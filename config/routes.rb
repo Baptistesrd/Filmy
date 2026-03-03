@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   devise_for :users
   # Your other resources here
   resources :watch_sessions, except: :index
-  root "watch_sessions#index"
+  # root "watch_sessions#index"
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
