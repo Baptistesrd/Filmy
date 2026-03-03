@@ -1,8 +1,5 @@
 class Chat < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+  belongs_to :watch_session
 
   DEFAULT_TITLE = "Untitled"
   TITLE_PROMPT = <<~PROMPT
@@ -18,4 +15,5 @@ class Chat < ApplicationRecord
     response = RubyLLM.chat.with_instructions(TITLE_PROMPT).ask(first_user_message.content)
     update(title: response.content)
   end
+
 end
