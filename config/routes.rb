@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  devise_for :chats
-  devise_for :watch_sessions
   devise_for :users
   root to: "pages#home"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
