@@ -6,3 +6,4 @@ class User < ApplicationRecord
 
   # has_many :watch_sessions, dependent: :destroy
 end
+
