@@ -15,7 +15,7 @@ puts "Creating watch sessions..."
 10.times do
   WatchSession.create!(
     user: demo_user,
-    title: "#{Faker::Movie.genre} Night",
+    title: "#{Faker::Book.genre} Night",
     created_at: Faker::Time.backward(days: 5)
   )
 end
