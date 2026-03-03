@@ -1,0 +1,34 @@
+<h1>New Watch Session</h1>
+
+<%= form_with model: @watch_session, local: true do |form| %>
+
+<div>
+    <%= form.label :title %><br>
+    <%= form.text_field :title %>
+  </div>
+
+  <div>
+    <%= form.label :description %><br>
+    <%= form.text_area :description %>
+  </div>
+
+  <div>
+    <%= form.label :movie_or_show_name, "Movie or Show Name" %><br>
+    <%= form.text_field :movie_or_show_name %>
+  </div>
+
+  <div>
+    <%= form.label :start_time %><br>
+    <%= form.datetime_field :start_time %>
+  </div>
+
+  <div>
+    <%= form.label :end_time %><br>
+    <%= form.datetime_field :end_time %>
+  </div>
+
+  <div>
+    <%= form.submit "Create Watch Session" %>
+  </div>
+
+<% end %>
