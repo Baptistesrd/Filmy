@@ -1,14 +1,23 @@
-# Clear database
-puts "Cleaning up database..."
+puts "Cleaning database..."
 
 WatchSession.destroy_all
+User.destroy_all
 
-# Create Watchsession
+puts "Creating demo user..."
+
+demo_user = User.create!(
+  email: "demo@test.com",
+  password: "123456"
+)
+
 puts "Creating watch sessions..."
 
 10.times do
   WatchSession.create!(
+    user: demo_user,
     title: "#{Faker::Movie.genre} Night",
     created_at: Faker::Time.backward(days: 5)
   )
 end
+
+puts "Done!"
