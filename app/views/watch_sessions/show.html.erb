@@ -3,7 +3,6 @@
 
   <hr>
 
-  <!-- Chat History -->
   <div class="mb-4">
     <% @messages.each do |message| %>
       <div class="mb-2 <%= message.role == 'assistant' ? 'text-primary' : 'text-dark' %>">
@@ -15,7 +14,6 @@
 
   <hr>
 
-  <!-- Message Form -->
   <%= form_with model: [@watch_session, @message] do |f| %>
     <div class="mb-3">
       <%= f.text_area :content, class: "form-control", placeholder: "Ask for a movie..." %>
