@@ -1,0 +1,26 @@
+<div class="container mt-4">
+  <h2><%= @watch_session.title %></h2>
+
+  <hr>
+
+  <!-- Chat History -->
+  <div class="mb-4">
+    <% @messages.each do |message| %>
+      <div class="mb-2 <%= message.role == 'assistant' ? 'text-primary' : 'text-dark' %>">
+        <strong><%= message.role.capitalize %>:</strong>
+        <%= message.content %>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <!-- Message Form -->
+  <%= form_with model: [@watch_session, @message] do |f| %>
+    <div class="mb-3">
+      <%= f.text_area :content, class: "form-control", placeholder: "Ask for a movie..." %>
+    </div>
+
+    <%= f.submit "Send", class: "btn btn-primary" %>
+  <% end %>
+</div>
