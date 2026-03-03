@@ -3,6 +3,14 @@ Rails.application.routes.draw do
   devise_for :watch_sessions
   devise_for :users
   root to: "pages#home"
+
+Rails.application.routes.draw do
+  devise_for :users
+  # Your other resources here
+  resources :watch_sessions
+  root "watch_sessions#index"
+end
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

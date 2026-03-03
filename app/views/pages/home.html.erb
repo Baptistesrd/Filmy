@@ -1,6 +1,6 @@
 <div class="hero">
   <div class="hero-content">
-    <h1 class="logo">🎬 Filmy</h1>
+    <h1 class="logo"%>Filmy</h1>
     <p class="tagline">Forget Netflix. Forget Letterboxd.</p>
 
     <% if user_signed_in? %>
@@ -10,65 +10,3 @@
     <% end %>
   </div>
 </div>
-
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: #0d0d0d;
-    color: #f0f0f0;
-    font-family: 'Helvetica Neue', sans-serif;
-  }
-
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0d0d0d 70%);
-  }
-
-  .hero-content {
-    text-align: center;
-    padding: 2rem;
-  }
-
-  .logo {
-    font-size: 3.5rem;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 0.5rem;
-  }
-
-  .tagline {
-    font-size: 1.3rem;
-    color: #e50914;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    letter-spacing: 0.5px;
-  }
-
-  .description {
-    font-size: 1rem;
-    color: #aaa;
-    margin-bottom: 2.5rem;
-  }
-
-  .btn-primary {
-    display: inline-block;
-    background: #e50914;
-    color: white;
-    padding: 0.9rem 2.5rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    transition: background 0.2s, transform 0.1s;
-  }
-
-  .btn-primary:hover {
-    background: #f40612;
-    transform: scale(1.03);
-  }
-</style>
