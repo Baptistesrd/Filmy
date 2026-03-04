@@ -2,6 +2,10 @@ class WatchSessionsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_watch_session, only: %i[show edit update destroy]
 
+  def index
+    @watch_sessions = current_user.watch_sessions.order(created_at: :desc)
+  end
+
   def new
     @watch_session = WatchSession.new
   end
