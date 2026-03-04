@@ -1,0 +1,39 @@
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  flex: 0 0 240px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0b0f14;
+}
+
+.app-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  flex: 0 0 auto;
+}
+
+.app-main {
+  flex: 1;
+  padding: 24px;
+}
+
+.app-main .container,
+.app-main .container-sm,
+.app-main .container-md,
+.app-main .container-lg,
+.app-main .container-xl {
+  max-width: 100%;
+}
