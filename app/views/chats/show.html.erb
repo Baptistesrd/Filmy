@@ -1,4 +1,4 @@
-<%= link_to "← #{@chat.watch_session.name}", watch_seesion_path(@chat.watch_session) %>
+<%= link_to "← #{@chat.watch_session.title}", watch_session_path(@chat.watch_session) %>
 
 <h1 id="chat_title"><%= @chat.title %></h1>
 
@@ -8,3 +8,12 @@
     <%= f.button :submit, 'Ask LLM', class: 'btn btn-primary' %>
   <% end %>
 </div>
+
+<div class="mb-4">
+    <% @chat.messages.each do |message| %>
+      <div class="mb-2 <%= message.role == 'assistant' ? 'text-primary' : 'text-dark' %>">
+        <strong><%= message.role.capitalize %>:</strong>
+        <%= message.content %>
+      </div>
+    <% end %>
+  </div>

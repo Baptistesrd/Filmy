@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_03_154712) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_04_114113) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -18,7 +18,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_154712) do
     t.datetime "created_at", null: false
     t.string "title"
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.bigint "watch_session_id", null: false
+    t.index ["user_id"], name: "index_chats_on_user_id"
     t.index ["watch_session_id"], name: "index_chats_on_watch_session_id"
   end
 
@@ -54,13 +56,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_154712) do
 
   create_table "watch_sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "description"
     t.string "genre"
     t.string "mood"
+    t.string "movie_or_show_name"
+    t.string "title"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_watch_sessions_on_user_id"
   end
 
+  add_foreign_key "chats", "users"
   add_foreign_key "chats", "watch_sessions"
   add_foreign_key "films", "watch_sessions"
   add_foreign_key "messages", "chats"
