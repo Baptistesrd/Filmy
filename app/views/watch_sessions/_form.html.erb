@@ -1,15 +1,18 @@
-<%= form_with(model: @watch_session) do |form| %>
-  <div>
-    <%= form.label :title %>
-    <%= form.text_field :title %>
-  </div>
+<%= simple_form_for @watch_session do |f| %>
+  <%= f.input :title %>
+  <%= f.input :description %>
 
-  <div>
-    <%= form.label :description %>
-    <%= form.text_area :description %>
-  </div>
+  <%= f.input :genre,
+              collection: WatchSession::GENRES,
+              prompt: "Select a genre",
+              input_html: { class: "form-select" } %>
 
-  <div>
-    <%= form.submit %>
-  </div>
+  <%= f.input :mood,
+              collection: WatchSession::MOODS,
+              prompt: "Select a mood",
+              input_html: { class: "form-select" } %>
+
+  <%= f.input :movie_or_show_name, label: "Movie or Show Name" %>
+
+  <%= f.button :submit, class: "btn btn-primary" %>
 <% end %>
