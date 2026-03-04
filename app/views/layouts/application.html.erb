@@ -11,14 +11,10 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
@@ -26,17 +22,26 @@
   <body>
     <%= link_to "Skip to main content", "#main-content", class: "visually-hidden-focusable" %>
 
-    <div class="app-shell">
-      <aside class="sidebar">
-        <%= render "shared/sidebar" %>
-      </aside>
+    <header>
+      <%= render "shared/navbar" %>
+    </header>
 
-      <div class="app-content">
-        <header class="app-header">
-          <%= render "shared/navbar" %>
-        </header>
+    <div class="container-fluid">
+      <div class="row" data-controller="toggle">
+        <!-- Sidebar -->
+        <nav class="col-md-2 sidebar pt-3" data-toggle-target="hideable">
+          <%= render "shared/sidebar" %>
+        </nav>
 
-        <main id="main-content" class="app-main">
+        <!-- Main content -->
+        <main id="main-content" class="col-md-10 my-4">
+          <!-- Re-open sidebar button (only shows when sidebar is hidden) -->
+          <%= link_to "#",
+                class: "d-none nav-link text-light mb-3",
+                data: { action: "click->toggle#call", toggle_target: "show" } do %>
+            ▶ Open menu
+          <% end %>
+
           <%= yield %>
         </main>
       </div>
