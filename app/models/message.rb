@@ -1,5 +1,5 @@
 class Message < ApplicationRecord
-  bbelongs_to :chat
+  belongs_to :chat
 
   validates :role, presence: true
   validates :content, presence: true
