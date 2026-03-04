@@ -1,0 +1,23 @@
+<aside class="sidebar d-flex flex-column p-3">
+  <div class="mb-4">
+    <%= link_to root_path, class: "sidebar-brand text-decoration-none" do %>
+      <span class="fw-bold">Filmy</span>
+    <% end %>
+  </div>
+
+  <nav class="nav nav-pills flex-column gap-1">
+    <%= link_to "Home", root_path, class: "nav-link" %>
+    <%= link_to "New Watch Session", new_watch_session_path, class: "nav-link" %>
+
+    <%# If you add an index later, swap this for watch_sessions_path %>
+    <%# <%= link_to "My Sessions", watch_sessions_path, class: "nav-link" %>
+
+    <% if user_signed_in? %>
+      <%= link_to "Edit account", edit_user_registration_path, class: "nav-link" %>
+      <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "btn btn-outline-light mt-3 w-100" %>
+    <% else %>
+      <%= link_to "Log in", new_user_session_path, class: "nav-link" %>
+      <%= link_to "Sign up", new_user_registration_path, class: "nav-link" %>
+    <% end %>
+  </nav>
+</aside>
