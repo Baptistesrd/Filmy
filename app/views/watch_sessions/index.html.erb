@@ -1,31 +1,20 @@
-<div class="container py-4">
+<div class="container py-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h1 class="mb-1">Your watch sessions</h1>
-      <p class="text-secondary mb-0">Pick a session to continue chatting and get recommendations.</p>
-    </div>
-
-    <%= link_to "New session", new_watch_session_path, class: "btn btn-primary" %>
+    <h1 class="mb-0">Your Watch Sessions</h1>
+    <%= link_to "New watch session", new_watch_session_path, class: "btn btn-primary" %>
   </div>
 
-  <div class="row g-3">
-    <% @watch_sessions.each do |session| %>
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="watch-session-card h-100">
-          <div class="watch-session-card__title">
-            <%= session.genre.presence || "Movie Night" %>
-          </div>
-
-          <div class="watch-session-card__meta">
-            Mood: <strong><%= session.mood.presence || "Any" %></strong>
-          </div>
-
-          <div class="watch-session-card__actions">
-            <%= link_to "Open", watch_session_path(session), class: "btn btn-outline-light btn-sm" %>
-            <%= link_to "Edit", edit_watch_session_path(session), class: "btn btn-outline-light btn-sm" %>
-          </div>
+  <% if @watch_sessions.any? %>
+    <div class="row g-3">
+      <% @watch_sessions.each do |watch_session| %>
+        <div class="col-12 col-md-6 col-lg-4">
+          <%= render "card", watch_session: watch_session %>
         </div>
-      </div>
-    <% end %>
-  </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      No watch sessions yet. Create your first one!
+    </div>
+  <% end %>
 </div>
