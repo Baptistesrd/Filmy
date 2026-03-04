@@ -26,20 +26,17 @@
       <%= render "shared/navbar" %>
     </header>
 
-    <div class="container-fluid">
+    <div class="container-fluid" id="main-content">
       <div class="row" data-controller="toggle">
-        <!-- Sidebar -->
         <nav class="col-md-2 sidebar pt-3" data-toggle-target="hideable">
-          <%= render "shared/sidebar" %>
+          <%= render "shared/sidebar", watch_sessions: @watch_sessions %>
         </nav>
 
-        <!-- Main content -->
-        <main id="main-content" class="col-md-10 my-4">
-          <!-- Re-open sidebar button (only shows when sidebar is hidden) -->
+        <main class="col-md-10 my-4">
           <%= link_to "#",
-                class: "d-none nav-link text-light mb-3",
-                data: { action: "click->toggle#call", toggle_target: "show" } do %>
-            ▶ Open menu
+              class: "d-none nav-link text-light mb-3",
+              data: { action: "click->toggle#call", toggle_target: "show" } do %>
+            <i class="fa-regular fa-square-caret-right"></i>
           <% end %>
 
           <%= yield %>
