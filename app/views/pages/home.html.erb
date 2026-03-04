@@ -4,9 +4,17 @@
     <p class="tagline">Forget Netflix. Forget Letterboxd.</p>
 
     <% if user_signed_in? %>
-      <%= link_to "Start the session", new_watch_session_path, method: :post, class: "btn-primary" %>
+      <div class="d-flex gap-2 justify-content-center">
+        <%= link_to "Start the session", new_watch_session_path,
+              class: "btn btn-primary btn-lg w-100",
+              style: "max-width: 220px;" %>
+
+        <%= link_to "See all my sessions", watch_sessions_path,
+              class: "btn btn-primary btn-lg w-100",
+              style: "max-width: 220px;" %>
+      </div>
     <% else %>
-      <%= link_to "Start now", new_user_session_path, class: "btn-primary" %>
+      <%= link_to "Start now", new_user_session_path, class: "btn btn-primary btn-lg" %>
     <% end %>
   </div>
 </div>

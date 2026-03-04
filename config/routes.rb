@@ -2,7 +2,7 @@
   devise_for :users
   root to: "pages#home"
 
-  resources :watch_sessions, except: :index do
+  resources :watch_sessions do
     resources :chats, only: [:create]
   end
 
