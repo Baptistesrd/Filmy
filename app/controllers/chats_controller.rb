@@ -1,7 +1,11 @@
 class ChatsController < ApplicationController
   def create
     watch_session = current_user.watch_sessions.find(params[:watch_session_id])
-    chat = watch_session.chats.create!(title: Chat::DEFAULT_TITLE)
+
+    chat = watch_session.chats.new(title: Chat::DEFAULT_TITLE)
+    chat.user = current_user
+    chat.save!
+
     redirect_to chat_path(chat)
   end
 
