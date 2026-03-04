@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 
+// Connects to data-controller="toggle"
 export default class extends Controller {
   static targets = ["hideable", "show"];
 
@@ -7,11 +8,9 @@ export default class extends Controller {
     event.preventDefault();
 
     if (this.hideableTarget.classList.contains("d-none")) {
-      // Show sidebar
       this.hideableTarget.classList.remove("d-none");
       this.showTarget.classList.add("d-none");
     } else {
-      // Hide sidebar
       this.hideableTarget.classList.add("d-none");
       this.showTarget.classList.remove("d-none");
     }
