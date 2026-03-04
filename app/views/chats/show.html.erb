@@ -1,21 +1,51 @@
 <div class="container py-4" style="max-width: 900px;">
+
   <%= link_to watch_session_path(@chat.watch_session),
               class: "d-inline-flex align-items-center gap-2 text-decoration-none text-muted mb-3" do %>
     <span>←</span>
     <span><%= @chat.watch_session.title %></span>
   <% end %>
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="fw-bold mb-0" id="chat_title"><%= @chat.title %></h1>
+  <h1 class="fw-bold mb-4" id="chat_title"><%= @chat.title %></h1>
+
+  <!-- Messages -->
+  <div class="d-flex flex-column gap-3 mb-4" id="messages">
+    <% @messages.each do |message| %>
+      <% is_user = (message.role == "user") %>
+
+      <div class="d-flex <%= is_user ? "justify-content-end" : "justify-content-start" %>">
+        <div
+          class="px-3 py-2 rounded-4 shadow-sm"
+          style="
+            max-width: 72%;
+            white-space: pre-wrap;
+            <%= is_user ?
+                  'background: #0d6efd; color: white; border-top-right-radius: 0.5rem;' :
+                  'background: #f1f3f5; color: #111; border-top-left-radius: 0.5rem;' %>
+          "
+        >
+          <%= message.content %>
+        </div>
+      </div>
+    <% end %>
   </div>
 
-  <div id="messages" class="chat-messages mb-3">
-    <%= render "messages/messages", messages: @messages %>
-  </div>
-
+  <!-- New message form -->
   <div class="card border-0 shadow-sm rounded-4" id="new_message_container">
     <div class="card-body p-3">
-      <%= render "messages/form", chat: @chat, message: @message %>
+      <%= simple_form_for [@chat, @message] do |f| %>
+        <div class="d-flex gap-2 align-items-end">
+          <%= f.input :content,
+                label: false,
+                placeholder: "I'm in the mood for...",
+                required: true,
+                wrapper_html: { class: "flex-grow-1 mb-0" },
+                input_html: { class: "form-control bg-light rounded-4", rows: 2 } %>
+
+          <%= f.button :submit, "Ask", class: "btn btn-primary rounded-4 px-4" %>
+        </div>
+      <% end %>
     </div>
   </div>
+
 </div>
