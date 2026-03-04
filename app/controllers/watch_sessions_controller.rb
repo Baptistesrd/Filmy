@@ -19,6 +19,7 @@ class WatchSessionsController < ApplicationController
 
   def show
     @message = Message.new
+    @chats = @watch_session.chats
   end
 
   def edit
@@ -46,4 +47,5 @@ class WatchSessionsController < ApplicationController
   def watch_session_params
     params.require(:watch_session).permit(:title, :description, :genre, :mood, :movie_or_show_name)
   end
+
 end

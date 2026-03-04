@@ -2,14 +2,15 @@ class WatchSession < ApplicationRecord
   belongs_to :user
   has_many :chats, dependent: :destroy
 
-  GENRES = [
-    "Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary",
-    "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi",
-    "Thriller", "War", "Western"
-  ].freeze
+  def context_prompt
+    <<~TEXT
+    You are helping with a watch session.
 
-  MOODS = [
-    "Chill", "Feel-good", "Dark", "Funny", "Romantic", "Mind-bending",
-    "Emotional", "High energy", "Scary", "Inspirational", "Cozy", "Weird"
-  ].freeze
+    Title: #{title}
+    Description: #{description}
+    Movie/Show: #{movie_or_show_name}
+    Genre: #{genre}
+    Mood: #{mood}
+    TEXT
+  end
 end

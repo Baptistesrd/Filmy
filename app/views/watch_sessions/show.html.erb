@@ -1,68 +1,22 @@
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-12 col-md-10 col-lg-8">
-      <div class="card shadow-sm">
-        <div class="card-body p-4 p-md-5">
-
-          <div class="d-flex justify-content-between align-items-start mb-3">
-            <div>
-              <h1 class="h3 mb-1">
-                <% if @watch_session.respond_to?(:title) && @watch_session.title.present? %>
-                  <%= @watch_session.title %>
-                <% else %>
-                  Watch Session
-                <% end %>
-              </h1>
-
-              <div class="text-muted">
-                <% if @watch_session.genre.present? %>
-                  <span class="me-2"><strong>Genre:</strong> <%= @watch_session.genre %></span>
-                <% end %>
-                <% if @watch_session.mood.present? %>
-                  <span><strong>Mood:</strong> <%= @watch_session.mood %></span>
-                <% end %>
-              </div>
-            </div>
-
-            <div class="d-flex gap-2">
-              <%= link_to "Back", root_path, class: "btn btn-outline-secondary" %>
-              <%= link_to "Edit", edit_watch_session_path(@watch_session), class: "btn btn-outline-dark" %>
-            </div>
-          </div>
-
-          <% if @watch_session.respond_to?(:description) && @watch_session.description.present? %>
-            <p class="mt-3"><%= @watch_session.description %></p>
+<div class="row">
+  <div class="col">
+    <h1><%= @watch_session.title %></h1>
+    <%= raw(render_markdown(@watch_session.description)) %>
+  </div>
+  <div class="col-md-3">
+    <h2>Chats</h2>
+    <div class="mb-4">
+      <% if @chats.any? %>
+        <ul>
+          <% @chats.each do |chat| %>
+            <li><%= link_to chat.title, chat_path(chat) %></li>
           <% end %>
-
-          <hr class="my-4">
-
-          <div class="d-flex flex-wrap gap-2">
-            <%= button_to "New chat",
-                          watch_session_chats_path(@watch_session),
-                          method: :post,
-                          class: "btn btn-primary" %>
-
-            <%# Optional: show existing chats if you have @watch_session.chats %>
-            <% if @watch_session.respond_to?(:chats) && @watch_session.chats.any? %>
-              <%= link_to "View chats", watch_session_path(@watch_session, anchor: "chats"), class: "btn btn-outline-primary" %>
-            <% end %>
-          </div>
-
-          <% if @watch_session.respond_to?(:chats) %>
-            <div id="chats" class="mt-4">
-              <% if @watch_session.chats.any? %>
-                <h2 class="h5 mb-3">Chats</h2>
-                <div class="list-group">
-                  <% @watch_session.chats.order(created_at: :desc).each do |chat| %>
-                    <%= link_to(chat.title.presence || "Untitled", chat_path(chat), class: "list-group-item list-group-item-action") %>
-                  <% end %>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
-
-        </div>
-      </div>
+        </ul>
+      <% else %>
+        There are no chats yet.
+      <% end %>
     </div>
+
+    <%= button_to "New chat", watch_session_chats_path(@watch_session), class: "btn btn-primary" %>
   </div>
 </div>
