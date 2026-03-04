@@ -1,43 +1,53 @@
-<% genres = defined?(WatchSession::GENRES) ? WatchSession::GENRES : [] %>
-<% moods  = defined?(WatchSession::MOODS)  ? WatchSession::MOODS  : [] %>
+<% genres = [
+  "Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama",
+  "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western",
+  "Family", "Musical", "Sport"
+] %>
 
-<%= simple_form_for(watch_session) do |f| %>
-  <div class="mb-3">
+<% moods = [
+  "Chill", "Feel-good", "Funny", "Romantic", "Dark", "Emotional", "Hype",
+  "Mind-bending", "Cozy", "Scary", "Inspiring", "Adventurous"
+] %>
+
+<%= simple_form_for(@watch_session) do |f| %>
+  <% if @watch_session.errors.any? %>
+    <div class="alert alert-danger">
+      <p class="mb-2"><strong>Please fix the errors below:</strong></p>
+      <ul class="mb-0">
+        <% @watch_session.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%# These are conditional so you won’t crash if the columns don’t exist %>
+  <% if @watch_session.respond_to?(:title) %>
     <%= f.input :title, input_html: { class: "form-control" } %>
-  </div>
-
-  <% if watch_session.respond_to?(:description) %>
-    <div class="mb-3">
-      <%= f.input :description, as: :text, input_html: { class: "form-control", rows: 3 } %>
-    </div>
   <% end %>
 
-  <% if watch_session.respond_to?(:genre) %>
-    <div class="mb-3">
-      <%= f.input :genre,
-        collection: genres,
-        prompt: "Select a genre",
-        input_html: { class: "form-select" } %>
-    </div>
+  <% if @watch_session.respond_to?(:description) %>
+    <%= f.input :description, as: :text, input_html: { class: "form-control", rows: 4 } %>
   <% end %>
 
-  <% if watch_session.respond_to?(:mood) %>
-    <div class="mb-3">
-      <%= f.input :mood,
-        collection: moods,
-        prompt: "Select a mood",
-        input_html: { class: "form-select" } %>
-    </div>
+  <%= f.input :genre,
+              collection: genres,
+              prompt: "Select a genre",
+              input_html: { class: "form-select" } %>
+
+  <%= f.input :mood,
+              collection: moods,
+              prompt: "Select a mood",
+              input_html: { class: "form-select" } %>
+
+  <% if @watch_session.respond_to?(:movie_or_show_name) %>
+    <%= f.input :movie_or_show_name, label: "Movie or Show Name", input_html: { class: "form-control" } %>
+  <% elsif @watch_session.respond_to?(:movie_title) %>
+    <%= f.input :movie_title, label: "Movie or Show Name", input_html: { class: "form-control" } %>
   <% end %>
 
-  <% if watch_session.respond_to?(:movie_or_show_name) %>
-    <div class="mb-4">
-      <%= f.input :movie_or_show_name, label: "Movie or Show Name", input_html: { class: "form-control" } %>
-    </div>
-  <% end %>
-
-  <div class="d-flex gap-2">
-    <%= f.button :submit, class: "btn btn-primary" %>
-    <%= link_to "Cancel", watch_sessions_path, class: "btn btn-outline-secondary" %>
+  <div class="d-flex gap-2 mt-4">
+    <%= f.button :submit, class: "btn btn-dark px-4" %>
+    <%= link_to "Cancel", (@watch_session.persisted? ? watch_session_path(@watch_session) : root_path), class: "btn btn-outline-secondary" %>
   </div>
 <% end %>
