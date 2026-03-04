@@ -21,8 +21,8 @@ class WatchSessionsController < ApplicationController
   end
 
   def show
-    @message = Message.new
-    @chats = @watch_session.chats
+    @watch_session = current_user.watch_sessions.find(params[:id])
+    @chats = @watch_session.chats.order(created_at: :desc)
   end
 
   def edit
@@ -50,5 +50,4 @@ class WatchSessionsController < ApplicationController
   def watch_session_params
     params.require(:watch_session).permit(:title, :description, :genre, :mood, :movie_or_show_name)
   end
-
 end

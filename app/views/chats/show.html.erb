@@ -9,15 +9,24 @@
 
   <div class="d-flex flex-column gap-3 mb-4">
     <% @messages.each do |message| %>
-      <div class="d-flex <%= message.role == 'user' ? 'justify-content-end' : 'justify-content-start' %>">
-        <div class="px-3 py-2 rounded-3" style="max-width: 75%; <%= message.role == 'assistant' ? 'background: #f0f4ff; color: #2d3a8c;' : 'background: #e9ecef; color: #212529;' %>">
-          <%= message.content %>
+      <% is_user = (message.role == "user") %>
+
+      <div class="d-flex <%= is_user ? "justify-content-end" : "justify-content-start" %>">
+        <div
+          class="px-3 py-2 rounded-4 shadow-sm"
+          style="
+            max-width: 75%;
+            white-space: pre-wrap;
+            <%= is_user ? "background: #0d6efd; color: #ffffff; border-top-right-radius: 10px;" : "background: #f0f4ff; color: #1f2d5c; border-top-left-radius: 10px;" %>
+          "
+        >
+          <%= simple_format(message.content) %>
         </div>
       </div>
     <% end %>
   </div>
 
-  <div class="card border-0 shadow-sm rounded-3" id="new_message_container">
+  <div class="card border-0 shadow-sm rounded-4" id="new_message_container">
     <div class="card-body p-3">
       <%= simple_form_for [@chat, @message] do |f| %>
         <div class="d-flex gap-2 align-items-end">
@@ -26,8 +35,9 @@
               placeholder: "I'm in the mood for...",
               required: true,
               wrapper_html: { class: "flex-grow-1 mb-0" },
-              input_html: { class: "form-control border-0 bg-light rounded-3", rows: 1 } %>
-          <%= f.button :submit, 'Ask', class: 'btn btn-primary rounded-3 px-4' %>
+              input_html: { class: "form-control bg-light rounded-4", rows: 2 } %>
+
+          <%= f.button :submit, "Ask", class: "btn btn-primary rounded-4 px-4" %>
         </div>
       <% end %>
     </div>
