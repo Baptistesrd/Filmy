@@ -22,6 +22,6 @@ class WatchSessionsController < ApplicationController
   private
 
   def watch_session_params
-    params.require(:watch_session).permit(:title, :description, :movie_or_show_name, :genre, :mood)
+    params.require(:watch_session).permit(:title, :description, :genre, :mood, :movie_or_show_name)
   end
 end
