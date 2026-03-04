@@ -1,15 +1,9 @@
 Rails.application.routes.draw do
-  devise_for :chats
-  devise_for :watch_sessions
-  devise_for :users
   root to: "pages#home"
-
-Rails.application.routes.draw do
   devise_for :users
   # Your other resources here
-  resources :watch_sessions
-  root "watch_sessions#index"
-end
+  resources :watch_sessions, except: :index
+  # root "watch_sessions#index"
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -17,13 +11,17 @@ end
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
+  resources :challenges, only: [:new, :create, :show] do
+    resources :chats, only: [:create]
+  end
+
+  resources :chats, only: :show do
+    resources :messages, only: [:create]
+  end
+end
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
   # root "posts#index"
-  Rails.application.routes.draw do
-  resources :watch_sessions
-end
-end

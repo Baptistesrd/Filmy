@@ -4,7 +4,7 @@
     <p class="tagline">Forget Netflix. Forget Letterboxd.</p>
 
     <% if user_signed_in? %>
-      <%= link_to "Start the session", conversations_path, method: :post, class: "btn-primary" %>
+      <%= link_to "Start the session", new_watch_session_path, method: :post, class: "btn-primary" %>
     <% else %>
       <%= link_to "Start now", new_user_session_path, class: "btn-primary" %>
     <% end %>
