@@ -1,34 +1,16 @@
-<h1>New Watch Session</h1>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body p-4 p-md-5">
+          <div class="d-flex justify-content-between align-items-start mb-4">
+            <h1 class="h2 mb-0">New Watch Session</h1>
+            <%= link_to "Back", root_path, class: "btn btn-outline-secondary" %>
+          </div>
 
-<%= form_with model: @watch_session, local: true do |form| %>
-
-<div>
-    <%= form.label :title %><br>
-    <%= form.text_field :title %>
+          <%= render "form", watch_session: @watch_session %>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div>
-    <%= form.label :description %><br>
-    <%= form.text_area :description %>
-  </div>
-
-  <div>
-    <%= form.label :genre %><br>
-    <%= form.text_area :genre %>
-  </div>
-
-  <div>
-    <%= form.label :mood %><br>
-    <%= form.text_area :mood %>
-  </div>
-
-  <div>
-    <%= form.label :movie_or_show_name, "Movie or Show Name" %><br>
-    <%= form.text_field :movie_or_show_name %>
-  </div>
-
-  <div>
-    <%= form.submit "Create Watch Session" %>
-  </div>
-
-<% end %>
+</div>

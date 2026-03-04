@@ -24,13 +24,22 @@
   </head>
 
   <body>
-      <%= link_to "Skip to main content", "#main-content", class: "visually-hidden-focusable" %>
-      <header>
-        <%= render "shared/navbar" %> <!-- 👈 Add this for navbar -->
-      </header>
+    <%= link_to "Skip to main content", "#main-content", class: "visually-hidden-focusable" %>
 
-      <main id="main-content">
-        <%= yield %>
-      </main>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <%= render "shared/sidebar" %>
+      </aside>
+
+      <div class="app-content">
+        <header class="app-header">
+          <%= render "shared/navbar" %>
+        </header>
+
+        <main id="main-content" class="app-main">
+          <%= yield %>
+        </main>
+      </div>
+    </div>
   </body>
 </html>
