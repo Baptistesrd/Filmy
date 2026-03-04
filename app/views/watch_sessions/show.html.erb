@@ -3,22 +3,5 @@
 
   <hr>
 
-  <div class="mb-4">
-    <% @messages.each do |message| %>
-      <div class="mb-2 <%= message.role == 'assistant' ? 'text-primary' : 'text-dark' %>">
-        <strong><%= message.role.capitalize %>:</strong>
-        <%= message.content %>
-      </div>
-    <% end %>
-  </div>
-
-  <hr>
-
-  <%= form_with model: [@watch_session, @message] do |f| %>
-    <div class="mb-3">
-      <%= f.text_area :content, class: "form-control", placeholder: "Ask for a movie..." %>
-    </div>
-
-    <%= f.submit "Send", class: "btn btn-primary" %>
-  <% end %>
+  <%= button_to "New chat", watch_session_chats_path(@watch_session), class: "btn btn-primary" %>
 </div>

@@ -1,5 +1,7 @@
 class Chat < ApplicationRecord
   belongs_to :watch_session
+  belongs_to :user
+  has_many :messages, dependent: :destroy
 
   DEFAULT_TITLE = "Untitled"
   TITLE_PROMPT = <<~PROMPT
@@ -15,5 +17,4 @@ class Chat < ApplicationRecord
     response = RubyLLM.chat.with_instructions(TITLE_PROMPT).ask(first_user_message.content)
     update(title: response.content)
   end
-
 end
