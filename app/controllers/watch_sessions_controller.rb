@@ -1,5 +1,4 @@
 class WatchSessionsController < ApplicationController
-  before_action :authenticate_user!
   before_action :set_watch_session, only: %i[show edit update destroy]
 
   def index
@@ -39,7 +38,7 @@ class WatchSessionsController < ApplicationController
 
   def destroy
     @watch_session.destroy
-    redirect_to root_path, notice: "Watch session was successfully deleted."
+    redirect_to watch_sessions_path, notice: "Watch session was successfully deleted."
   end
 
   private
