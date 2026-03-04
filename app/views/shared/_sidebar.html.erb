@@ -1,55 +1,75 @@
-<div class="d-flex justify-content-between align-items-center px-3 mb-3">
-  <div class="fw-bold">Filmy</div>
+<%# app/views/shared/_sidebar.html.erb %>
 
-  <%= link_to "#",
-      class: "nav-link text-light p-0",
-      data: { action: "click->toggle#call" } do %>
-    <span aria-hidden="true">◀</span>
-  <% end %>
-</div>
+<div class="sidebar">
+  <!-- Brand + collapse button -->
+  <div class="sidebar-brand">
+    <p class="brand mb-0">Filmy</p>
 
-<ul class="nav flex-column px-2">
-  <li class="nav-item">
-    <%= link_to "Home", root_path, class: "nav-link text-light" %>
-  </li>
+    <%# Collapse sidebar button (requires your toggle stimulus controller setup) %>
+    <%= link_to "#",
+                class: "sidebar-link p-2",
+                aria: { label: "Collapse sidebar" },
+                data: { action: "click->toggle#call" } do %>
+      ◀
+    <% end %>
+  </div>
 
-  <li class="nav-item">
-    <%= link_to "New Watch Session", new_watch_session_path, class: "nav-link text-light" %>
-  </li>
+  <!-- Main navigation -->
+  <div class="sidebar-section-title">Navigation</div>
+  <ul class="sidebar-nav">
+    <li>
+      <%= link_to "Home", root_path, class: "sidebar-link" %>
+    </li>
 
-  <li class="nav-item">
-    <%= link_to "All Watch Sessions", watch_sessions_path, class: "nav-link text-light" %>
-  </li>
+    <li>
+      <%= link_to "New Watch Session", new_watch_session_path, class: "sidebar-link" %>
+    </li>
 
-  <li class="nav-item my-2">
-    <details class="sidebar-details">
-      <summary class="nav-link text-light">
-        Your watch sessions
-      </summary>
+    <li>
+      <%= link_to "All Watch Sessions", watch_sessions_path, class: "sidebar-link" %>
+    </li>
+  </ul>
 
-      <div class="mt-2 ms-3">
-        <% if watch_sessions.present? %>
-          <ul class="list-unstyled mb-0">
-            <% watch_sessions.each do |ws| %>
-              <li class="mb-1">
-                <%= link_to (ws.title.presence || "Untitled session"),
-                            watch_session_path(ws),
-                            class: "nav-link text-light py-1" %>
-              </li>
-            <% end %>
-          </ul>
+  <!-- Collapsible list of watch sessions -->
+  <details class="mt-2" open>
+    <summary class="sidebar-link" style="cursor: pointer; list-style: none;">
+      <span class="truncate">Your watch sessions</span>
+    </summary>
+
+    <ul class="sidebar-nav sidebar-sublist">
+      <% if user_signed_in? %>
+        <% sessions = @watch_sessions || current_user.watch_sessions.order(created_at: :desc) %>
+
+        <% if sessions.any? %>
+          <% sessions.each do |ws| %>
+            <li>
+              <%= link_to watch_session_path(ws), class: "sidebar-link" do %>
+                <span class="truncate"><%= ws.title.presence || "Untitled session" %></span>
+              <% end %>
+            </li>
+          <% end %>
         <% else %>
-          <div class="text-secondary small">No sessions yet.</div>
+          <li>
+            <span class="sidebar-link" style="opacity: 0.75;">No sessions yet</span>
+          </li>
         <% end %>
-      </div>
-    </details>
-  </li>
+      <% else %>
+        <li>
+          <%= link_to "Sign in", new_user_session_path, class: "sidebar-link" %>
+        </li>
+      <% end %>
+    </ul>
+  </details>
 
-  <li class="nav-item">
-    <%= link_to "Edit account", edit_user_registration_path, class: "nav-link text-light" %>
-  </li>
+  <!-- Footer actions -->
+  <div class="sidebar-footer">
+    <% if user_signed_in? %>
+      <%= link_to "Edit account", edit_user_registration_path, class: "sidebar-link" %>
 
-  <li class="nav-item px-3 mt-2">
-    <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "btn btn-outline-light w-100" %>
-  </li>
-</ul>
+      <%= button_to "Log out",
+                    destroy_user_session_path,
+                    method: :delete,
+                    class: "btn btn-outline-light mt-2" %>
+    <% end %>
+  </div>
+</div>
