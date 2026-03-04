@@ -1,6 +1,6 @@
 class WatchSessionsController < ApplicationController
   def new
-    @session = Session.new
+    @watch_session = WatchSession.new
   end
 
   def create
