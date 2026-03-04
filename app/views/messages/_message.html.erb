@@ -1,0 +1,7 @@
+<% is_user = (message.role == "user") %>
+
+<div class="d-flex mb-2 <%= is_user ? "justify-content-end" : "justify-content-start" %>">
+  <div class="chat-bubble <%= is_user ? "chat-bubble-user" : "chat-bubble-assistant" %>">
+    <%= simple_format(message.content) %>
+  </div>
+</div>
