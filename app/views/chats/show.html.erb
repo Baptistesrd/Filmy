@@ -4,15 +4,14 @@
 
 <div id="new_message_container">
   <%= simple_form_for [@chat, @message] do |f| %>
-    <%= f.input :content, label: "What are you in the mood for?", required: true, placeholder: "Im in the mood for..." %>
+    <%= f.input :content, label: "What are you in the mood for?", required: true, placeholder: "I'm in the mood for..." %>
     <%= f.button :submit, 'Ask LLM', class: 'btn btn-primary' %>
   <% end %>
 </div>
 
 <div class="mb-4">
-    <% @chat.messages.each do |message| %>
+    <% @messages.each do |message| %>
       <div class="mb-2 <%= message.role == 'assistant' ? 'text-primary' : 'text-dark' %>">
-        <strong><%= message.role.capitalize %>:</strong>
         <%= message.content %>
       </div>
     <% end %>
