@@ -19,8 +19,9 @@
 
             <%= button_to "New chat",
                   watch_session_chats_path(@watch_session),
-                  method: :post,
-                  class: "btn btn-primary btn-sm" %>
+                    method: :post,
+                    class: "btn btn-primary btn-sm",
+                    form: { data: { turbo: false } } %>
           </div>
 
           <% if @chats.any? %>
