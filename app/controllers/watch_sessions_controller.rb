@@ -1,4 +1,6 @@
 class WatchSessionsController < ApplicationController
+  before_action :set_watch_session, only: %i[show edit update destroy]
+
   def new
     @watch_session = WatchSession.new
   end
@@ -12,6 +14,9 @@ class WatchSessionsController < ApplicationController
     else
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def edit
   end
 
   def show
