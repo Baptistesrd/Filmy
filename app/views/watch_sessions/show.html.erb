@@ -1,7 +1,22 @@
-<div class="container mt-4">
-  <h2><%= @watch_session.title %></h2>
+<div class="row">
+  <div class="col">
+    <h1><%= @watch_session.title %></h1>
+    <%= raw(render_markdown(@watch_session.description)) %>
+  </div>
+  <div class="col-md-3">
+    <h2>Chats</h2>
+    <div class="mb-4">
+      <% if @chats.any? %>
+        <ul>
+          <% @chats.each do |chat| %>
+            <li><%= link_to chat.title, chat_path(chat) %></li>
+          <% end %>
+        </ul>
+      <% else %>
+        There are no chats yet.
+      <% end %>
+    </div>
 
-  <hr>
-
-  <%= button_to "New chat", watch_session_chats_path(@watch_session), class: "btn btn-primary" %>
+    <%= button_to "New chat", watch_session_chats_path(@watch_session), class: "btn btn-primary" %>
+  </div>
 </div>
