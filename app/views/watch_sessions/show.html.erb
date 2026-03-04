@@ -1,7 +1,43 @@
 <div class="container mt-4">
-  <h2><%= @watch_session.title %></h2>
+
+  <div class="mb-4">
+    <h1><%= @watch_session.title || "Movie Night" %></h1>
+
+    <div class="text-muted">
+      <% if @watch_session.genre.present? %>
+        <span class="me-3"><strong>Genre:</strong> <%= @watch_session.genre %></span>
+      <% end %>
+
+      <% if @watch_session.mood.present? %>
+        <span><strong>Mood:</strong> <%= @watch_session.mood %></span>
+      <% end %>
+    </div>
+  </div>
 
   <hr>
 
-  <%= button_to "New chat", watch_session_chats_path(@watch_session), class: "btn btn-primary" %>
+  <div class="mb-4">
+    <%= button_to "Start New Chat", watch_session_chats_path(@watch_session), method: :post, class: "btn btn-primary" %>
+  </div>
+
+  <% if @watch_session.chats.any? %>
+    <h3 class="mb-3">Previous Chats</h3>
+
+    <div class="list-group">
+      <% @watch_session.chats.each do |chat| %>
+        <%= link_to chat_path(chat), class: "list-group-item list-group-item-action" do %>
+          <strong><%= chat.title || "Untitled Chat" %></strong>
+          <div class="text-muted small">
+            Created <%= time_ago_in_words(chat.created_at) %> ago
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+  <% else %>
+
+    <p class="text-muted">No chats yet. Start one to get movie recommendations.</p>
+
+  <% end %>
+
 </div>
