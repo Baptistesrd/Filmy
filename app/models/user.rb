@@ -5,5 +5,5 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :watch_sessions, dependent: :destroy
+  has_many :chats, through: :watch_sessions
 end
-
