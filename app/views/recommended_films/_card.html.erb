@@ -1,22 +1,28 @@
-<div class="film-card" id="<%= dom_id(film) %>">
-  <div class="d-flex justify-content-between align-items-start">
-    <div class="me-2">
-      <div class="film-title"><%= film.title %> <span class="film-meta">(<%= film.year %>)</span></div>
-      <div class="film-meta"><%= film.runtime.present? ? "#{film.runtime} min" : "" %></div>
+<div class="card border-0 rounded-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start gap-3">
+      <div class="flex-grow-1">
+        <div class="fw-semibold">
+          <%= film.title %><% if film.year.present? %> (<%= film.year %>)<% end %>
+        </div>
+
+        <% if film.runtime.present? %>
+          <div class="small text-muted"><%= film.runtime %> min</div>
+        <% end %>
+      </div>
+
+      <% if film.added? %>
+        <button class="btn btn-secondary btn-sm" disabled>
+          ✓
+        </button>
+      <% else %>
+        <%= button_to add_recommended_film_path(film),
+              method: :post,
+              class: "btn btn-primary btn-sm",
+              form: { data: { turbo_stream: true } } do %>
+          <span class="fw-bold">+</span>
+        <% end %>
+      <% end %>
     </div>
-
-    <% if film.added? %>
-      <span class="badge bg-success">Added</span>
-    <% else %>
-      <%= button_to "＋",
-          watchlist_items_path(recommended_film_id: film.id),
-          method: :post,
-          form: { data: { turbo: true } },
-          class: "btn btn-sm btn-primary film-add" %>
-    <% end %>
   </div>
-
-  <% if film.blurb.present? %>
-    <div class="film-blurb mt-2"><%= film.blurb %></div>
-  <% end %>
 </div>
