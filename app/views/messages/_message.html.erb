@@ -7,6 +7,7 @@
       <%= raw(render_markdown(message.content)) %>
     </div>
 
+
     <% if is_user && message.file.attached? %>
       <div class="ps-3 pt-1">
         <strong>File:</strong>

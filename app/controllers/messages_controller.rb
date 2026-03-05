@@ -4,7 +4,7 @@ class MessagesController < ApplicationController
 
   def send_question(model: "gpt-4.1-nano", with: {})
     @ruby_llm_chat = RubyLLM.chat(model: model)
-    build_conversation_history
+    # build_conversation_history/*
     @ruby_llm_chat.with_instructions(instructions)
     @response = @ruby_llm_chat.ask(@message.content, with: with)
   end
@@ -62,13 +62,11 @@ class MessagesController < ApplicationController
     [SYSTEM_PROMPT, watch_session_context].compact.join("\n\n")
   end
 
-  def build_conversation(watch_session)
-    messages = @chat.messages.order(:created_at)
-    [
-      { role: "system", content: watch_session.context_prompt }
-      ] + messages.map do |msg| { role: msg.role, content: msg.content}
+  def build_conversation_history
+    @chat.messages.order(:created_at).where.not(role: nil).each do |message|
+      @ruby_llm_chat.add_message(role: message.role, content: message.content)
     end
-  end
+end
 
   def call_llm(conversation)
     client = OpenAI::Client.new
@@ -84,12 +82,12 @@ class MessagesController < ApplicationController
   def process_file(file)
     if file.content_type == "application/pdf"
       @ruby_llm_chat = RubyLLM.chat(model: "gemini-2.0-flash")
-      build_conversation_history
+        build_conversation_history
       @ruby_llm_chat.with_instructions(instructions)
       @response = @ruby_llm_chat.ask(@message.content, with: { pdf: @message.file.url })
     elsif file.image?
       @ruby_llm_chat = RubyLLM.chat(model: "gpt-4o")
-      build_conversation_history
+        build_conversation_history
       @ruby_llm_chat.with_instructions(instructions)
       @response = @ruby_llm_chat.ask(@message.content, with: { image: @message.file.url })
     end

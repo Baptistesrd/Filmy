@@ -49,6 +49,9 @@ gem "sassc-rails"
 gem "ruby_llm"
 gem "ruby-openai"
 gem "cloudinary"
+gem "solid_queue"
+gem "solid_cable"
+gem "solid_cache"
 
 group :development, :test do
   gem "dotenv-rails"
