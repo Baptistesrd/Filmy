@@ -2,7 +2,13 @@
 
 <div class="sidebar">
   <div class="sidebar-brand">
-    <p class="brand mb-0">Filmy</p>
+    <div class="d-flex align-items-center">
+      <%= image_tag "https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/logo.png",
+          style: "width:32px;height:32px",
+          class: "me-2" %>
+
+      <p class="brand mb-0">Filmy</p>
+    </div>
 
     <%= link_to "#",
                 class: "sidebar-link p-2",
@@ -59,7 +65,14 @@
 
   <div class="sidebar-footer">
     <% if user_signed_in? %>
-      <%= link_to "Edit account", edit_user_registration_path, class: "sidebar-link" %>
+      <%= link_to edit_user_registration_path, class: "sidebar-link d-flex align-items-center" do %>
+
+      <%= image_tag "https://kitt.lewagon.com/placeholder/users/ssaunier",
+        class: "avatar me-2",
+        style: "width:28px;height:28px;border-radius:50%" %>
+
+      Edit account
+    <% end %>
 
       <%= button_to "Log out",
                     destroy_user_session_path,
