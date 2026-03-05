@@ -5,7 +5,6 @@ Rails.application.routes.draw do
   resources :watch_sessions do
     resources :chats, only: [:create]
   end
-  # ^ includes index/show/new/create/edit/update/destroy
 
   get "up" => "rails/health#show", as: :rails_health_check
 
@@ -13,7 +12,7 @@ Rails.application.routes.draw do
     resources :chats, only: [:create]
   end
 
-  resources :chats, only: [:show] do
+  resources :chats, only: [:show, :create, :destroy] do
     resources :messages, only: [:create]
   end
 end
