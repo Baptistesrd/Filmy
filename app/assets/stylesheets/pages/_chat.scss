@@ -37,3 +37,13 @@
   color: #111;
   border-bottom-left-radius: 6px;
 }
+
+@media (max-width: 768px) {
+  .chat-shell {
+    height: calc(100vh - 120px);
+  }
+
+  .chat-messages {
+    padding: 12px;
+  }
+}
