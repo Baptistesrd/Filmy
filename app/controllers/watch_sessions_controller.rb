@@ -21,8 +21,8 @@ class WatchSessionsController < ApplicationController
   end
 
   def show
-    @watch_session = current_user.watch_sessions.find(params[:id])
-    @chats = @watch_session.chats.order(created_at: :desc)
+    @watch_session = WatchSession.find(params[:id])
+    @watchlist_items = @watch_session.watchlist_items.order(created_at: :desc)
   end
 
   def edit

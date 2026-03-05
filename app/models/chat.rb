@@ -2,6 +2,7 @@ class Chat < ApplicationRecord
   belongs_to :watch_session
   belongs_to :user
   has_many :messages, dependent: :destroy
+  has_many :recommended_films, dependent: :destroy
 
   DEFAULT_TITLE = "Untitled"
 
@@ -21,9 +22,7 @@ class Chat < ApplicationRecord
 
     raw_title =
       begin
-        response = RubyLLM.chat(model: "gpt-4.1-mini")
-                          .with_instructions(TITLE_PROMPT)
-                          .ask(first_user_message.content)
+        response = RubyLLM.chat.with_instructions(TITLE_PROMPT).ask(first_user_message.content)
         response.content.to_s
       rescue StandardError
         ""

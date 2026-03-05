@@ -41,6 +41,8 @@ class MessagesController < ApplicationController
         chat: @chat
       )
 
+      upsert_recommended_films_from(clean)
+
       @chat.generate_title_from_first_message
 
       respond_to do |format|
@@ -82,19 +84,10 @@ class MessagesController < ApplicationController
   def normalize_ai_text(text)
     s = text.to_s.gsub(/\r\n?/, "\n").strip
 
-    # Remove markdown headings safely (e.g. "# Title")
     s = s.gsub(/^\s{0,3}#{Regexp.escape('#')}{1,6}\s+/, "")
-
-    # Normalize bullets to "• "
     s = s.gsub(/^\s*[-*]\s+/, "• ")
-
-    # If bullets were jammed into one line, split them
     s = s.gsub(/\s+•\s+/, "\n• ")
-
-    # Force Refine to be on its own line (single blank line before it later)
     s = s.gsub(/\s*Refine:\s*/m, "\nRefine:\n")
-
-    # Trim whitespace + remove giant blank gaps
     s = s.gsub(/[ \t]+\n/, "\n")
     s = s.gsub(/\n{3,}/, "\n\n").strip
 
@@ -136,5 +129,47 @@ class MessagesController < ApplicationController
     out.concat(refine_lines)
 
     out.join("\n").strip
+  end
+
+  def upsert_recommended_films_from(clean_text)
+    film_lines = clean_text
+                 .to_s
+                 .gsub(/\r\n?/, "\n")
+                 .split("\n")
+                 .map(&:strip)
+
+    refine_at = film_lines.index { |l| l.casecmp("Refine:").zero? }
+    film_lines = refine_at ? film_lines[0...refine_at] : film_lines
+    film_lines = film_lines.select { |l| l.start_with?("•") }
+
+    film_lines.first(MAX_FILMS).each do |line|
+      film = parse_film_line(line)
+      next if film.nil?
+      next if film[:title].blank?
+
+      @chat.recommended_films.find_or_create_by!(
+        title: film[:title],
+        year: film[:year]
+      ) do |rf|
+        rf.runtime_minutes = film[:runtime_minutes]
+        rf.summary = film[:summary]
+      end
+    end
+  end
+
+  def parse_film_line(line)
+    s = line.to_s.strip
+    s = s.sub(/\A•\s*/, "")
+    s = s.gsub(/\*\*(.*?)\*\*/, '\1').strip
+
+    m = s.match(/\A(?<title>.+?)\s*\((?<year>\d{4})\)\s*—\s*(?<runtime>\d+)\s*min:\s*(?<summary>.+)\z/)
+    return nil unless m
+
+    {
+      title: m[:title].to_s.strip,
+      year: m[:year].to_i,
+      runtime_minutes: m[:runtime].to_i,
+      summary: m[:summary].to_s.strip
+    }
   end
 end
