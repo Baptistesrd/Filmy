@@ -1,64 +1,22 @@
-<div class="container py-4" style="max-width: 900px;">
-
+<div class="container py-4 chat-page" style="max-width: 900px;">
   <%= link_to watch_session_path(@chat.watch_session),
-      class: "btn btn-outline-light mb-4 d-inline-flex align-items-center gap-2" do %>
+      class: "btn btn-sm btn-outline-light mb-3 d-inline-flex align-items-center gap-2" do %>
     <span>←</span>
     <span><%= @chat.watch_session.title %></span>
   <% end %>
 
-  <h1 class="fw-bold mb-4 text-white"><%= @chat.title %></h1>
+  <h1 class="fw-bold mb-3" id="chat_title"><%= @chat.title %></h1>
 
-  <div id="messages" class="d-flex flex-column gap-3 mb-4 w-100">
+  <div
+    class="chat-shell rounded-4 shadow-sm"
+    data-controller="chat-scroll"
+  >
+    <div class="chat-messages" id="messages" data-chat-scroll-target="messages">
+      <%= render partial: "messages/message", collection: @messages, as: :message %>
+    </div>
 
-    <% @messages.each do |message| %>
-      <% is_user = message.role == "user" %>
-
-      <div class="w-100 d-flex <%= is_user ? "justify-content-end" : "justify-content-start" %>">
-
-        <div
-          style="
-            max-width: 70%;
-            padding: 10px 14px;
-            border-radius: 18px;
-            white-space: pre-wrap;
-            line-height: 1.4;
-            <%= is_user ?
-              'background:#0d6efd;color:white;border-bottom-right-radius:6px;' :
-              'background:#f1f3f5;color:#111;border-bottom-left-radius:6px;' %>
-          "
-        >
-          <%= message.content %>
-        </div>
-
-      </div>
-
-    <% end %>
-
-  </div>
-
-  <div class="card border-0 shadow-sm rounded-4">
-    <div class="card-body p-3">
-
-      <%= simple_form_for [@chat, @message] do |f| %>
-
-        <div class="d-flex gap-2 align-items-end">
-
-          <%= f.input :content,
-              label: false,
-              placeholder: "Ask for a movie recommendation...",
-              wrapper_html: { class: "flex-grow-1 mb-0" },
-              input_html: {
-                class: "form-control rounded-3",
-                rows: 1
-              } %>
-
-          <%= f.button :submit, "Send", class: "btn btn-primary px-4 rounded-3" %>
-
-        </div>
-
-      <% end %>
-
+    <div class="chat-composer border-top" id="new_message_container">
+      <%= render "messages/form", chat: @chat, message: @message %>
     </div>
   </div>
-
 </div>

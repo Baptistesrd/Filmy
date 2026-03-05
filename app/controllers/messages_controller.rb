@@ -13,36 +13,33 @@ class MessagesController < ApplicationController
     @chat = current_user.chats.find(params[:chat_id])
     @watch_session = @chat.watch_session
 
-    @message = @chat.messages.build(message_params)
-    @message.role = :user
+    @message = Message.new(message_params)
+    @message.chat = @chat
+    @message.role = "user"
 
     if @message.save
-      if @message.file.attached?
-        process_file(@message.file)
-      else
-        send_question
-      end
       ruby_llm_chat = RubyLLM.chat
+      response = ruby_llm_chat.with_instructions(instructions).ask(@message.content)
 
-      ruby_llm_chat.with_instructions(instructions)
-      @chat.messages.order(:created_at).each do |msg|
-        ruby_llm_chat.add_message(role: msg.role, content: msg.content)
-      end
-
-      response = ruby_llm_chat.ask(@message.content)
-
-      @chat.messages.create!(
-        role: :assistant,
+      @assistant_message = @chat.messages.create!(
+        role: "assistant",
         content: response.content
       )
 
       @chat.generate_title_from_first_message
-      redirect_to chat_path(@chat)
+
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to chat_path(@chat) }
+      end
     else
-      @messages = @chat.messages.order(:created_at)
-      render "chats/show", status: :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("new_message_container", partial: "messages/form", locals: { chat: @chat, message: @message }) }
+        format.html { render "chats/show", status: :unprocessable_entity }
+      end
     end
   end
+
 
   private
 
