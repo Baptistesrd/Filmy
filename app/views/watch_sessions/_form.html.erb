@@ -42,7 +42,7 @@
               placeholder: "What kind of movie are you in the mood to watch right now? e.g. cozy, adventurous, emotional"%>
 
   <div class="d-flex gap-2 mt-4">
-    <%= f.button :submit, class: "btn btn-dark px-4" %>
+    <%= f.button :submit, "Start Watch Session", class: "btn btn-dark px-4" %>
     <%= link_to "Cancel", (@watch_session.persisted? ? watch_session_path(@watch_session) : root_path), class: "btn btn-outline-secondary" %>
   </div>
 <% end %>
