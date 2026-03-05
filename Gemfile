@@ -49,7 +49,6 @@ gem "sassc-rails"
 gem "ruby_llm"
 gem "ruby-openai"
 gem "cloudinary"
-gem "image_processing", "~> 1.2"
 
 group :development, :test do
   gem "dotenv-rails"
@@ -79,4 +78,3 @@ end
 
 gem "devise"
 gem "faker"
-gem "ruby_llm"

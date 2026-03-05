@@ -1,7 +1,7 @@
 <% is_user = (message.role == "user") %>
 
 <div class="d-flex mb-2 <%= is_user ? "justify-content-end" : "justify-content-start" %>">
-  <div class="<%= is_user ? "" : "chat-bubble chat-bubble-assistant" %>">
+ <div class="<%= is_user ? "" : "chat-bubble chat-bubble-assistant" %>">
 
     <div class="<%= is_user ? "bg-white px-3 pb-1 pt-3 rounded-pill" : "" %>">
       <%= raw(render_markdown(message.content)) %>
