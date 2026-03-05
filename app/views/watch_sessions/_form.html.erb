@@ -23,21 +23,25 @@
 
   <% if @watch_session.respond_to?(:title) %>
     <%= f.input :title, input_html: { class: "form-control" } %>
+    <%= form.text_field :title, placeholder: "Give this watch session a name (e.g. Friday Night Movies)" %>
   <% end %>
 
   <% if @watch_session.respond_to?(:description) %>
     <%= f.input :description, as: :text, input_html: { class: "form-control", rows: 4 } %>
+    <%= form.text_area :description, placeholder: "Describe what kind of movie you're planning on watching..." %>
   <% end %>
 
   <%= f.input :genre,
               collection: genres,
               prompt: "Select a genre",
               input_html: { class: "form-select" } %>
+   <%= form.text_field :genre, placeholder: "e.g. Comedy, Thriller, Sci-Fi, Romance" %>
 
   <%= f.input :mood,
               collection: moods,
               prompt: "Select a mood",
               input_html: { class: "form-select" } %>
+  <%= form.text_field :mood, placeholder: "What kind of movie are you in the mood to watch right now? e.g. cozy, adventurous, emotional" %>
 
   <div class="d-flex gap-2 mt-4">
     <%= f.button :submit, class: "btn btn-dark px-4" %>
