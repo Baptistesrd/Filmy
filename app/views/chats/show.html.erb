@@ -54,8 +54,8 @@
                         <div class="fw-bold text-dark">
                           <%= film.title %><% if film.year.present? %> (<%= film.year %>)<% end %>
                         </div>
-                        <% if film.runtime_minutes.present? %>
-                          <div class="small text-muted"><%= film.runtime_minutes %> min</div>
+                        <% if film.runtime.present? %>
+                          <div class="small text-muted"><%= film.runtime %> min</div>
                         <% end %>
                       </div>
 
@@ -64,8 +64,8 @@
                       </button>
                     </div>
 
-                    <% if film.summary.present? %>
-                      <p class="small text-dark mb-0 mt-2"><%= film.summary %></p>
+                    <% if film.blurb.present? %>
+                      <p class="small text-dark mb-0 mt-2"><%= film.blurb %></p>
                     <% end %>
                   </div>
                 </div>
