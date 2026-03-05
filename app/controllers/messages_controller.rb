@@ -5,20 +5,25 @@ class MessagesController < ApplicationController
     @chat = current_user.chats.find(params[:chat_id])
     @watch_session = @chat.watch_session
 
-    @message = Message.new(message_params)
-    @message.chat = @chat
+    @message = @chat.messages.build(message_params)
     @message.role = :user
 
     if @message.save
       ruby_llm_chat = RubyLLM.chat
-      response = ruby_llm_chat.with_instructions(instructions).ask(@message.content)
+
+      ruby_llm_chat.with_instructions(instructions)
+      @chat.messages.order(:created_at).each do |msg|
+        ruby_llm_chat.add_message(role: msg.role, content: msg.content)
+      end
+
+      response = ruby_llm_chat.ask(@message.content)
 
       @chat.messages.create!(
-        role: :assistant
+        role: :assistant,
+        content: response.content
       )
 
       @chat.generate_title_from_first_message
-
       redirect_to chat_path(@chat)
     else
       @messages = @chat.messages.order(:created_at)
@@ -33,14 +38,14 @@ class MessagesController < ApplicationController
   end
 
   def watch_session_context
-    return "" if @watch_session.nil?
-
-    "Here is the context of the watch session: " \
-      "genre: #{@watch_session.genre}, mood: #{@watch_session.mood}, " \
-      "title: #{@watch_session.title}, description: #{@watch_session.description}."
+    "Watch session context:\n" \
+    "- genre: #{@watch_session.genre}\n" \
+    "- mood: #{@watch_session.mood}\n" \
+    "- title: #{@watch_session.title}\n" \
+    "- description: #{@watch_session.description}"
   end
 
   def instructions
-    [SYSTEM_PROMPT, watch_session_context].reject(&:blank?).join("\n\n")
+    [SYSTEM_PROMPT, watch_session_context].compact.join("\n\n")
   end
 end
