@@ -40,11 +40,6 @@
               prompt: "Select a mood",
               input_html: { class: "form-select" } %>
 
-  <% if @watch_session.respond_to?(:movie_or_show_name) %>
-    <%= f.input :movie_or_show_name, label: "Movie or Show Name", input_html: { class: "form-control" } %>
-  <% elsif @watch_session.respond_to?(:movie_title) %>
-    <%= f.input :movie_title, label: "Movie or Show Name", input_html: { class: "form-control" } %>
-  <% end %>
 
   <div class="d-flex gap-2 mt-4">
     <%= f.button :submit, class: "btn btn-dark px-4" %>
