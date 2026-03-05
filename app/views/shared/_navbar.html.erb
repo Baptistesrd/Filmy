@@ -1,5 +1,12 @@
 <nav class="navbar navbar-expand-sm navbar-light navbar-lewagon">
   <div class="container-fluid">
+
+    <%= link_to "#",
+      class: "btn btn-light me-2",
+      data: { action: "click->toggle#call", toggle_target: "show" } do %>
+      <i class="fa-solid fa-bars"></i>
+    <% end %>
+
     <%= link_to root_path, class: "navbar-brand" do %>
       <%= image_tag "https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/logo.png" %>
     <% end %>
@@ -14,21 +21,6 @@
       <ul class="navbar-nav me-auto">
 
         <% if user_signed_in? %>
-
-
-          <li class="nav-item">
-            <%= link_to "Home",
-                        root_path,
-                        class: "nav-link #{'active' if current_page?(root_path)}" %>
-          </li>
-
-
-          <li class="nav-item">
-            <%= link_to "Watch Sessions",
-                        watch_sessions_path,
-                        class: "nav-link #{'active' if current_page?(watch_sessions_path)}" %>
-          </li>
-
 
           <li class="nav-item dropdown">
             <a href="#"

@@ -17,27 +17,35 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   </head>
 
   <body>
     <%= link_to "Skip to main content", "#main-content", class: "visually-hidden-focusable" %>
 
     <header>
-      <%= render "shared/navbar" %>
+      <%# <%= render "shared/navbar" %>
     </header>
 
     <div class="container-fluid" id="main-content">
-      <div class="row" data-controller="toggle">
-        <nav class="col-md-2 sidebar pt-3" data-toggle-target="hideable">
+      <div class="d-flex" data-controller="toggle">
+        <nav class="sidebar pt-3 flex-shrink-0 d-none" style="width:250px" data-toggle-target="hideable">
           <%= render "shared/sidebar", watch_sessions: @watch_sessions %>
         </nav>
 
-        <main class="col-md-10 my-4">
-          <%= link_to "#",
+        <main class="flex-grow-1 my-4">
+          <%# <%= link_to "#",
               class: "d-none nav-link text-light mb-3",
               data: { action: "click->toggle#call", toggle_target: "show" } do %>
-            <i class="fa-regular fa-square-caret-right"></i>
+            <%# <i class="fa-regular fa-square-caret-right"></i>
           <% end %>
+
+          <button
+            class="sidebar-toggle btn btn-light"
+            data-action="click->toggle#call"
+            data-toggle-target="show">
+            <i class="fa-solid fa-bars"></i>
+          </button>
 
           <%= yield %>
         </main>
