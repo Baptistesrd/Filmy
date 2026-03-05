@@ -4,8 +4,6 @@ class Message < ApplicationRecord
   validates :role, presence: true
   validates :content, presence: true
 
-  enum :role, { user: 0, assistant: 1 }
-
   has_one_attached :file
   
 end
