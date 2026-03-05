@@ -17,7 +17,6 @@ SYSTEM_PROMPT = <<~PROMPT
 PROMPT
 
 class MessagesController < ApplicationController
-  MIN_FILMS = 4
   MAX_FILMS = 6
   REFINE_BULLETS = 3
 
@@ -25,23 +24,25 @@ class MessagesController < ApplicationController
     @chat = current_user.chats.find(params[:chat_id])
     @watch_session = @chat.watch_session
 
-    @message = Message.new(message_params)
-    @message.chat = @chat
+    @message = @chat.messages.new(message_params)
     @message.role = "user"
 
     if @message.save
-      ruby_llm_chat = RubyLLM.chat(model: "gpt-4.1-mini")
-      response = ruby_llm_chat.with_instructions(instructions).ask(@message.content)
-
-      clean = normalize_ai_text(response.content)
+      response_text = call_ruby_llm(@message.content)
+      clean = normalize_ai_text(response_text)
 
       @assistant_message = @chat.messages.create!(
         role: "assistant",
-        content: clean,
-        chat: @chat
+        content: clean
       )
 
       @chat.generate_title_from_first_message
+
+      begin
+        upsert_recommended_films_from(clean)
+      rescue StandardError => e
+        Rails.logger.warn("[recommended_films] #{e.class}: #{e.message}")
+      end
 
       respond_to do |format|
         format.turbo_stream
@@ -64,7 +65,7 @@ class MessagesController < ApplicationController
   private
 
   def message_params
-    params.require(:message).permit(:content, :file)
+    params.require(:message).permit(:content)
   end
 
   def watch_session_context
@@ -79,22 +80,28 @@ class MessagesController < ApplicationController
     [SYSTEM_PROMPT, watch_session_context].compact.join("\n\n")
   end
 
+  def call_ruby_llm(user_text)
+    ruby_llm_chat = RubyLLM.chat(model: "gpt-4.1-mini")
+    response = ruby_llm_chat.with_instructions(instructions).ask(user_text)
+    response.content.to_s
+  end
+
   def normalize_ai_text(text)
     s = text.to_s.gsub(/\r\n?/, "\n").strip
 
-    # Remove markdown headings safely (e.g. "# Title")
-    s = s.gsub(/^\s{0,3}#{Regexp.escape('#')}{1,6}\s+/, "")
+    # Remove markdown headings like "# Title"
+    s = s.gsub(/^\s{0,3}\#{1,6}\s+/, "")
 
     # Normalize bullets to "• "
     s = s.gsub(/^\s*[-*]\s+/, "• ")
 
-    # If bullets were jammed into one line, split them
+    # Split jammed bullets
     s = s.gsub(/\s+•\s+/, "\n• ")
 
-    # Force Refine to be on its own line (single blank line before it later)
-    s = s.gsub(/\s*Refine:\s*/m, "\nRefine:\n")
+    # Force Refine on its own line
+    s = s.gsub(/\s*Refine:\s*/m, "\n\nRefine:\n")
 
-    # Trim whitespace + remove giant blank gaps
+    # Cleanup whitespace
     s = s.gsub(/[ \t]+\n/, "\n")
     s = s.gsub(/\n{3,}/, "\n\n").strip
 
@@ -102,23 +109,23 @@ class MessagesController < ApplicationController
     lines.reject! { |l| l.strip.empty? || l.strip == "•" }
 
     refine_index = lines.index { |l| l.strip.casecmp("Refine:").zero? }
-    film_lines = []
-    refine_lines = []
 
-    if refine_index
-      film_lines = lines[0...refine_index]
-      refine_lines = lines[(refine_index + 1)..] || []
-    else
-      film_lines = lines
-      refine_lines = []
-    end
+    film_lines =
+      if refine_index
+        lines[0...refine_index]
+      else
+        lines
+      end
 
-    film_lines = film_lines.select { |l| l.strip.start_with?("•") }
-    film_lines = film_lines.first(MAX_FILMS)
-    film_lines = film_lines.first(MIN_FILMS) if film_lines.length < MIN_FILMS
+    refine_lines =
+      if refine_index
+        lines[(refine_index + 1)..] || []
+      else
+        []
+      end
 
-    refine_lines = refine_lines.select { |l| l.strip.start_with?("•") }
-    refine_lines = refine_lines.first(REFINE_BULLETS)
+    film_lines = film_lines.select { |l| l.strip.start_with?("•") }.first(MAX_FILMS)
+    refine_lines = refine_lines.select { |l| l.strip.start_with?("•") }.first(REFINE_BULLETS)
 
     if refine_lines.length < REFINE_BULLETS
       defaults = [
@@ -126,15 +133,64 @@ class MessagesController < ApplicationController
         "• Pick a runtime cap (e.g., < 100 min).",
         "• Choose era: classics, 2000s, or modern."
       ]
-      refine_lines += defaults[(refine_lines.length)...REFINE_BULLETS]
+      refine_lines += defaults[refine_lines.length...REFINE_BULLETS]
     end
 
-    out = []
-    out.concat(film_lines)
-    out << ""
-    out << "Refine:"
-    out.concat(refine_lines)
+    (film_lines + ["", "Refine:"] + refine_lines).join("\n").strip
+  end
 
-    out.join("\n").strip
+  def upsert_recommended_films_from(clean_text)
+    films = parse_film_bullets(clean_text)
+    return if films.empty?
+
+    films.each do |film|
+      rec = RecommendedFilm.find_or_initialize_by(
+        chat: @chat,
+        watch_session: @watch_session,
+        title: film[:title],
+        year: film[:year]
+      )
+
+      rec.runtime = film[:runtime] if film[:runtime].present?
+      rec.blurb = film[:blurb] if film[:blurb].present?
+      rec.added = false if rec.new_record? && rec.respond_to?(:added)
+
+      rec.save!
+    end
+  end
+
+  def parse_film_bullets(text)
+    lines = text.to_s.split("\n").map(&:strip)
+    film_lines = lines.take_while { |l| !l.casecmp("Refine:").zero? }
+
+    film_lines = film_lines.select { |l| l.start_with?("•") }
+
+    film_lines.map do |line|
+      # Example:
+      # • **Insidious (2010)** — 103 min: Masterful jump scares...
+      title = nil
+      year = nil
+      runtime = nil
+      blurb = nil
+
+      if (m = line.match(/\*\*(.+?)\s*\((\d{4})\)\*\*/))
+        title = m[1].strip
+        year = m[2].to_i
+      end
+
+      if (m = line.match(/—\s*(\d+)\s*min/i))
+        runtime = m[1].to_i
+      end
+
+      if (m = line.match(/min:\s*(.+)\z/i))
+        blurb = m[1].strip
+      elsif (m = line.match(/\)\*\*\s*—\s*\d+\s*min:\s*(.+)\z/i))
+        blurb = m[1].strip
+      end
+
+      next if title.blank? || year.blank?
+
+      { title: title, year: year, runtime: runtime, blurb: blurb }
+    end.compact
   end
 end

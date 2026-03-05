@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   resources :watch_sessions do
     resources :chats, only: [:create]
+    resources :watchlist_items, only: [:create, :destroy]
   end
 
   get "up" => "rails/health#show", as: :rails_health_check
@@ -14,5 +15,8 @@ Rails.application.routes.draw do
 
   resources :chats, only: [:show, :create, :destroy] do
     resources :messages, only: [:create]
+    resources :recommended_films, only: [:index, :create] do
+      post :add_to_watchlist, on: :member
+    end
   end
 end
