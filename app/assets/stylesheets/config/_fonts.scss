@@ -1,16 +1,14 @@
-// Import Google fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito:400,700|Work+Sans:400,700&display=swap');
+// app/assets/stylesheets/config/_bootstrap_variables.scss
 
-// Define fonts for body and headers
-$body-font: "Work Sans", "Helvetica", "sans-serif";
-$headers-font: "Nunito", "Helvetica", "sans-serif";
+// Fallback fonts (so this file never crashes even if config/_fonts.scss changes)
+$body-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+  Arial, "Noto Sans", "Liberation Sans", sans-serif !default;
 
-// To use a font file (.woff) uncomment following lines
-// @font-face {
-//   font-family: "Font Name";
-//   src: font-url('FontFile.eot');
-//   src: font-url('FontFile.eot?#iefix') format('embedded-opentype'),
-//        font-url('FontFile.woff') format('woff'),
-//        font-url('FontFile.ttf') format('truetype')
-// }
-// $my-font: "Font Name";
+$headers-font: $body-font !default;
+
+// Bootstrap variables (edit as you like)
+$font-family-sans-serif: $body-font;
+
+// Optional: example tweaks (safe to keep or delete)
+// $body-bg: #0b0e14;
+// $body-color: rgba(255, 255, 255, 0.92);
