@@ -3,6 +3,14 @@
 
 <div class="chat-row <%= is_user ? "chat-row--user" : "chat-row--assistant" %>">
   <div class="chat-bubble <%= is_user ? "chat-bubble--user" : "chat-bubble--assistant" %>">
-    <%= simple_format(h(message.content), {}, wrapper_tag: "div") %>
+
+    <% if message.image.attached? %>
+      <%= image_tag message.image, class: "img-fluid rounded mb-2 d-block", style: "max-width: 220px;" %>
+    <% end %>
+
+    <% if message.content.present? %>
+      <%= simple_format(h(message.content), {}, wrapper_tag: "div") %>
+    <% end %>
+
   </div>
 </div>
