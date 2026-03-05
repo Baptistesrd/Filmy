@@ -1,9 +1,7 @@
 class WatchSession < ApplicationRecord
   belongs_to :user
-
   has_many :chats, dependent: :destroy
-  has_many :recommended_films, dependent: :destroy
-  has_many :watchlist_items, dependent: :destroy
+  has_many :films, dependent: :destroy
 
   def context_prompt
     <<~TEXT
