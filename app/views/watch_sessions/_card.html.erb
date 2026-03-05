@@ -22,7 +22,12 @@
     <div class="d-flex gap-2">
     <%= link_to "Open", watch_session_path(watch_session), class: "btn btn-outline-primary btn-sm" %>
     <%= link_to "Edit", edit_watch_session_path(watch_session), class: "btn btn-outline-secondary btn-sm" %>
-    <%= button_to "Delete", watch_session_path(watch_session), method: :delete, class: "btn btn-outline-danger btn-sm", form: { data: { turbo_confirm: "Delete this session?" } } %>
+    <%= button_to watch_session_path(watch_session),
+              method: :delete,
+              class: "btn btn-outline-danger btn-sm",
+              form: { data: { turbo_confirm: "Delete this session?" } } do %>
+  <i class="fa-solid fa-trash"></i>
+<% end %>
 </div>
   </div>
 </div>
