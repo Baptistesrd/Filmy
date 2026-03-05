@@ -1,22 +1,43 @@
-<div class="container py-4 chat-page" style="max-width: 900px;">
-  <%= link_to watch_session_path(@chat.watch_session),
-      class: "btn btn-sm btn-outline-light mb-3 d-inline-flex align-items-center gap-2" do %>
-    <span>←</span>
-    <span><%= @chat.watch_session.title %></span>
-  <% end %>
+<div class="chat-page container-fluid py-4">
 
-  <h1 class="fw-bold mb-3" id="chat_title"><%= @chat.title %></h1>
+  <div class="chat-wrapper mx-auto">
 
-  <div
-    class="chat-shell rounded-4 shadow-sm"
-    data-controller="chat-scroll"
-  >
-    <div class="chat-messages" id="messages" data-chat-scroll-target="messages">
-      <%= render partial: "messages/message", collection: @messages, as: :message %>
+    <%= link_to watch_session_path(@chat.watch_session),
+        class: "btn btn-sm btn-outline-light mb-3 d-inline-flex align-items-center gap-2" do %>
+      <span>←</span>
+      <span><%= @chat.watch_session.title %></span>
+    <% end %>
+
+    <h1 class="fw-bold mb-4" id="chat_title">
+      <%= @chat.title %>
+    </h1>
+
+    <div
+      class="chat-shell rounded-4 shadow-sm"
+      data-controller="chat-scroll"
+    >
+
+      <div
+        class="chat-messages"
+        id="messages"
+        data-chat-scroll-target="messages"
+      >
+        <%= render partial: "messages/message",
+            collection: @messages,
+            as: :message %>
+      </div>
+
+      <div
+        class="chat-composer border-top"
+        id="new_message_container"
+      >
+        <%= render "messages/form",
+            chat: @chat,
+            message: @message %>
+      </div>
+
     </div>
 
-    <div class="chat-composer border-top" id="new_message_container">
-      <%= render "messages/form", chat: @chat, message: @message %>
-    </div>
   </div>
+
 </div>
