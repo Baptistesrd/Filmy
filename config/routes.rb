@@ -12,7 +12,7 @@ Rails.application.routes.draw do
     resources :chats, only: [:create]
   end
 
-  resources :chats, only: :show do
+  resources :chats, only: [:show] do
     resources :messages, only: [:create]
   end
 end
