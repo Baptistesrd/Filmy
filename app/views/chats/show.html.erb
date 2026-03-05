@@ -1,32 +1,30 @@
 <div class="container py-4" style="max-width: 900px;">
 
   <%= link_to watch_session_path(@chat.watch_session),
-              class: "d-inline-flex align-items-center gap-2 text-decoration-none text-muted mb-3" do %>
+      class: "btn btn-outline-light mb-4 d-inline-flex align-items-center gap-2" do %>
     <span>←</span>
     <span><%= @chat.watch_session.title %></span>
   <% end %>
 
-  <h1 class="fw-bold mb-4" id="chat_title"><%= @chat.title %></h1>
+  <h1 class="fw-bold mb-4 text-white"><%= @chat.title %></h1>
 
-  <div class="d-flex flex-column gap-3 mb-4" id="messages">
+  <div id="messages" class="d-flex flex-column gap-3 mb-4 w-100">
 
     <% @messages.each do |message| %>
+      <% is_user = message.role == "user" %>
 
-      <% role = message.role.to_s.strip.downcase %>
-      <% is_user = (role == "user") %>
-
-      <div class="d-flex <%= is_user ? "justify-content-end" : "justify-content-start" %>">
+      <div class="w-100 d-flex <%= is_user ? "justify-content-end" : "justify-content-start" %>">
 
         <div
-          class="px-3 py-2 rounded-4 shadow-sm"
           style="
             max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 18px;
             white-space: pre-wrap;
             line-height: 1.4;
-
             <%= is_user ?
-                'background:#0d6efd;color:white;border-bottom-right-radius:6px;' :
-                'background:#f1f3f5;color:#111;border-bottom-left-radius:6px;' %>
+              'background:#0d6efd;color:white;border-bottom-right-radius:6px;' :
+              'background:#f1f3f5;color:#111;border-bottom-left-radius:6px;' %>
           "
         >
           <%= message.content %>
@@ -38,7 +36,7 @@
 
   </div>
 
-  <div class="card border-0 shadow-sm rounded-4" id="new_message_container">
+  <div class="card border-0 shadow-sm rounded-4">
     <div class="card-body p-3">
 
       <%= simple_form_for [@chat, @message] do |f| %>
@@ -47,14 +45,14 @@
 
           <%= f.input :content,
               label: false,
-              placeholder: "I'm in the mood for...",
-              required: true,
+              placeholder: "Ask for a movie recommendation...",
               wrapper_html: { class: "flex-grow-1 mb-0" },
-              input_html: { class: "form-control bg-light rounded-4", rows: 2 } %>
+              input_html: {
+                class: "form-control rounded-3",
+                rows: 1
+              } %>
 
-          <%= f.button :submit,
-              "Ask",
-              class: "btn btn-primary rounded-4 px-4" %>
+          <%= f.button :submit, "Send", class: "btn btn-primary px-4 rounded-3" %>
 
         </div>
 
