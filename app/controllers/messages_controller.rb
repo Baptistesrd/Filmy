@@ -7,9 +7,7 @@ SYSTEM_PROMPT = <<~PROMPT
   - Format each film as ONE bullet line ONLY, like:
     • **Title (Year)** — 112 min: short sentence. Second short sentence.
   - Do NOT add blank lines between film bullets.
-  - After the last film bullet, output a divider line exactly:
-    ====================
-  - On the next line, write:
+  - After the last film bullet, add ONE blank line, then:
     Refine:
   - Then EXACTLY 3 bullet lines (no blank lines), each starting with "• ".
 
@@ -19,7 +17,6 @@ SYSTEM_PROMPT = <<~PROMPT
 PROMPT
 
 class MessagesController < ApplicationController
-  DIVIDER = "====================".freeze
   MIN_FILMS = 4
   MAX_FILMS = 6
   REFINE_BULLETS = 3
@@ -33,7 +30,7 @@ class MessagesController < ApplicationController
     @message.role = "user"
 
     if @message.save
-      ruby_llm_chat = RubyLLM.chat
+      ruby_llm_chat = RubyLLM.chat(model: "gpt-4.1-mini")
       response = ruby_llm_chat.with_instructions(instructions).ask(@message.content)
 
       clean = normalize_ai_text(response.content)
@@ -85,48 +82,58 @@ class MessagesController < ApplicationController
   def normalize_ai_text(text)
     s = text.to_s.gsub(/\r\n?/, "\n").strip
 
-    s = s.gsub(/^\s{0,3}\#{1,6}\s+/, "")
-    s = s.gsub(/^\s*-\s+/, "• ")
-    s = s.gsub(/\s+Refine:\s*/m, "\nRefine:\n")
-    s = s.gsub(/\n{3,}/, "\n\n")
-    s = s.gsub(/[ \t]+\n/, "\n").strip
+    # Remove markdown headings safely (e.g. "# Title")
+    s = s.gsub(/^\s{0,3}#{Regexp.escape('#')}{1,6}\s+/, "")
 
-    lines = s.split("\n").map(&:rstrip).reject { |l| l.strip.empty? }
+    # Normalize bullets to "• "
+    s = s.gsub(/^\s*[-*]\s+/, "• ")
+
+    # If bullets were jammed into one line, split them
+    s = s.gsub(/\s+•\s+/, "\n• ")
+
+    # Force Refine to be on its own line (single blank line before it later)
+    s = s.gsub(/\s*Refine:\s*/m, "\nRefine:\n")
+
+    # Trim whitespace + remove giant blank gaps
+    s = s.gsub(/[ \t]+\n/, "\n")
+    s = s.gsub(/\n{3,}/, "\n\n").strip
+
+    lines = s.split("\n").map(&:rstrip)
+    lines.reject! { |l| l.strip.empty? || l.strip == "•" }
 
     refine_index = lines.index { |l| l.strip.casecmp("Refine:").zero? }
+    film_lines = []
+    refine_lines = []
 
-    if refine_index.nil?
-      lines << "Refine:"
-      refine_index = lines.length - 1
+    if refine_index
+      film_lines = lines[0...refine_index]
+      refine_lines = lines[(refine_index + 1)..] || []
+    else
+      film_lines = lines
+      refine_lines = []
     end
 
-    film_lines = lines[0...refine_index]
-    refine_lines = lines[(refine_index + 1)..] || []
+    film_lines = film_lines.select { |l| l.strip.start_with?("•") }
+    film_lines = film_lines.first(MAX_FILMS)
+    film_lines = film_lines.first(MIN_FILMS) if film_lines.length < MIN_FILMS
 
-    film_bullets = film_lines
-                   .select { |l| l.strip.start_with?("•") }
-                   .first(6)
+    refine_lines = refine_lines.select { |l| l.strip.start_with?("•") }
+    refine_lines = refine_lines.first(REFINE_BULLETS)
 
-    film_bullets = film_bullets.first(4) if film_bullets.length < 4
-
-    refine_bullets = refine_lines
-                     .select { |l| l.strip.start_with?("•") }
-                     .reject { |l| l.strip == "•" }
-                     .first(3)
-
-    if refine_bullets.length < 3
-      refine_bullets = [
-        "• Prefer newer or older films.",
-        "• Focus on a specific subgenre.",
-        "• Choose shorter or longer runtime."
+    if refine_lines.length < REFINE_BULLETS
+      defaults = [
+        "• Want more gore vs. paranormal?",
+        "• Pick a runtime cap (e.g., < 100 min).",
+        "• Choose era: classics, 2000s, or modern."
       ]
+      refine_lines += defaults[(refine_lines.length)...REFINE_BULLETS]
     end
 
     out = []
-    out.concat(film_bullets)
+    out.concat(film_lines)
     out << ""
     out << "Refine:"
-    out.concat(refine_bullets)
+    out.concat(refine_lines)
 
     out.join("\n").strip
   end
