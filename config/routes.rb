@@ -16,5 +16,7 @@ Rails.application.routes.draw do
     resources :messages, only: [:create]
   end
 
-  post "recommended_films/:id/add", to: "recommended_films#add", as: :add_recommended_film
+  post "recommended_films/:id/add",
+       to: "recommended_films#add",
+       as: :add_recommended_film
 end

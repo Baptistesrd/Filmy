@@ -1,8 +1,12 @@
-<div class="card border-0 rounded-3">
-  <div class="card-body">
-    <div class="d-flex justify-content-between align-items-start gap-3">
-      <div class="flex-grow-1">
-        <div class="fw-semibold">
+<div id="<%= dom_id(film) %>"
+     class="card border-0 shadow-sm rounded-4 mb-2"
+     data-controller="film-card">
+
+  <div class="card-body py-2">
+    <div class="d-flex justify-content-between align-items-center">
+
+      <div>
+        <div class="fw-semibold text-dark">
           <%= film.title %><% if film.year.present? %> (<%= film.year %>)<% end %>
         </div>
 
@@ -11,18 +15,17 @@
         <% end %>
       </div>
 
-      <% if film.added? %>
-        <button class="btn btn-secondary btn-sm" disabled>
-          ✓
-        </button>
-      <% else %>
+      <% unless film.added? %>
         <%= button_to add_recommended_film_path(film),
               method: :post,
               class: "btn btn-primary btn-sm",
               form: { data: { turbo_stream: true } } do %>
-          <span class="fw-bold">+</span>
+          +
         <% end %>
+      <% else %>
+        <span class="text-success fw-bold">✓</span>
       <% end %>
+
     </div>
   </div>
 </div>
