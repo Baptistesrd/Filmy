@@ -1,22 +1,42 @@
-<div class="row">
-  <div class="col">
-    <h1><%= @watch_session.title %></h1>
-    <%= raw(render_markdown(@watch_session.description)) %>
-  </div>
-  <div class="col-md-3">
-    <h2>Chats</h2>
-    <div class="mb-4">
-      <% if @chats.any? %>
-        <ul>
-          <% @chats.each do |chat| %>
-            <li><%= link_to chat.title, chat_path(chat) %></li>
-          <% end %>
-        </ul>
-      <% else %>
-        There are no chats yet.
-      <% end %>
+<div class="container py-4">
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <h1 class="fw-bold mb-3"><%= @watch_session.title %></h1>
+      <div class="mb-4">
+        <%= raw(render_markdown(@watch_session.description)) %>
+      </div>
+
+      <div class="d-flex gap-2">
+        <%= link_to "Edit session", edit_watch_session_path(@watch_session), class: "btn btn-outline-secondary" %>
+      </div>
     </div>
 
-    <%= button_to "New chat", watch_session_chats_path(@watch_session), class: "btn btn-primary" %>
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 mb-0">Chats</h2>
+
+            <%= button_to "New chat",
+                  watch_session_chats_path(@watch_session),
+                    method: :post,
+                    class: "btn btn-primary btn-sm",
+                    form: { data: { turbo: false } } %>
+          </div>
+
+          <% if @chats.any? %>
+            <ul class="list-unstyled mb-0">
+              <% @chats.each do |chat| %>
+                <li class="mb-2">
+                  <%= link_to chat.title, chat_path(chat), class: "text-decoration-none" %>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <p class="text-muted mb-0">There are no chats yet.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

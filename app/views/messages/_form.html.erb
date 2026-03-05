@@ -1,0 +1,14 @@
+<%= simple_form_for [chat, message] do |f| %>
+  <div class="d-flex gap-2 align-items-end">
+    <%= f.input :content,
+      label: false,
+      placeholder: "I'm in the mood for...",
+      required: true,
+      wrapper_html: { class: "flex-grow-1 mb-0" },
+      input_html: { class: "form-control bg-light rounded-4", rows: 2 } %>
+    
+    <%= f.input :file, as: :file, label: "Upload a file (PDF, image, or audio)" %>
+    
+    <%= f.button :submit, "Ask", class: "btn btn-primary rounded-4 px-4" %>
+  </div>
+<% end %>
