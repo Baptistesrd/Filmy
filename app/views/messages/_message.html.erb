@@ -3,6 +3,10 @@
 
 <div class="chat-row <%= is_user ? "chat-row--user" : "chat-row--assistant" %>">
   <div class="chat-bubble <%= is_user ? "chat-bubble--user" : "chat-bubble--assistant" %>">
-    <%= simple_format(h(message.content), {}, wrapper_tag: "div") %>
+    <% if is_user %>
+      <%= simple_format(h(message.content), {}, wrapper_tag: "div") %>
+    <% else %>
+      <%= raw(render_markdown(message.content)) %>
+    <% end %>
   </div>
 </div>
