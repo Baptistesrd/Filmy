@@ -6,6 +6,6 @@ class User < ApplicationRecord
 
   has_many :watch_sessions, dependent: :destroy
   has_many :chats, through: :watch_sessions
-  validates :name, :email, :password, presence: true
+  validates :email, :password, presence: true
   validates :email, uniqueness: true
 end
