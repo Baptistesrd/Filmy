@@ -14,4 +14,12 @@ class ChatsController < ApplicationController
     @messages = @chat.messages.order(:created_at)
     @message = Message.new
   end
+
+  def destroy
+    @chat = current_user.chats.find(params[:id])
+    watch_session = @chat.watch_session
+    @chat.destroy
+
+    redirect_to watch_session_path(watch_session)
+  end
 end

@@ -2,20 +2,18 @@
   <div class="row g-4">
 
     <div class="col-lg-8">
-      <h1 class="fw-bold mb-2 text-white"><%= @watch_session.title %></h1>
+      <h1 class="fw-bold mb-3"><%= @watch_session.title %></h1>
 
-      <% if @watch_session.description.present? %>
-        <p class="text-white-50 mb-4">
+      <div class="mb-4">
+        <% if @watch_session.description.present? %>
           <%= raw(render_markdown(@watch_session.description)) %>
-        </p>
-      <% else %>
-        <p class="text-white-50 mb-4">No description yet.</p>
-      <% end %>
+        <% else %>
+          <p class="text-muted">No description yet.</p>
+        <% end %>
+      </div>
 
       <div class="d-flex gap-2">
-        <%= link_to "Edit session",
-              edit_watch_session_path(@watch_session),
-              class: "btn btn-outline-light" %>
+        <%= link_to "Edit session", edit_watch_session_path(@watch_session), class: "btn btn-outline-secondary" %>
       </div>
     </div>
 
@@ -34,22 +32,29 @@
 
           <% if @chats.any? %>
             <div class="list-group list-group-flush">
+
               <% @chats.each do |chat| %>
-                <%= link_to chat_path(chat),
-                      class: "list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3" do %>
+                <div class="d-flex justify-content-between align-items-center py-3 border-top">
 
-                  <div class="me-2" style="min-width: 0;">
-                    <div class="fw-semibold text-dark text-truncate">
-                      <%= chat.title.presence || "Untitled" %>
-                    </div>
-                    <small class="text-muted">
-                      <%= chat.created_at.strftime("%d %b %Y • %H:%M") %>
-                    </small>
-                  </div>
+                  <%= link_to chat_path(chat), class: "text-decoration-none flex-grow-1 me-2" do %>
+                    <div class="text-dark fw-semibold"><%= chat.title.presence || "Untitled" %></div>
+                    <div class="text-muted small"><%= chat.created_at.strftime("%d %b %Y • %H:%M") %></div>
+                  <% end %>
 
-                  <span class="text-muted">›</span>
-                <% end %>
+                  <%= button_to chat_path(chat),
+                        method: :delete,
+                        data: { turbo_confirm: "Delete this chat?" },
+                        class: "btn btn-sm btn-outline-danger",
+                        form: { class: "m-0" } do %>
+                    <span class="d-inline-flex align-items-center">
+                      <i class="fa-solid fa-trash"></i>
+                      <span class="ms-1 d-none">Delete</span>
+                    </span>
+                  <% end %>
+
+                </div>
               <% end %>
+
             </div>
           <% else %>
             <p class="text-muted mb-0">There are no chats yet.</p>
