@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_05_122027) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_05_172544) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -68,6 +68,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_05_122027) do
     t.string "role"
     t.datetime "updated_at", null: false
     t.index ["chat_id"], name: "index_messages_on_chat_id"
+  end
+
+  create_table "recommended_films", force: :cascade do |t|
+    t.boolean "added"
+    t.text "blurb"
+    t.bigint "chat_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "runtime"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.bigint "watch_session_id", null: false
+    t.integer "year"
+    t.index ["chat_id"], name: "index_recommended_films_on_chat_id"
+    t.index ["watch_session_id"], name: "index_recommended_films_on_watch_session_id"
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -215,12 +229,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_05_122027) do
     t.index ["user_id"], name: "index_watch_sessions_on_user_id"
   end
 
+  create_table "watchlist_items", force: :cascade do |t|
+    t.text "blurb"
+    t.datetime "created_at", null: false
+    t.integer "runtime"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.bigint "watch_session_id", null: false
+    t.integer "year"
+    t.index ["watch_session_id"], name: "index_watchlist_items_on_watch_session_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "chats", "users"
   add_foreign_key "chats", "watch_sessions"
   add_foreign_key "films", "watch_sessions"
   add_foreign_key "messages", "chats"
+  add_foreign_key "recommended_films", "chats"
+  add_foreign_key "recommended_films", "watch_sessions"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
@@ -228,4 +255,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_05_122027) do
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "watch_sessions", "users"
+  add_foreign_key "watchlist_items", "watch_sessions"
 end
