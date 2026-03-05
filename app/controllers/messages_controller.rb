@@ -7,16 +7,21 @@ class MessagesController < ApplicationController
 
     @message = Message.new(message_params)
     @message.chat = @chat
-    @message.role = "user"
+    @message.role = :user
 
     if @message.save
       ruby_llm_chat = RubyLLM.chat
       response = ruby_llm_chat.with_instructions(instructions).ask(@message.content)
-      Message.create(role: "assistant", content: response.content, chat: @chat)
-      conversation = build_conversation(@watch_session)
+
+      @chat.messages.create!(
+        role: :assistant
+      )
+
       @chat.generate_title_from_first_message
+
       redirect_to chat_path(@chat)
     else
+      @messages = @chat.messages.order(:created_at)
       render "chats/show", status: :unprocessable_entity
     end
   end
@@ -28,29 +33,14 @@ class MessagesController < ApplicationController
   end
 
   def watch_session_context
-    "Here is the context of the watch_session: genre: #{@watch_session.genre}, mood: #{@watch_session.mood}, title: #{@watch_session.title}, description: #{@watch_session.description}."
+    return "" if @watch_session.nil?
+
+    "Here is the context of the watch session: " \
+      "genre: #{@watch_session.genre}, mood: #{@watch_session.mood}, " \
+      "title: #{@watch_session.title}, description: #{@watch_session.description}."
   end
 
   def instructions
-    [SYSTEM_PROMPT, watch_session_context].compact.join("\n\n")
-  end
-
-  def build_conversation(watch_session)
-    messages = @chat.messages.order(:created_at)
-    [
-      { role: "system", content: watch_session.context_prompt }
-      ] + messages.map do |msg| { role: msg.role, content: msg.content}
-    end
-  end
-
-  def call_llm(conversation)
-    client = OpenAI::Client.new
-    response = client.chat(
-    parameters: {
-    model: "gpt-4o-mini",
-    messages: conversation,
-    temperature: 0.7 }
-    )
-    response.dig("choices", 0, "message", "content")
+    [SYSTEM_PROMPT, watch_session_context].reject(&:blank?).join("\n\n")
   end
 end
