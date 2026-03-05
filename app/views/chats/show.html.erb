@@ -1,70 +1,41 @@
-<div class="container py-4 chat-page">
+<div class="container py-4" style="max-width: 900px;">
 
-  <div class="mb-3">
-    <%= link_to watch_session_path(@chat.watch_session),
-      class: "btn btn-sm btn-outline-light d-inline-flex align-items-center gap-2" do %>
-      <span aria-hidden="true">←</span>
-      <span><%= @chat.watch_session.title.presence || "Back" %></span>
-    <% end %>
-  </div>
+  <%= link_to watch_session_path(@chat.watch_session),
+      class: "d-inline-flex align-items-center gap-2 mb-3 px-2 py-1 rounded text-white-50",
+      style: "border: 1px solid rgba(255,255,255,.15);" do %>
+    <span>←</span>
+    <span><%= @chat.watch_session.title %></span>
+  <% end %>
 
-  <h1 class="fw-bold mb-4 text-white" id="chat_title">
-    <%= @chat.title %>
-  </h1>
+  <h1 class="fw-bold mb-4 text-white" id="chat_title"><%= @chat.title %></h1>
 
-  <div class="d-flex flex-column gap-3 mb-4" id="messages">
-
+  <div id="messages" class="chat-thread mb-3">
     <% @messages.each do |message| %>
-
       <% role = message.role.to_s.strip.downcase %>
       <% is_user = (role == "user") %>
 
-      <div class="d-flex <%= is_user ? "justify-content-end" : "justify-content-start" %>">
-
-        <div
-          class="px-3 py-2 rounded-4 shadow-sm"
-          style="
-            max-width: 70%;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            <%= is_user ?
-              'background:#0d6efd;color:white;border-top-right-radius:0.4rem;' :
-              'background:#f1f3f5;color:#111;border-top-left-radius:0.4rem;' %>
-          "
-        >
+      <div class="chat-row <%= is_user ? "chat-row-user" : "chat-row-assistant" %>">
+        <div class="chat-bubble <%= is_user ? "chat-bubble-user" : "chat-bubble-assistant" %>">
           <%= message.content %>
         </div>
-
       </div>
-
     <% end %>
-
   </div>
 
-  <div class="card border-0 shadow-sm rounded-4" id="new_message_container">
+  <div class="card border-0 shadow-sm rounded-4">
     <div class="card-body p-3">
-
       <%= simple_form_for [@chat, @message] do |f| %>
-
         <div class="d-flex gap-2 align-items-end">
-
           <%= f.input :content,
-            label: false,
-            placeholder: "I'm in the mood for...",
-            required: true,
-            wrapper_html: { class: "flex-grow-1 mb-0" },
-            input_html: {
-              class: "form-control border-0 bg-light rounded-3",
-              rows: 1
-            } %>
+              label: false,
+              placeholder: "I'm in the mood for...",
+              required: true,
+              wrapper_html: { class: "flex-grow-1 mb-0" },
+              input_html: { class: "form-control bg-light rounded-3", rows: 1 } %>
 
-          <%= f.button :submit, "Send",
-            class: "btn btn-primary rounded-3 px-4" %>
-
+          <%= f.button :submit, "Send", class: "btn btn-primary px-4 rounded-3" %>
         </div>
-
       <% end %>
-
     </div>
   </div>
 
