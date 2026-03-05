@@ -2,8 +2,9 @@ Rails.application.routes.draw do
   root to: "pages#home"
   devise_for :users
 
-  resources :watch_sessions
-  # ^ includes index/show/new/create/edit/update/destroy
+  resources :watch_sessions do
+    resources :chats, only: [:create]
+  end
 
   get "up" => "rails/health#show", as: :rails_health_check
 
