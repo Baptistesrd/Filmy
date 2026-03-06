@@ -17,6 +17,8 @@ SYSTEM_PROMPT = <<~PROMPT
 PROMPT
 
 class MessagesController < ApplicationController
+  include ActionView::RecordIdentifier
+
   MIN_FILMS = 4
   MAX_FILMS = 6
   REFINE_BULLETS = 3
@@ -25,52 +27,21 @@ class MessagesController < ApplicationController
     @chat = current_user.chats.find(params[:chat_id])
     @watch_session = @chat.watch_session
 
-    @message = Message.new(message_params)
-    @message.chat = @chat
+    @message = @chat.messages.new(message_params)
     @message.role = "user"
 
     if @message.save
-      ruby_llm_chat = RubyLLM.chat(model: "gpt-4.1-mini")
+      @assistant_message = @chat.messages.create!(role: "assistant", content: "")
 
       if @message.image.attached?
-
-        image_url = @message.image.blob.url
-
-        response = ruby_llm_chat.with_instructions(instructions).ask(
-          "You are a movie recommendation assistant.
-            When the user uploads an image:
-            - Analyze the aesthetic, lighting, color palette and mood.
-            - Recommend exactly 3–5 movies with a similar cinematic atmosphere.
-
-            Response format:
-            Movie Title (Year) — short explanation.
-
-            Rules:
-            - Do NOT add tips.
-            - Do NOT suggest ways to refine the search.
-            - Do NOT add extra sections.
-            - Only return the movie list.",
-          with: { image: image_url }
-        )
+        send_image_question
       else
-        response = ruby_llm_chat.with_instructions(instructions).ask(@message.content)
+        send_question
       end
 
-      Message.create(
-        chat: @message.chat,
-        content: response.content,
-        role: "assistant"
-      )
+      @assistant_message.update_column(:content, normalize_ai_text(@assistant_message.content))
 
-      clean = normalize_ai_text(response.content)
-
-      @assistant_message = @chat.messages.create!(
-        role: "assistant",
-        content: clean,
-        chat: @chat
-      )
-
-      upsert_recommended_films_from(clean)
+      upsert_recommended_films_from(@assistant_message.content)
 
       @chat.generate_title_from_first_message
       @recommended_films = @chat.recommended_films.order(created_at: :desc)
@@ -95,6 +66,54 @@ class MessagesController < ApplicationController
 
   private
 
+  def send_question
+    ruby_llm_chat = RubyLLM.chat(model: "gpt-4.1-mini")
+    ruby_llm_chat.with_instructions(instructions)
+
+    build_conversation_history(ruby_llm_chat)
+
+    ruby_llm_chat.ask(@message.content) do |chunk|
+      next if chunk.content.blank?
+
+      @assistant_message.content += chunk.content
+      broadcast_replace(@assistant_message)
+    end
+  end
+
+  def send_image_question
+    ruby_llm_chat = RubyLLM.chat(model: "gpt-4.1-mini")
+    ruby_llm_chat.with_instructions(image_instructions)
+
+    build_conversation_history(ruby_llm_chat)
+
+    ruby_llm_chat.ask(
+      "Analyze this image and recommend films with a similar cinematic atmosphere.",
+      with: { image: url_for(@message.image) }
+    ) do |chunk|
+      next if chunk.content.blank?
+
+      @assistant_message.content += chunk.content
+      broadcast_replace(@assistant_message)
+    end
+  end
+
+  def broadcast_replace(message)
+    Turbo::StreamsChannel.broadcast_replace_to(
+      @chat,
+      target: dom_id(message),
+      partial: "messages/message",
+      locals: { message: message }
+    )
+  end
+
+  def build_conversation_history(ruby_llm_chat)
+    @chat.messages.order(:created_at).each do |message|
+      next if message.content.blank?
+
+      ruby_llm_chat.add_message(role: message.role, content: message.content)
+    end
+  end
+
   def message_params
     params.require(:message).permit(:content, :image)
   end
@@ -111,6 +130,25 @@ class MessagesController < ApplicationController
 
   def instructions
     [SYSTEM_PROMPT, watch_session_context].compact.join("\n\n")
+  end
+
+  def image_instructions
+    <<~PROMPT
+      You are a movie recommendation assistant.
+
+      When the user uploads an image:
+      - Analyze the aesthetic, lighting, color palette, and mood.
+      - Recommend exactly 3-5 movies with a similar cinematic atmosphere.
+
+      Response format:
+      • **Movie Title (Year)** — Runtime min: short explanation.
+
+      Rules:
+      - Do NOT add tips.
+      - Do NOT suggest ways to refine the search.
+      - Do NOT add extra sections.
+      - Only return the movie list.
+    PROMPT
   end
 
   def normalize_ai_text(text)
@@ -144,22 +182,16 @@ class MessagesController < ApplicationController
     refine_lines = refine_lines.select { |l| l.strip.start_with?("•") }
     refine_lines = refine_lines.first(REFINE_BULLETS)
 
-    if refine_lines.length < REFINE_BULLETS
-      defaults = [
-        "• Want more gore vs. paranormal?",
-        "• Pick a runtime cap (e.g., < 100 min).",
-        "• Choose era: classics, 2000s, or modern."
-      ]
-      refine_lines += defaults[(refine_lines.length)...REFINE_BULLETS]
+    if refine_lines.any?
+      out = []
+      out.concat(film_lines)
+      out << ""
+      out << "Refine:"
+      out.concat(refine_lines)
+      out.join("\n").strip
+    else
+      film_lines.join("\n").strip
     end
-
-    out = []
-    out.concat(film_lines)
-    out << ""
-    out << "Refine:"
-    out.concat(refine_lines)
-
-    out.join("\n").strip
   end
 
   def upsert_recommended_films_from(clean_text)
@@ -179,26 +211,13 @@ class MessagesController < ApplicationController
 
   def extract_films_from(clean_text)
     film_lines = clean_text.to_s.lines
-                         .map(&:strip)
-                         .take_while { |line| !line.casecmp("Refine:").zero? }
-                         .select { |line| line.start_with?("•") }
+                           .map(&:strip)
+                           .take_while { |line| !line.casecmp("Refine:").zero? }
+                           .select { |line| line.start_with?("•") }
 
     film_lines.map { |line| parse_film_line(line) }.compact
   end
 
-  def process_file
-    return unless @message.image.attached?
-
-    @ruby_llm_chat = RubyLLM.chat(model: "gpt-4o")
-
-    build_conversation_history
-    @ruby_llm_chat.with_instructions(instructions)
-
-    @response = @ruby_llm_chat.ask(
-      "Analyze the aesthetic, color palette, lighting, and mood of this image.
-        Then recommend 3-5 films with a similar cinematic atmosphere.",
-      with: { image: url_for(@message.image) }
-    )
   def parse_film_line(line)
     s = line.sub(/\A•\s*/, "").strip
 
