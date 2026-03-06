@@ -3,6 +3,7 @@
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
+
 }
 
 .cta-btn {
@@ -29,7 +30,6 @@
   }
 
   &--primary {
-    background: #39304A;
     color: #fff;
     border: 1.5px solid #39304A;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
