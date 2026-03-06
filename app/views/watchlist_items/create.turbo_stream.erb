@@ -1,0 +1,3 @@
+<%= turbo_stream.replace dom_id(@recommended_film || RecommendedFilm.find(params[:recommended_film_id])) do %>
+  <%= render "recommended_films/card", film: RecommendedFilm.find(params[:recommended_film_id]) %>
+<% end %>

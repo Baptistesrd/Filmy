@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_05_172544) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_05_194349) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -58,6 +58,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_05_172544) do
     t.string "title"
     t.datetime "updated_at", null: false
     t.bigint "watch_session_id", null: false
+    t.integer "year"
     t.index ["watch_session_id"], name: "index_films_on_watch_session_id"
   end
 

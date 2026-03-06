@@ -201,3 +201,38 @@ a {
     padding: 8px 10px;
   }
 }
+.films-panel {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.film-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.film-title {
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.film-meta {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.film-blurb {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.film-add {
+  line-height: 1;
+  padding: 4px 10px;
+  border-radius: 10px;
+}

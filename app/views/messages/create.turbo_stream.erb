@@ -3,10 +3,13 @@
 <% end %>
 
 <%= turbo_stream.append "messages" do %>
-  <%= render partial: "messages/message", locals: { message: @message } %>
-  <%= render partial: "messages/message", locals: { message: @assistant_message } %>
+  <%= render partial: "messages/message", collection: [@message, @assistant_message], as: :message %>
 <% end %>
 
 <%= turbo_stream.update "new_message_container" do %>
   <%= render "messages/form", chat: @chat, message: Message.new %>
+<% end %>
+
+<%= turbo_stream.replace "recommended_panel" do %>
+  <%= render "recommended_films/panel", chat: @chat, recommended_films: @recommended_films %>
 <% end %>
