@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_06_143256) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_06_150708) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -55,7 +55,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_143256) do
   create_table "films", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "genre"
+    t.string "justwatch_url"
     t.string "poster_url"
+    t.integer "runtime"
+    t.text "streaming_services"
     t.string "title"
     t.datetime "updated_at", null: false
     t.bigint "watch_session_id", null: false
@@ -88,8 +91,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_143256) do
 
   create_table "solid_cable_messages", force: :cascade do |t|
     t.binary "channel", null: false
+    t.bigint "channel_hash", default: 0, null: false
     t.datetime "created_at", null: false
     t.binary "payload", null: false
+    t.index ["channel"], name: "index_solid_cable_messages_on_channel"
+    t.index ["channel_hash"], name: "index_solid_cable_messages_on_channel_hash"
     t.index ["created_at"], name: "index_solid_cable_messages_on_created_at"
     t.index ["id"], name: "index_solid_cable_messages_on_id", unique: true
   end
