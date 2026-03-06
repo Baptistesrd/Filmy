@@ -15,13 +15,4 @@ class Message < ApplicationRecord
   def content_optional?
     image.attached? || (assistant? && content.blank?)
   end
-
-  def broadcast_append_to_chat
-    broadcast_append_to(
-      chat,
-      target: "messages",
-      partial: "messages/message",
-      locals: { message: self }
-    )
-  end
 end

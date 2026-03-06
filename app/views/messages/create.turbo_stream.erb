@@ -2,6 +2,10 @@
   <%= turbo_stream.update "chat_title", @chat.title %>
 <% end %>
 
+<%= turbo_stream.append "messages" do %>
+  <%= render partial: "messages/message", collection: [@message, @assistant_message], as: :message %>
+<% end %>
+
 <%= turbo_stream.update "new_message_container" do %>
   <%= render "messages/form", chat: @chat, message: Message.new %>
 <% end %>
