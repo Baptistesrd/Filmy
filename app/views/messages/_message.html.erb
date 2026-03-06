@@ -1,21 +1,30 @@
 <% role = message.role.to_s.strip.downcase %>
 <% is_user = (role == "user") %>
 
-<div class="chat-row <%= is_user ? "chat-row--user" : "chat-row--assistant" %>">
-  <div class="chat-bubble <%= is_user ? "chat-bubble--user" : "chat-bubble--assistant" %>">
+<% if is_user %>
+  <div class="chat-row chat-row--user">
+    <div class="chat-bubble chat-bubble--user">
+      <% if message.image.attached? %>
+        <%= image_tag message.image, class: "img-fluid rounded mb-2 d-block", style: "max-width: 220px;" %>
+      <% end %>
 
-    <% if message.image.attached? %>
-      <%= image_tag message.image, class: "img-fluid rounded mb-2 d-block", style: "max-width: 220px;" %>
-    <% end %>
-
-    <% if message.content.present? %>
-      <%= simple_format(h(message.content), {}, wrapper_tag: "div") %>
-    <% end %>
-
-    <% if is_user %>
-      <%= simple_format(h(message.content), {}, wrapper_tag: "div") %>
-    <% else %>
-      <%= raw(render_markdown(message.content)) %>
-    <% end %>
+      <% if message.content.present? %>
+        <%= simple_format(h(message.content), {}, wrapper_tag: "div") %>
+      <% end %>
+    </div>
   </div>
-</div>
+<% else %>
+  <div class="chat-row chat-row--assistant" id="<%= dom_id(message) %>">
+    <div class="chat-bubble chat-bubble--assistant">
+      <% if message.content.present? %>
+        <%= simple_format(
+              h(message.content).gsub(/\*\*(.*?)\*\*/, '<strong>\1</strong>').html_safe,
+              {},
+              wrapper_tag: "div"
+            ) %>
+      <% else %>
+        <span class="text-muted">...</span>
+      <% end %>
+    </div>
+  </div>
+<% end %>
