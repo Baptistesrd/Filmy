@@ -1,47 +1,46 @@
-<%# app/views/shared/_sidebar.html.erb %>
-
 <div class="sidebar">
   <div class="sidebar-brand">
-    <div class="d-flex align-items-center">
-      <%= image_tag "https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/logo.png",
-          style: "width:32px;height:32px",
-          class: "me-2" %>
-
+    <div class="d-flex align-items-center gap-2">
+      <%= image_tag "moov.png", style: "width:30px;height:30px;border-radius:8px", class: "" %>
       <p class="brand mb-0">Filmy</p>
     </div>
-
     <%= link_to "#",
-                class: "sidebar-link p-2",
+                class: "sidebar-collapse-btn",
                 aria: { label: "Collapse sidebar" },
                 data: { action: "click->toggle#call" } do %>
       ◀
     <% end %>
   </div>
 
-  <div class="sidebar-section-title">Sidebar</div>
+  <div class="sidebar-section-title">Navigation</div>
   <ul class="sidebar-nav">
     <li>
-      <%= link_to "Home", root_path, class: "sidebar-link" %>
+      <%= link_to root_path, class: "sidebar-link" do %>
+        <span>Home</span>
+      <% end %>
     </li>
-
     <li>
-      <%= link_to "New Watch Session", new_watch_session_path, class: "sidebar-link" %>
+      <%= link_to new_watch_session_path, class: "sidebar-link" do %>
+        <span>New Watch Session</span>
+      <% end %>
     </li>
-
     <li>
-      <%= link_to "All Watch Sessions", watch_sessions_path, class: "sidebar-link" %>
+      <%= link_to watch_sessions_path, class: "sidebar-link" do %>
+        <span class="sidebar-icon">🎬</span>
+        <span>All Watch Sessions</span>
+      <% end %>
     </li>
   </ul>
 
-  <details class="mt-2" open>
-    <summary class="sidebar-link" style="cursor: pointer; list-style: none;">
+  <details class="mt-3" open>
+    <summary class="sidebar-link sidebar-summary">
       <span class="truncate">Watch Sessions</span>
+      <span class="sidebar-chevron ms-auto">▾</span>
     </summary>
 
     <ul class="sidebar-nav sidebar-sublist">
       <% if user_signed_in? %>
         <% sessions = @watch_sessions || current_user.watch_sessions.order(created_at: :desc) %>
-
         <% if sessions.any? %>
           <% sessions.each do |ws| %>
             <li>
@@ -51,33 +50,29 @@
             </li>
           <% end %>
         <% else %>
-          <li>
-            <span class="sidebar-link" style="opacity: 0.75;">No sessions yet</span>
-          </li>
+          <li><span class="sidebar-link sidebar-empty">No sessions yet</span></li>
         <% end %>
       <% else %>
-        <li>
-          <%= link_to "Sign in", new_user_session_path, class: "sidebar-link" %>
-        </li>
+        <li><%= link_to "Sign in", new_user_session_path, class: "sidebar-link" %></li>
       <% end %>
     </ul>
   </details>
 
   <div class="sidebar-footer">
     <% if user_signed_in? %>
-      <%= link_to edit_user_registration_path, class: "sidebar-link d-flex align-items-center" do %>
-
-      <%= image_tag "https://kitt.lewagon.com/placeholder/users/ssaunier",
-        class: "avatar me-2",
-        style: "width:28px;height:28px;border-radius:50%" %>
-
-      Edit account
-    <% end %>
-
+      <div class="sidebar-user">
+        <%= image_tag "https://kitt.lewagon.com/placeholder/users/ssaunier",
+          class: "sidebar-avatar",
+          style: "" %>
+        <div class="sidebar-user-info">
+          <%= link_to "Edit account", edit_user_registration_path, class: "sidebar-user-name" %>
+          <span class="sidebar-user-sub">Account settings</span>
+        </div>
+      </div>
       <%= button_to "Log out",
                     destroy_user_session_path,
                     method: :delete,
-                    class: "btn btn-outline-light mt-2" %>
+                    class: "btn sidebar-logout" %>
     <% end %>
   </div>
 </div>
