@@ -9,13 +9,19 @@ class RecommendedFilmsController < ApplicationController
     @chat = current_user.chats.find(@recommended_film.chat_id)
     watch_session = @recommended_film.watch_session
 
+    tmdb_data = TmdbMovieLookup.new(
+      title: @recommended_film.title,
+      year: @recommended_film.year
+    ).call
+
     watch_session.films.create!(
       title: @recommended_film.title,
       year: @recommended_film.year,
       runtime: @recommended_film.runtime,
       genre: watch_session.genre,
       streaming_services: @recommended_film.try(:streaming_services),
-      justwatch_url: @recommended_film.try(:justwatch_url)
+      justwatch_url: @recommended_film.try(:justwatch_url),
+      poster_url: tmdb_data[:poster_url]
     )
 
     @recommended_film.update!(added: true)
