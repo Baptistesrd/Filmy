@@ -14,7 +14,7 @@
     </div>
   </div>
 <% else %>
-  <div class="chat-row chat-row--assistant" id="<%= dom_id(message) %>">
+  <div class="chat-row chat-row--assistant" id="message_<%= message.id %>">
     <div class="chat-bubble chat-bubble--assistant">
       <% if message.content.present? %>
         <%= simple_format(
