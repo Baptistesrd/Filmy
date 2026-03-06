@@ -101,8 +101,8 @@ class MessagesController < ApplicationController
 
   def broadcast_replace(message)
     Turbo::StreamsChannel.broadcast_replace_to(
-      @chat,
-      target: dom_id(message),
+      "chat_#{@chat.id}",
+      target: "message_#{message.id}",
       partial: "messages/message",
       locals: { message: message }
     )
