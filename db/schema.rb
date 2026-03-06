@@ -72,15 +72,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_05_194349) do
   end
 
   create_table "recommended_films", force: :cascade do |t|
-    t.boolean "added"
+    t.boolean "added", default: false, null: false
     t.text "blurb"
     t.bigint "chat_id", null: false
     t.datetime "created_at", null: false
     t.integer "runtime"
-    t.string "title"
+    t.string "title", null: false
     t.datetime "updated_at", null: false
     t.bigint "watch_session_id", null: false
     t.integer "year"
+    t.index ["chat_id", "title", "year"], name: "index_recommended_films_on_chat_id_and_title_and_year", unique: true
     t.index ["chat_id"], name: "index_recommended_films_on_chat_id"
     t.index ["watch_session_id"], name: "index_recommended_films_on_watch_session_id"
   end
@@ -234,10 +235,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_05_194349) do
     t.text "blurb"
     t.datetime "created_at", null: false
     t.integer "runtime"
-    t.string "title"
+    t.string "title", null: false
     t.datetime "updated_at", null: false
     t.bigint "watch_session_id", null: false
     t.integer "year"
+    t.index ["watch_session_id", "title", "year"], name: "index_watchlist_items_on_watch_session_id_and_title_and_year", unique: true
     t.index ["watch_session_id"], name: "index_watchlist_items_on_watch_session_id"
   end
 

@@ -4,19 +4,19 @@
     <p class="tagline">Forget Netflix. Forget Letterboxd.</p>
 
     <% if user_signed_in? %>
-      <div class="cta-group">
-        <%= link_to new_watch_session_path, class: "cta-btn cta-btn--primary" do %>
+      <div class="cta-group d-flex gap-3">
+        <%= link_to new_watch_session_path, class: "btn btn-secondary rounded-pill px-4 py-2 shadow-sm d-flex align-items-center " do %>
           <span class="cta-btn__icon">▶</span>
           <span class="cta-btn__text">Start the session</span>
         <% end %>
 
-        <%= link_to watch_sessions_path, class: "cta-btn cta-btn--primary" do %>
+        <%= link_to watch_sessions_path, class: "btn btn-secondary rounded-pill px-4 py-2 shadow-sm d-flex align-items-center" do %>
           <span class="cta-btn__icon">◈</span>
           <span class="cta-btn__text">See all my sessions</span>
         <% end %>
       </div>
     <% else %>
-      <%= link_to new_user_session_path, class: "cta-btn cta-btn--primary" do %>
+      <%= link_to new_user_session_path, class: "btn btn-secondary rounded-pill px-4 py-2 shadow-sm d-flex align-items-center" do %>
         <span class="cta-btn__text">Start now</span>
         <span class="cta-btn__arrow">→</span>
       <% end %>

@@ -13,7 +13,7 @@
       </div>
 
       <div class="d-flex gap-2 mb-4">
-        <%= link_to "Edit session", edit_watch_session_path(@watch_session), class: "btn btn-outline-secondary" %>
+        <%= link_to "Edit session", edit_watch_session_path(@watch_session), class: "btn btn-secondary rounded-pill " %>
       </div>
 
       <div class="card border-0 shadow-sm rounded-4">
@@ -63,7 +63,7 @@
             <%= button_to "New chat",
                   watch_session_chats_path(@watch_session),
                   method: :post,
-                  class: "btn btn-primary btn-sm" %>
+                  class: "btn btn-secondary rounded-pill px-4 py-2 shadow-sm" %>
           </div>
 
           <% if @chats.any? %>
