@@ -26,6 +26,7 @@ class WatchSessionsController < ApplicationController
   end
 
   def edit
+    @films = @watch_session.films.order(:title)
   end
 
   def update
