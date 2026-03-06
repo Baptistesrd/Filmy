@@ -1,7 +1,18 @@
+
+.placeholder-fade::placeholder {
+  color: #6c757d;
+  opacity: 0.6;
+  font-style: italic;
+  transition: opacity 0.25s ease;
+}
+
+.placeholder-fade:focus::placeholder {
+  opacity: 0.3;
+}
+
 #recommended_panel .btn {
-  // Bootstrap button base classes will still apply
-  border-radius: 50px;       // rounded-pill
-  padding: 0.5rem 1.5rem;    // adjust padding
+  border-radius: 50px;
+  padding: 0.5rem 1.5rem;
   font-weight: 500;
   font-size: 1rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
