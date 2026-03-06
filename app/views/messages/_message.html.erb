@@ -4,14 +4,24 @@
 <% if is_user %>
   <div class="chat-row chat-row--user">
     <div class="chat-bubble chat-bubble--user">
-      <%= simple_format(h(message.content), {}, wrapper_tag: "div") %>
+      <% if message.image.attached? %>
+        <%= image_tag message.image, class: "img-fluid rounded mb-2 d-block", style: "max-width: 220px;" %>
+      <% end %>
+
+      <% if message.content.present? %>
+        <%= simple_format(h(message.content), {}, wrapper_tag: "div") %>
+      <% end %>
     </div>
   </div>
 <% else %>
   <div class="chat-row chat-row--assistant" id="<%= dom_id(message) %>">
     <div class="chat-bubble chat-bubble--assistant">
       <% if message.content.present? %>
-        <%= raw(render_markdown(message.content)) %>
+        <%= simple_format(
+              h(message.content).gsub(/\*\*(.*?)\*\*/, '<strong>\1</strong>').html_safe,
+              {},
+              wrapper_tag: "div"
+            ) %>
       <% else %>
         <span class="text-muted">...</span>
       <% end %>

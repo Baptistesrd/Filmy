@@ -41,7 +41,9 @@ class MessagesController < ApplicationController
 
       @assistant_message.update_column(:content, normalize_ai_text(@assistant_message.content))
 
-      upsert_recommended_films_from(@assistant_message.content)
+      broadcast_replace(@assistant_message)
+      clean_text = @assistant_message.content
+      upsert_recommended_films_from(clean_text)
 
       @chat.generate_title_from_first_message
       @recommended_films = @chat.recommended_films.order(created_at: :desc)
