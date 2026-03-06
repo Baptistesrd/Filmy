@@ -236,3 +236,52 @@ a {
   padding: 4px 10px;
   border-radius: 10px;
 }
+
+/* macOS-style close button */
+form:has(.mac-close-btn) {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.mac-close-btn {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #ff5f57;
+  border: 1.5px solid #e0443e;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: none;
+  outline: none;
+  transition: background-color 0.15s ease;
+}
+
+.mac-close-icon {
+  display: none;
+  font-size: 8px;
+  color: #820005;
+  line-height: 1;
+  font-weight: bold;
+}
+
+.mac-close-btn:hover {
+  background-color: #ff3b30;
+}
+
+.mac-close-btn:hover .mac-close-icon {
+  display: block;
+}
+
+body {
+  background-image: url('moveuh.avif');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
