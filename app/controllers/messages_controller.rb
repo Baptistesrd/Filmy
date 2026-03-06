@@ -84,13 +84,13 @@ class MessagesController < ApplicationController
 
   def send_image_question
     ruby_llm_chat = RubyLLM.chat(model: "gpt-4.1-mini")
-    ruby_llm_chat.with_instructions(image_instructions)
+    ruby_llm_chat.with_instructions([image_instructions, watch_session_context].compact.join("\n\n"))
 
     build_conversation_history(ruby_llm_chat)
 
     ruby_llm_chat.ask(
       "Analyze this image and recommend films with a similar cinematic atmosphere.",
-      with: { image: url_for(@message.image) }
+      with: { image: @message.image.url }
     ) do |chunk|
       next if chunk.content.blank?
 
