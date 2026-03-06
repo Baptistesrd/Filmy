@@ -1,12 +1,31 @@
-<%= simple_form_for [chat, message], html: { class: "chat-form" } do |f| %>
-  <div class="d-flex gap-2 align-items-end">
+<%= simple_form_for [chat, message], html: { class: "chat-form", multipart: true } do |f| %>
+
+  <div id="image-preview-container" class="mb-2"></div>
+
+  <div class="d-flex gap-2 align-items-center">
+
     <%= f.input :content,
       label: false,
       placeholder: "I'm in the mood for...",
-      required: true,
+      required: false,
       wrapper_html: { class: "flex-grow-1 mb-0" },
-      input_html: { class: "form-control chat-input", rows: 1 } %>
+      input_html: { class: "form-control chat-input", rows: 2 } %>
 
-    <%= f.button :submit, "Send", class: "btn btn-primary chat-send px-4" %>
+      <label class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center mb-0" style="width:38px;height:38px;">
+        <i class="fa-solid fa-plus text-white"></i>
+
+        <%= f.file_field :image,
+            accept: "image/png,image/jpeg,image/gif,image/webp",
+            class: "d-none",
+            id: "image-upload" %>
+      </label>
+
+    <button type="submit"
+      class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center p-0"
+      style="width:36px;height:36px;">
+      <i class="fa-solid fa-arrow-up text-white"></i>
+    </button>
+
   </div>
+
 <% end %>

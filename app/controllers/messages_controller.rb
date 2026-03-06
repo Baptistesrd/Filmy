@@ -31,7 +31,36 @@ class MessagesController < ApplicationController
 
     if @message.save
       ruby_llm_chat = RubyLLM.chat(model: "gpt-4.1-mini")
-      response = ruby_llm_chat.with_instructions(instructions).ask(@message.content)
+
+      if @message.image.attached?
+
+        image_url = @message.image.blob.url
+
+        response = ruby_llm_chat.with_instructions(instructions).ask(
+          "You are a movie recommendation assistant.
+            When the user uploads an image:
+            - Analyze the aesthetic, lighting, color palette and mood.
+            - Recommend exactly 3–5 movies with a similar cinematic atmosphere.
+
+            Response format:
+            Movie Title (Year) — short explanation.
+
+            Rules:
+            - Do NOT add tips.
+            - Do NOT suggest ways to refine the search.
+            - Do NOT add extra sections.
+            - Only return the movie list.",
+          with: { image: image_url }
+        )
+      else
+        response = ruby_llm_chat.with_instructions(instructions).ask(@message.content)
+      end
+
+      Message.create(
+        chat: @message.chat,
+        content: response.content,
+        role: "assistant"
+      )
 
       clean = normalize_ai_text(response.content)
 
@@ -67,7 +96,7 @@ class MessagesController < ApplicationController
   private
 
   def message_params
-    params.require(:message).permit(:content, :file)
+    params.require(:message).permit(:content, :image)
   end
 
   def watch_session_context
@@ -157,6 +186,19 @@ class MessagesController < ApplicationController
     film_lines.map { |line| parse_film_line(line) }.compact
   end
 
+  def process_file
+    return unless @message.image.attached?
+
+    @ruby_llm_chat = RubyLLM.chat(model: "gpt-4o")
+
+    build_conversation_history
+    @ruby_llm_chat.with_instructions(instructions)
+
+    @response = @ruby_llm_chat.ask(
+      "Analyze the aesthetic, color palette, lighting, and mood of this image.
+        Then recommend 3-5 films with a similar cinematic atmosphere.",
+      with: { image: url_for(@message.image) }
+    )
   def parse_film_line(line)
     s = line.sub(/\A•\s*/, "").strip
 
