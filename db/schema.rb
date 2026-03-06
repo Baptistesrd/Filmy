@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_06_133046) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_06_142258) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -76,18 +76,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_133046) do
   end
 
   create_table "recommended_films", force: :cascade do |t|
-    t.boolean "added", default: false, null: false
+    t.boolean "added"
     t.text "blurb"
     t.bigint "chat_id", null: false
     t.datetime "created_at", null: false
     t.integer "runtime"
-    t.string "title", null: false
+    t.string "title"
     t.datetime "updated_at", null: false
     t.bigint "watch_session_id", null: false
     t.integer "year"
-    t.index ["chat_id", "title", "year"], name: "index_recommended_films_on_chat_id_and_title_and_year", unique: true
     t.index ["chat_id"], name: "index_recommended_films_on_chat_id"
     t.index ["watch_session_id"], name: "index_recommended_films_on_watch_session_id"
+  end
+
+  create_table "solid_cable_messages", force: :cascade do |t|
+    t.binary "channel", null: false
+    t.datetime "created_at", null: false
+    t.binary "payload", null: false
+    t.index ["created_at"], name: "index_solid_cable_messages_on_created_at"
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -239,11 +245,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_133046) do
     t.text "blurb"
     t.datetime "created_at", null: false
     t.integer "runtime"
-    t.string "title", null: false
+    t.string "title"
     t.datetime "updated_at", null: false
     t.bigint "watch_session_id", null: false
     t.integer "year"
-    t.index ["watch_session_id", "title", "year"], name: "index_watchlist_items_on_watch_session_id_and_title_and_year", unique: true
     t.index ["watch_session_id"], name: "index_watchlist_items_on_watch_session_id"
   end
 
