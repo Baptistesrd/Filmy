@@ -122,25 +122,14 @@ class MessagesController < ApplicationController
     )
   end
 
-def broadcast_append(message)
-  Turbo::StreamsChannel.broadcast_append_to(
-    "chat_#{@chat.id}",
-    target: "messages",
-    partial: "messages/message",
-    locals: { message: message }
-  )
-end
+  def broadcast_recommended_panel
+    recommended_films = @chat.recommended_films.order(created_at: :desc)
 
-def broadcast_recommended_panel
-  recommended_films = @chat.recommended_films.order(created_at: :desc)
-
-  Turbo::StreamsChannel.broadcast_replace_to(
-    "chat_#{@chat.id}",
-    target: "recommended_panel",
-    partial: "recommended_films/panel",
-    locals: { chat: @chat, recommended_films: recommended_films }
-  )
-end
+    Turbo::StreamsChannel.broadcast_replace_to(
+      "chat_#{@chat.id}",
+      target: "recommended_panel",
+      partial: "recommended_films/panel",
+      locals: { chat: @chat, recommended_films: recommended_films }
     )
   end
 
