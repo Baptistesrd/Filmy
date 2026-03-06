@@ -1,0 +1,3 @@
+<%= turbo_stream.replace dom_id(@recommended_film) do %>
+  <%= render "recommended_films/card", film: @recommended_film %>
+<% end %>

@@ -1,5 +1,4 @@
 <div class="chat-page container-fluid py-4">
-
   <div class="chat-wrapper mx-auto">
 
     <%= link_to watch_session_path(@chat.watch_session),
@@ -12,32 +11,25 @@
       <%= @chat.title %>
     </h1>
 
-    <div
-      class="chat-shell rounded-4 shadow-sm"
-      data-controller="chat-scroll"
-    >
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-8">
+        <div class="chat-shell rounded-4 shadow-sm" data-controller="chat-scroll">
+          <div class="chat-messages" id="messages" data-chat-scroll-target="messages">
+            <%= render partial: "messages/message", collection: @messages, as: :message %>
+          </div>
 
-      <div
-        class="chat-messages"
-        id="messages"
-        data-chat-scroll-target="messages"
-      >
-        <%= render partial: "messages/message",
-            collection: @messages,
-            as: :message %>
+          <div class="chat-composer border-top" id="new_message_container">
+            <%= render "messages/form", chat: @chat, message: @message %>
+          </div>
+        </div>
       </div>
 
-      <div
-        class="chat-composer border-top"
-        id="new_message_container"
-      >
-        <%= render "messages/form",
-            chat: @chat,
-            message: @message %>
+      <div class="col-lg-4">
+        <div id="recommended_panel">
+          <%= render "recommended_films/panel", chat: @chat, recommended_films: @recommended_films %>
+        </div>
       </div>
-
     </div>
 
   </div>
-
 </div>

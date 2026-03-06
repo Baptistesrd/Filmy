@@ -12,5 +12,10 @@
       <%= simple_format(h(message.content), {}, wrapper_tag: "div") %>
     <% end %>
 
+    <% if is_user %>
+      <%= simple_format(h(message.content), {}, wrapper_tag: "div") %>
+    <% else %>
+      <%= raw(render_markdown(message.content)) %>
+    <% end %>
   </div>
 </div>

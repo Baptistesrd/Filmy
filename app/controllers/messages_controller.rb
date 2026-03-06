@@ -1,27 +1,25 @@
-SYSTEM_PROMPT = "You are an expert film curator and passionate cinephile with encyclopedic knowledge of world cinema across all eras, genres, and cultures.
+SYSTEM_PROMPT = <<~PROMPT
+  You are an expert film curator and passionate cinephile.
 
-Recommend movies tailored to the user's tastes, mood, and context.
+  Rules for responses (VERY IMPORTANT):
+  - Keep responses compact so they fit on one screen.
+  - Recommend between 4-6 films.
+  - Format each film as ONE bullet line ONLY, like:
+    • **Title (Year)** — 112 min: short sentence. Second short sentence.
+  - Do NOT add blank lines between film bullets.
+  - After the last film bullet, add ONE blank line, then:
+    Refine:
+  - Then EXACTLY 3 bullet lines (no blank lines), each starting with "• ".
 
-Keep responses concise and structured:
-- Recommend 3-5 films maximum.
-- Use bullet points.
-- Each film should have only ONE short sentence explaining why it fits.
-- Avoid long paragraphs.
-- Keep the total response under ~120 words.
-
-Never recommend the same film twice in a conversation.
-
-After the recommendations, suggest 2-3 short ways the user could refine their search (for example: by genre, mood, decade, country, runtime, or intensity).
-
-Tone: confident, warm, enthusiastic, and slightly obsessive about film, like a trusted friend who loves movies. You enjoy both arthouse and blockbuster cinema. Subtitles are never a barrier."
+  Other rules:
+  - Never recommend the same film twice in a conversation.
+  - Be confident, warm, and a little obsessive. Zero snobbery.
+PROMPT
 
 class MessagesController < ApplicationController
-  def send_question(model: "gpt-4.1-nano", with: {})
-    @ruby_llm_chat = RubyLLM.chat(model: model)
-    # build_conversation_history/*
-    @ruby_llm_chat.with_instructions(instructions)
-    @response = @ruby_llm_chat.ask(@message.content, with: with)
-  end
+  MIN_FILMS = 4
+  MAX_FILMS = 6
+  REFINE_BULLETS = 3
 
   def create
     @chat = current_user.chats.find(params[:chat_id])
@@ -32,7 +30,7 @@ class MessagesController < ApplicationController
     @message.role = "user"
 
     if @message.save
-      ruby_llm_chat = RubyLLM.chat
+      ruby_llm_chat = RubyLLM.chat(model: "gpt-4.1-mini")
 
       if @message.image.attached?
 
@@ -64,12 +62,18 @@ class MessagesController < ApplicationController
         role: "assistant"
       )
 
+      clean = normalize_ai_text(response.content)
+
       @assistant_message = @chat.messages.create!(
         role: "assistant",
-        content: response.content
+        content: clean,
+        chat: @chat
       )
 
+      upsert_recommended_films_from(clean)
+
       @chat.generate_title_from_first_message
+      @recommended_films = @chat.recommended_films.order(created_at: :desc)
 
       respond_to do |format|
         format.turbo_stream
@@ -78,8 +82,11 @@ class MessagesController < ApplicationController
     else
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("new_message_container", partial: "messages/form",
-                                                                             locals: { chat: @chat, message: @message })
+          render turbo_stream: turbo_stream.replace(
+            "new_message_container",
+            partial: "messages/form",
+            locals: { chat: @chat, message: @message }
+          )
         end
         format.html { render "chats/show", status: :unprocessable_entity }
       end
@@ -93,6 +100,8 @@ class MessagesController < ApplicationController
   end
 
   def watch_session_context
+    return nil unless @watch_session
+
     "Watch session context:\n" \
       "- genre: #{@watch_session.genre}\n" \
       "- mood: #{@watch_session.mood}\n" \
@@ -104,22 +113,77 @@ class MessagesController < ApplicationController
     [SYSTEM_PROMPT, watch_session_context].compact.join("\n\n")
   end
 
-  def build_conversation_history
-    @chat.messages.order(:created_at).where.not(role: nil).each do |message|
-      @ruby_llm_chat.add_message(role: message.role, content: message.content)
+  def normalize_ai_text(text)
+    s = text.to_s.gsub(/\r\n?/, "\n").strip
+    s = s.gsub(/^\s{0,3}#{Regexp.escape('#')}{1,6}\s+/, "")
+    s = s.gsub(/^\s*[-*]\s+/, "• ")
+    s = s.gsub(/\s+•\s+/, "\n• ")
+    s = s.gsub(/\s*Refine:\s*/m, "\nRefine:\n")
+    s = s.gsub(/[ \t]+\n/, "\n")
+    s = s.gsub(/\n{3,}/, "\n\n").strip
+
+    lines = s.split("\n").map(&:rstrip)
+    lines.reject! { |l| l.strip.empty? || l.strip == "•" }
+
+    refine_index = lines.index { |l| l.strip.casecmp("Refine:").zero? }
+    film_lines = []
+    refine_lines = []
+
+    if refine_index
+      film_lines = lines[0...refine_index]
+      refine_lines = lines[(refine_index + 1)..] || []
+    else
+      film_lines = lines
+      refine_lines = []
+    end
+
+    film_lines = film_lines.select { |l| l.strip.start_with?("•") }
+    film_lines = film_lines.first(MAX_FILMS)
+    film_lines = film_lines.first(MIN_FILMS) if film_lines.length < MIN_FILMS
+
+    refine_lines = refine_lines.select { |l| l.strip.start_with?("•") }
+    refine_lines = refine_lines.first(REFINE_BULLETS)
+
+    if refine_lines.length < REFINE_BULLETS
+      defaults = [
+        "• Want more gore vs. paranormal?",
+        "• Pick a runtime cap (e.g., < 100 min).",
+        "• Choose era: classics, 2000s, or modern."
+      ]
+      refine_lines += defaults[(refine_lines.length)...REFINE_BULLETS]
+    end
+
+    out = []
+    out.concat(film_lines)
+    out << ""
+    out << "Refine:"
+    out.concat(refine_lines)
+
+    out.join("\n").strip
+  end
+
+  def upsert_recommended_films_from(clean_text)
+    films = extract_films_from(clean_text)
+
+    films.each do |film|
+      record = @chat.recommended_films.where(title: film[:title], year: film[:year]).first_or_initialize
+
+      record.watch_session = @watch_session
+      record.runtime = film[:runtime]
+      record.blurb = film[:blurb]
+      record.added = false if record.added.nil?
+
+      record.save!
     end
   end
 
-  def call_llm(conversation)
-    client = OpenAI::Client.new
-    response = client.chat(
-      parameters: {
-        model: "gpt-4o-mini",
-        messages: conversation,
-        temperature: 0.7
-      }
-    )
-    response.dig("choices", 0, "message", "content")
+  def extract_films_from(clean_text)
+    film_lines = clean_text.to_s.lines
+                         .map(&:strip)
+                         .take_while { |line| !line.casecmp("Refine:").zero? }
+                         .select { |line| line.start_with?("•") }
+
+    film_lines.map { |line| parse_film_line(line) }.compact
   end
 
   def process_file
@@ -135,5 +199,35 @@ class MessagesController < ApplicationController
         Then recommend 3-5 films with a similar cinematic atmosphere.",
       with: { image: url_for(@message.image) }
     )
+  def parse_film_line(line)
+    s = line.sub(/\A•\s*/, "").strip
+
+    title_year, rest = s.split("—", 2).map { |x| x.to_s.strip }
+    return nil if title_year.blank?
+
+    title_year = title_year.gsub(/\*\*(.*?)\*\*/, '\1').strip
+
+    title = title_year
+    year = nil
+
+    if (m = title_year.match(/\A(.+?)\s*\((\d{4})\)\z/))
+      title = m[1].strip
+      year = m[2].to_i
+    end
+
+    runtime = nil
+    blurb = nil
+
+    if rest.present?
+      if (rm = rest.match(/(\d{1,3})\s*min/i))
+        runtime = rm[1].to_i
+      end
+
+      parts = rest.split(":", 2).map { |x| x.to_s.strip }
+      blurb = parts.length == 2 ? parts[1] : rest
+      blurb = blurb.to_s.strip
+    end
+
+    { title: title, year: year, runtime: runtime, blurb: blurb }
   end
 end

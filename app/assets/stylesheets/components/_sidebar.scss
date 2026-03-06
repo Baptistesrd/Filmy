@@ -2,12 +2,11 @@
 .sidebar {
   min-height: 100vh;
   padding: 18px 14px;
-  background: rgba(8, 10, 14, 0.78);
+  background: #39304A;
   backdrop-filter: blur(10px);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid #39304A;
 }
 
-/* Brand row (Filmy + collapse icon row) */
 .sidebar .sidebar-brand {
   display: flex;
   align-items: center;
@@ -23,7 +22,6 @@
   margin: 0;
 }
 
-/* Section headings */
 .sidebar .sidebar-section-title {
   font-size: 12px;
   font-weight: 700;

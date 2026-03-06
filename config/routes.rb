@@ -15,4 +15,8 @@ Rails.application.routes.draw do
   resources :chats, only: [:show, :create, :destroy] do
     resources :messages, only: [:create]
   end
+
+  post "recommended_films/:id/add",
+       to: "recommended_films#add",
+       as: :add_recommended_film
 end
