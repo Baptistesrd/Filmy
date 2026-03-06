@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   resources :watch_sessions do
     resources :chats, only: [:create]
+    resources :films, only: [:destroy]
   end
 
   get "up" => "rails/health#show", as: :rails_health_check
