@@ -33,6 +33,9 @@ class MessagesController < ApplicationController
     if @message.save
       @assistant_message = @chat.messages.create!(role: "assistant", content: "")
 
+      broadcast_append(@message)
+      broadcast_append(@assistant_message)
+
       if @message.image.attached?
         send_image_question
       else
@@ -103,6 +106,15 @@ class MessagesController < ApplicationController
     Turbo::StreamsChannel.broadcast_replace_to(
       "chat_#{@chat.id}",
       target: "message_#{message.id}",
+      partial: "messages/message",
+      locals: { message: message }
+    )
+  end
+
+  def broadcast_append(message)
+    Turbo::StreamsChannel.broadcast_append_to(
+      "chat_#{@chat.id}",
+      target: "messages",
       partial: "messages/message",
       locals: { message: message }
     )
