@@ -1,3 +1,15 @@
+#recommended_panel .btn {
+  // Bootstrap button base classes will still apply
+  border-radius: 50px;       // rounded-pill
+  padding: 0.5rem 1.5rem;    // adjust padding
+  font-weight: 500;
+  font-size: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s ease;
+  background-color: #6c757d;
+  color: #ffffff;
+}
+
 .cta-group {
   display: flex;
   gap: 12px;
