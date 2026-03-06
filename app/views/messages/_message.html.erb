@@ -5,7 +5,7 @@
   <div class="chat-row chat-row--user">
     <div class="chat-bubble chat-bubble--user">
       <% if message.image.attached? %>
-        <%= image_tag message.image, class: "img-fluid rounded mb-2 d-block", style: "max-width: 220px;" %>
+        <%= image_tag url_for(message.image), class: "img-fluid rounded mb-2 d-block", style: "max-width: 220px;" %>
       <% end %>
 
       <% if message.content.present? %>
