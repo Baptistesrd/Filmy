@@ -46,7 +46,9 @@ class MessagesController < ApplicationController
       @assistant_message.update_column(:content, cleaned_content)
 
       broadcast_replace(@assistant_message)
+
       upsert_recommended_films_from(cleaned_content)
+      broadcast_recommended_panel
 
       @chat.generate_title_from_first_message
       @recommended_films = @chat.recommended_films.order(created_at: :desc)
@@ -102,6 +104,15 @@ class MessagesController < ApplicationController
     end
   end
 
+  def broadcast_append(message)
+    Turbo::StreamsChannel.broadcast_append_to(
+      "chat_#{@chat.id}",
+      target: "messages",
+      partial: "messages/message",
+      locals: { message: message }
+    )
+  end
+
   def broadcast_replace(message)
     Turbo::StreamsChannel.broadcast_replace_to(
       "chat_#{@chat.id}",
@@ -111,12 +122,25 @@ class MessagesController < ApplicationController
     )
   end
 
-  def broadcast_append(message)
-    Turbo::StreamsChannel.broadcast_append_to(
-      "chat_#{@chat.id}",
-      target: "messages",
-      partial: "messages/message",
-      locals: { message: message }
+def broadcast_append(message)
+  Turbo::StreamsChannel.broadcast_append_to(
+    "chat_#{@chat.id}",
+    target: "messages",
+    partial: "messages/message",
+    locals: { message: message }
+  )
+end
+
+def broadcast_recommended_panel
+  recommended_films = @chat.recommended_films.order(created_at: :desc)
+
+  Turbo::StreamsChannel.broadcast_replace_to(
+    "chat_#{@chat.id}",
+    target: "recommended_panel",
+    partial: "recommended_films/panel",
+    locals: { chat: @chat, recommended_films: recommended_films }
+  )
+end
     )
   end
 
@@ -170,16 +194,9 @@ class MessagesController < ApplicationController
 
     s = s.gsub(/^\s{0,3}#{Regexp.escape('#')}{1,6}\s+/, "")
     s = s.gsub(/^\s*[-*]\s+/, "• ")
-
-    # Force every bullet onto its own line, even if streamed as one paragraph
     s = s.gsub(/\s*•\s*/, "\n• ")
-
-    # Force "Refine:" onto its own line
     s = s.gsub(/\s*Refine:\s*/i, "\n\nRefine:\n")
-
-    # Make sure any refine bullets also sit on their own lines
     s = s.gsub(/(?<=\S)\s+•\s+/, "\n• ")
-
     s = s.gsub(/[ \t]+\n/, "\n")
     s = s.gsub(/\n{3,}/, "\n\n").strip
 
