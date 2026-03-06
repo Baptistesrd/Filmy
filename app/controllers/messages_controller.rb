@@ -39,11 +39,11 @@ class MessagesController < ApplicationController
         send_question
       end
 
-      @assistant_message.update_column(:content, normalize_ai_text(@assistant_message.content))
+      cleaned_content = normalize_ai_text(@assistant_message.content)
+      @assistant_message.update_column(:content, cleaned_content)
 
       broadcast_replace(@assistant_message)
-      clean_text = @assistant_message.content
-      upsert_recommended_films_from(clean_text)
+      upsert_recommended_films_from(cleaned_content)
 
       @chat.generate_title_from_first_message
       @recommended_films = @chat.recommended_films.order(created_at: :desc)
@@ -155,45 +155,63 @@ class MessagesController < ApplicationController
 
   def normalize_ai_text(text)
     s = text.to_s.gsub(/\r\n?/, "\n").strip
+
     s = s.gsub(/^\s{0,3}#{Regexp.escape('#')}{1,6}\s+/, "")
     s = s.gsub(/^\s*[-*]\s+/, "• ")
-    s = s.gsub(/\s+•\s+/, "\n• ")
-    s = s.gsub(/\s*Refine:\s*/m, "\nRefine:\n")
+
+    # Force every bullet onto its own line, even if streamed as one paragraph
+    s = s.gsub(/\s*•\s*/, "\n• ")
+
+    # Force "Refine:" onto its own line
+    s = s.gsub(/\s*Refine:\s*/i, "\n\nRefine:\n")
+
+    # Make sure any refine bullets also sit on their own lines
+    s = s.gsub(/(?<=\S)\s+•\s+/, "\n• ")
+
     s = s.gsub(/[ \t]+\n/, "\n")
     s = s.gsub(/\n{3,}/, "\n\n").strip
 
-    lines = s.split("\n").map(&:rstrip)
-    lines.reject! { |l| l.strip.empty? || l.strip == "•" }
+    lines = s.split("\n").map(&:strip)
+    lines.reject!(&:blank?)
 
-    refine_index = lines.index { |l| l.strip.casecmp("Refine:").zero? }
-    film_lines = []
-    refine_lines = []
+    refine_index = lines.index { |line| line.casecmp("Refine:").zero? }
 
-    if refine_index
-      film_lines = lines[0...refine_index]
-      refine_lines = lines[(refine_index + 1)..] || []
-    else
-      film_lines = lines
-      refine_lines = []
+    film_lines =
+      if refine_index
+        lines[0...refine_index]
+      else
+        lines
+      end
+
+    refine_lines =
+      if refine_index
+        lines[(refine_index + 1)..] || []
+      else
+        []
+      end
+
+    film_lines = film_lines.select { |line| line.start_with?("•") }.first(MAX_FILMS)
+    refine_lines = refine_lines.select { |line| line.start_with?("•") }.first(REFINE_BULLETS)
+
+    if refine_lines.length < REFINE_BULLETS && refine_index.present?
+      defaults = [
+        "• Want more gore vs. paranormal?",
+        "• Pick a runtime cap (e.g., < 100 min).",
+        "• Choose era: classics, 2000s, or modern."
+      ]
+      refine_lines += defaults[(refine_lines.length)...REFINE_BULLETS]
     end
 
-    film_lines = film_lines.select { |l| l.strip.start_with?("•") }
-    film_lines = film_lines.first(MAX_FILMS)
-    film_lines = film_lines.first(MIN_FILMS) if film_lines.length < MIN_FILMS
+    output = []
+    output.concat(film_lines)
 
-    refine_lines = refine_lines.select { |l| l.strip.start_with?("•") }
-    refine_lines = refine_lines.first(REFINE_BULLETS)
-
-    if refine_lines.any?
-      out = []
-      out.concat(film_lines)
-      out << ""
-      out << "Refine:"
-      out.concat(refine_lines)
-      out.join("\n").strip
-    else
-      film_lines.join("\n").strip
+    if refine_index.present?
+      output << ""
+      output << "Refine:"
+      output.concat(refine_lines)
     end
+
+    output.join("\n").strip
   end
 
   def upsert_recommended_films_from(clean_text)
@@ -212,43 +230,28 @@ class MessagesController < ApplicationController
   end
 
   def extract_films_from(clean_text)
-    film_lines = clean_text.to_s.lines
-                           .map(&:strip)
-                           .take_while { |line| !line.casecmp("Refine:").zero? }
-                           .select { |line| line.start_with?("•") }
+    film_section = clean_text.to_s.split(/^Refine:\s*$/i).first.to_s
 
-    film_lines.map { |line| parse_film_line(line) }.compact
+    film_section
+      .split("\n")
+      .map(&:strip)
+      .select { |line| line.start_with?("•") }
+      .map { |line| parse_film_line(line) }
+      .compact
   end
 
   def parse_film_line(line)
     s = line.sub(/\A•\s*/, "").strip
+    s = s.gsub(/\*\*(.*?)\*\*/, '\1')
 
-    title_year, rest = s.split("—", 2).map { |x| x.to_s.strip }
-    return nil if title_year.blank?
+    match = s.match(/\A(.+?)\s*\((\d{4})\)\s*—\s*(\d{1,3})\s*min:\s*(.+)\z/)
+    return nil unless match
 
-    title_year = title_year.gsub(/\*\*(.*?)\*\*/, '\1').strip
-
-    title = title_year
-    year = nil
-
-    if (m = title_year.match(/\A(.+?)\s*\((\d{4})\)\z/))
-      title = m[1].strip
-      year = m[2].to_i
-    end
-
-    runtime = nil
-    blurb = nil
-
-    if rest.present?
-      if (rm = rest.match(/(\d{1,3})\s*min/i))
-        runtime = rm[1].to_i
-      end
-
-      parts = rest.split(":", 2).map { |x| x.to_s.strip }
-      blurb = parts.length == 2 ? parts[1] : rest
-      blurb = blurb.to_s.strip
-    end
-
-    { title: title, year: year, runtime: runtime, blurb: blurb }
+    {
+      title: match[1].strip,
+      year: match[2].to_i,
+      runtime: match[3].to_i,
+      blurb: match[4].strip
+    }
   end
 end
