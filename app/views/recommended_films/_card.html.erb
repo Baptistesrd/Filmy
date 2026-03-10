@@ -1,31 +1,38 @@
-<div id="<%= dom_id(film) %>"
-     class="card border-0 shadow-sm rounded-7 mb-2"
-     data-controller="film-card">
+<div id="<%= dom_id(film) %>" class="rec-film-card" data-controller="film-card">
 
-  <div class="card-body py-2 rounded-7 ">
-    <div class="d-flex justify-content-between align-items-center">
+  <% if film.poster_url.present? %>
+    <%= image_tag film.poster_url, alt: film.title, class: "rec-film-poster" %>
+  <% else %>
+    <div class="rec-film-poster-placeholder">
+      <i class="fa-solid fa-clapperboard" style="font-size:1rem;opacity:0.4"></i>
+    </div>
+  <% end %>
 
-      <div>
-        <div class="fw-semibold text-dark">
-          <%= film.title %><% if film.year.present? %> (<%= film.year %>)<% end %>
-        </div>
+  <div class="rec-film-info">
+    <div class="rec-film-title"><%= film.title %></div>
+    <div class="rec-film-meta">
+      <%= film.year %>
+      <% if film.runtime.present? %> · <%= film.runtime %> min<% end %>
+    </div>
 
-        <% if film.runtime.present? %>
-          <div class="small text-muted"><%= film.runtime %> min</div>
-        <% end %>
-      </div>
+    <% if film.blurb.present? %>
+      <div class="rec-film-blurb"><%= film.blurb %></div>
+    <% end %>
 
-      <% unless film.added? %>
-        <%= button_to add_recommended_film_path(film),
-              method: :post,
-              class: "btn btn-primary btn-sm",
-              form: { data: { turbo_stream: true } } do %>
-          +
-        <% end %>
+    <div class="rec-film-actions">
+      <% if film.added? %>
+        <span class="rec-film-saved">
+          <i class="fa-solid fa-check"></i> Saved
+        </span>
       <% else %>
-        <span class="text-success fw-bold">✓</span>
+        <%= button_to save_recommended_film_path(film),
+              method: :post,
+              class: "btn-accent-ghost",
+              form: { data: { turbo_stream: true } } do %>
+          <i class="fa-solid fa-plus" style="font-size:0.75rem"></i> Save
+        <% end %>
       <% end %>
-
     </div>
   </div>
+
 </div>

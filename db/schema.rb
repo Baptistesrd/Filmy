@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_06_150708) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_10_000006) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,15 +52,38 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_150708) do
     t.index ["watch_session_id"], name: "index_chats_on_watch_session_id"
   end
 
-  create_table "films", force: :cascade do |t|
+  create_table "feedbacks", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "genre"
-    t.string "poster_url"
-    t.string "title"
+    t.string "rating_type", null: false
+    t.bigint "recommended_film_id", null: false
     t.datetime "updated_at", null: false
-    t.bigint "watch_session_id", null: false
+    t.bigint "user_id", null: false
+    t.index ["recommended_film_id"], name: "index_feedbacks_on_recommended_film_id"
+    t.index ["user_id", "recommended_film_id"], name: "index_feedbacks_on_user_id_and_recommended_film_id", unique: true
+    t.index ["user_id"], name: "index_feedbacks_on_user_id"
+  end
+
+  create_table "films", force: :cascade do |t|
+    t.text "blurb"
+    t.string "cast_members"
+    t.datetime "created_at", null: false
+    t.string "director"
+    t.string "genre"
+    t.string "justwatch_url"
+    t.string "poster_url"
+    t.decimal "rating", precision: 3, scale: 1
+    t.integer "runtime"
+    t.string "streaming_services"
+    t.text "synopsis"
+    t.string "title"
+    t.integer "tmdb_id"
+    t.string "trailer_url"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.integer "year"
-    t.index ["watch_session_id"], name: "index_films_on_watch_session_id"
+    t.index ["tmdb_id"], name: "index_films_on_tmdb_id"
+    t.index ["user_id", "tmdb_id"], name: "index_films_on_user_id_and_tmdb_id", unique: true, where: "(tmdb_id IS NOT NULL)"
+    t.index ["user_id"], name: "index_films_on_user_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -72,17 +95,38 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_150708) do
     t.index ["chat_id"], name: "index_messages_on_chat_id"
   end
 
+  create_table "ratings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "film_id", null: false
+    t.text "review"
+    t.integer "score", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["film_id"], name: "index_ratings_on_film_id"
+    t.index ["user_id", "film_id"], name: "index_ratings_on_user_id_and_film_id", unique: true
+    t.index ["user_id"], name: "index_ratings_on_user_id"
+  end
+
   create_table "recommended_films", force: :cascade do |t|
-    t.boolean "added"
+    t.boolean "added", default: false, null: false
     t.text "blurb"
+    t.string "cast_members"
     t.bigint "chat_id", null: false
     t.datetime "created_at", null: false
+    t.string "director"
+    t.string "genre"
+    t.string "poster_url"
+    t.decimal "rating", precision: 3, scale: 1
     t.integer "runtime"
-    t.string "title"
+    t.string "title", null: false
+    t.integer "tmdb_id"
+    t.string "trailer_url"
     t.datetime "updated_at", null: false
     t.bigint "watch_session_id", null: false
     t.integer "year"
+    t.index ["chat_id", "title", "year"], name: "index_recommended_films_on_chat_id_and_title_and_year", unique: true
     t.index ["chat_id"], name: "index_recommended_films_on_chat_id"
+    t.index ["tmdb_id"], name: "index_recommended_films_on_tmdb_id"
     t.index ["watch_session_id"], name: "index_recommended_films_on_watch_session_id"
   end
 
@@ -218,6 +262,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_150708) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
+  create_table "swipe_preferences", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "genre"
+    t.boolean "liked", null: false
+    t.string "poster_url"
+    t.text "synopsis"
+    t.string "title", null: false
+    t.integer "tmdb_id", null: false
+    t.decimal "tmdb_rating", precision: 3, scale: 1
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.integer "year"
+    t.index ["user_id", "tmdb_id"], name: "index_swipe_preferences_on_user_id_and_tmdb_id", unique: true
+    t.index ["user_id"], name: "index_swipe_preferences_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
@@ -242,23 +302,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_150708) do
     t.index ["user_id"], name: "index_watch_sessions_on_user_id"
   end
 
-  create_table "watchlist_items", force: :cascade do |t|
-    t.text "blurb"
-    t.datetime "created_at", null: false
-    t.integer "runtime"
-    t.string "title"
-    t.datetime "updated_at", null: false
-    t.bigint "watch_session_id", null: false
-    t.integer "year"
-    t.index ["watch_session_id"], name: "index_watchlist_items_on_watch_session_id"
-  end
-
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "chats", "users"
   add_foreign_key "chats", "watch_sessions"
-  add_foreign_key "films", "watch_sessions"
+  add_foreign_key "feedbacks", "recommended_films"
+  add_foreign_key "feedbacks", "users"
+  add_foreign_key "films", "users"
   add_foreign_key "messages", "chats"
+  add_foreign_key "ratings", "films"
+  add_foreign_key "ratings", "users"
   add_foreign_key "recommended_films", "chats"
   add_foreign_key "recommended_films", "watch_sessions"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
@@ -267,6 +320,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_150708) do
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "swipe_preferences", "users"
   add_foreign_key "watch_sessions", "users"
-  add_foreign_key "watchlist_items", "watch_sessions"
 end

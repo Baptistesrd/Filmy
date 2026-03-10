@@ -1,25 +1,34 @@
 <div class="hero">
   <div class="hero-content">
-    <h1 class="logo"%>Filmy</h1>
-    <p class="tagline">Forget Netflix. Forget Letterboxd.</p>
+    <p class="hero-eyebrow">Your cinematic companion</p>
 
-    <% if user_signed_in? %>
-      <div class="cta-group d-flex gap-3">
-        <%= link_to new_watch_session_path, class: "btn btn-secondary rounded-pill px-4 py-2 shadow-sm d-flex align-items-center " do %>
-          <span class="cta-btn__icon">▶</span>
-          <span class="cta-btn__text">Start the session</span>
+    <h1 class="hero-title">Filmy</h1>
+
+    <p class="hero-tagline">
+      Tell us how you feel.<br>
+      We'll find the perfect film.
+    </p>
+
+    <div class="hero-cta">
+      <% if user_signed_in? %>
+        <%= link_to new_watch_session_path, class: "hero-btn-primary" do %>
+          <i class="fa-solid fa-play" style="font-size:0.8rem"></i>
+          Start a session
         <% end %>
 
-        <%= link_to watch_sessions_path, class: "btn btn-secondary rounded-pill px-4 py-2 shadow-sm d-flex align-items-center" do %>
-          <span class="cta-btn__icon">◈</span>
-          <span class="cta-btn__text">See all my sessions</span>
+        <%= link_to watch_sessions_path, class: "hero-btn-ghost" do %>
+          My sessions
         <% end %>
-      </div>
-    <% else %>
-      <%= link_to new_user_session_path, class: "btn btn-secondary rounded-pill px-4 py-2 shadow-sm d-flex align-items-center" do %>
-        <span class="cta-btn__text">Start now</span>
-        <span class="cta-btn__arrow">→</span>
+      <% else %>
+        <%= link_to new_user_registration_path, class: "hero-btn-primary" do %>
+          Get started — it's free
+          <i class="fa-solid fa-arrow-right" style="font-size:0.8rem"></i>
+        <% end %>
+
+        <%= link_to new_user_session_path, class: "hero-btn-ghost" do %>
+          Sign in
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
   </div>
 </div>

@@ -1,18 +1,16 @@
 import { Controller } from "@hotwired/stimulus";
 
+// Fades out a card that has a success indicator (e.g., after saving)
 export default class extends Controller {
   connect() {
-    const tick = this.element.querySelector(".text-success");
+    const saved = this.element.querySelector(".rec-film-saved");
+    if (!saved) return;
 
-    if (tick) {
-      setTimeout(() => {
-        this.element.style.transition = "opacity 0.4s";
-        this.element.style.opacity = "0";
-
-        setTimeout(() => {
-          this.element.remove();
-        }, 400);
-      }, 700);
-    }
+    // Brief confirmation flash, then stabilise
+    saved.style.opacity = "0";
+    requestAnimationFrame(() => {
+      saved.style.transition = "opacity 0.3s ease";
+      saved.style.opacity = "1";
+    });
   }
 }

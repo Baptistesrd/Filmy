@@ -1,0 +1,240 @@
+// ─── Recommended Films Panel ──────────────────────────────────────────────────
+
+.film-panel {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  height: calc(100vh - 130px);
+  display: flex;
+  flex-direction: column;
+}
+
+.film-panel-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+
+  h2 {
+    font-family: $headers-font;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+  }
+}
+
+.film-panel-count {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid rgba(232, 160, 32, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  letter-spacing: 0.05em;
+}
+
+.film-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &::-webkit-scrollbar       { width: 3px; }
+  &::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+}
+
+.film-panel-empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.875rem;
+  line-height: 1.6;
+
+  i { font-size: 1.5rem; margin-bottom: 10px; display: block; opacity: 0.5; }
+}
+
+// ─── Individual recommended film card ────────────────────────────────────────
+.rec-film-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 11px 12px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  transition: border-color var(--ease);
+
+  &:hover { border-color: var(--border-strong); }
+}
+
+.rec-film-poster {
+  width: 44px;
+  height: 66px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg-elevated);
+}
+
+.rec-film-poster-placeholder {
+  width: 44px;
+  height: 66px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+
+.rec-film-info { flex: 1; min-width: 0; }
+
+.rec-film-title {
+  font-family: $headers-font;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rec-film-meta {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.rec-film-blurb {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.rec-film-actions { display: flex; gap: 6px; align-items: center; }
+
+.rec-film-saved {
+  font-size: 0.75rem;
+  color: #{$success};
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// ─── Library film cards (films#index) ────────────────────────────────────────
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px;
+}
+
+.library-film-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform var(--spring), box-shadow var(--ease), border-color var(--ease);
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border-strong);
+  }
+}
+
+.library-film-poster-wrap {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: var(--bg-surface);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+
+  .library-film-card:hover & img { transform: scale(1.04); }
+}
+
+.library-film-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 65%;
+  background: linear-gradient(to top, rgba(10, 10, 15, 0.98) 0%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 12px 10px 10px;
+}
+
+.library-film-no-poster {
+  aspect-ratio: 2 / 3;
+  background: var(--bg-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  text-align: center;
+  padding: 12px;
+}
+
+.library-film-title {
+  font-family: $headers-font;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.library-film-year {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.library-film-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(232, 160, 32, 0.2);
+  margin-top: 4px;
+}
+
+.library-film-footer {
+  padding: 10px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

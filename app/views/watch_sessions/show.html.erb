@@ -1,153 +1,71 @@
-<div class="container py-4">
-  <div class="row g-4">
+<div class="session-hero">
+  <p class="session-hero-kicker">Watch Session</p>
+  <h1 class="session-hero-title"><%= @watch_session.title %></h1>
 
-    <div class="col-lg-8">
-      <h1 class="fw-bold mb-3"><%= @watch_session.title %></h1>
+  <div class="session-hero-chips">
+    <% if @watch_session.genre.present? %>
+      <span class="ws-chip"><%= @watch_session.genre %></span>
+    <% end %>
+    <% if @watch_session.mood.present? %>
+      <span class="ws-chip"><%= @watch_session.mood %></span>
+    <% end %>
+  </div>
 
-      <div class="mb-4">
-        <% if @watch_session.description.present? %>
-          <%= raw(render_markdown(@watch_session.description)) %>
-        <% else %>
-          <p class="text-muted">No description yet.</p>
+  <% if @watch_session.description.present? %>
+    <p style="color:var(--text-muted);margin-top:12px;font-size:0.9375rem;line-height:1.6;">
+      <%= @watch_session.description %>
+    </p>
+  <% end %>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="section-heading" style="font-size:1.5rem">Chats</h2>
+      <%= button_to "New chat",
+            watch_session_chats_path(@watch_session),
+            method: :post,
+            class: "btn btn-primary btn-sm" %>
+    </div>
+
+    <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;">
+      <% if @chats.any? %>
+        <% @chats.each do |chat| %>
+          <div class="chat-list-item px-4">
+            <%= link_to chat_path(chat), class: "flex-grow-1 me-3" do %>
+              <div class="chat-list-title"><%= chat.title.presence || "Untitled" %></div>
+              <div class="chat-list-date"><%= chat.created_at.strftime("%d %b %Y · %H:%M") %></div>
+            <% end %>
+
+            <%= button_to chat_path(chat),
+                  method: :delete,
+                  data: { turbo_confirm: "Delete this chat?" },
+                  class: "btn btn-outline-danger btn-sm",
+                  form: { class: "m-0" } do %>
+              <i class="fa-solid fa-trash" style="font-size:0.75rem"></i>
+            <% end %>
+          </div>
         <% end %>
-      </div>
-
-      <div class="d-flex gap-2 mb-4">
-        <%= link_to "Edit session", edit_watch_session_path(@watch_session), class: "btn btn-secondary rounded-pill " %>
-      </div>
-
-      <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="h5 mb-0 text-dark">Watchlist</h2>
-            <span class="badge text-bg-light"><%= @films&.count.to_i %></span>
-          </div>
-
-          <% if @films.present? && @films.any? %>
-            <div class="row g-3">
-              <% @films.each do |film| %>
-                <div class="col-12 col-md-6">
-                  <div class="card h-100 border-0" style="background: rgba(255,255,255,0.92);">
-                    <div class="card-body p-3">
-                      <div class="d-flex gap-3 align-items-start">
-                        <div style="width: 90px; flex-shrink: 0;">
-                          <% if film.poster_url.present? %>
-                            <%= image_tag film.poster_url,
-                                alt: "#{film.title} poster",
-                                class: "img-fluid rounded shadow-sm",
-                                style: "width: 90px; height: 135px; object-fit: cover;" %>
-                          <% else %>
-                            <div
-                              class="rounded d-flex align-items-center justify-content-center text-muted small"
-                              style="width: 90px; height: 135px; background: #e9ecef;"
-                            >
-                              No poster
-                            </div>
-                          <% end %>
-                        </div>
-
-                        <div class="flex-grow-1">
-                          <div class="d-flex justify-content-between align-items-start gap-2">
-                            <div>
-                              <div class="fw-bold text-dark">
-                                <%= film.title %>
-                                <% if film.year.present? %>
-                                  (<%= film.year %>)
-                                <% end %>
-                              </div>
-
-                              <% if film.runtime.present? %>
-                                <div class="small text-muted mt-1">
-                                  <%= film.runtime %> min
-                                </div>
-                              <% end %>
-
-                              <% if film.genre.present? %>
-                                <div class="small text-muted mt-1">
-                                  <%= film.genre %>
-                                </div>
-                              <% end %>
-
-                              <% if film.streaming_services.present? %>
-                                <div class="small text-dark mt-2">
-                                  <strong>Watch on:</strong>
-                                  <%= film.streaming_services %>
-                                </div>
-                              <% else %>
-                                <div class="small text-muted mt-2">
-                                  Streaming info coming soon
-                                </div>
-                              <% end %>
-
-                              <div class="mt-2">
-                                <%= link_to "View on JustWatch",
-                                    film.justwatch_url,
-                                    target: "_blank",
-                                    rel: "noopener",
-                                    class: "btn btn-sm btn-outline-secondary" %>
-                              </div>
-                            </div>
-
-                            <span class="badge text-bg-secondary">Saved</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          <% else %>
-            <p class="text-muted mb-0">
-              No films saved yet. Add films from a chat to build your watchlist.
-            </p>
-          <% end %>
+      <% else %>
+        <div class="empty-state" style="padding:32px">
+          <i class="fa-regular fa-comment-dots"></i>
+          <p>No chats yet — start one above.</p>
         </div>
-      </div>
+      <% end %>
     </div>
+  </div>
 
-    <div class="col-lg-4">
-      <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body">
-
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="h5 mb-0 text-dark">Chats</h2>
-
-            <%= button_to "New chat",
-                  watch_session_chats_path(@watch_session),
-                  method: :post,
-                  class: "btn btn-secondary rounded-pill px-4 py-2 shadow-sm" %>
-          </div>
-
-          <% if @chats.any? %>
-            <div class="list-group list-group-flush">
-              <% @chats.each do |chat| %>
-                <div class="d-flex justify-content-between align-items-center py-3 border-top">
-                  <%= link_to chat_path(chat), class: "text-decoration-none flex-grow-1 me-2" do %>
-                    <div class="text-dark fw-semibold"><%= chat.title.presence || "Untitled" %></div>
-                    <div class="text-muted small"><%= chat.created_at.strftime("%d %b %Y • %H:%M") %></div>
-                  <% end %>
-
-                  <%= button_to chat_path(chat),
-                        method: :delete,
-                        data: { turbo_confirm: "Delete this chat?" },
-                        class: "btn btn-sm btn-outline-danger",
-                        form: { class: "m-0" } do %>
-                    <span class="d-inline-flex align-items-center">
-                      <i class="fa-solid fa-trash"></i>
-                      <span class="ms-1 d-none">Delete</span>
-                    </span>
-                  <% end %>
-                </div>
-              <% end %>
-            </div>
-          <% else %>
-            <p class="text-muted mb-0">There are no chats yet.</p>
-          <% end %>
-
-        </div>
-      </div>
+  <div class="col-lg-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="section-heading" style="font-size:1.5rem">Actions</h2>
     </div>
-
+    <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;display:flex;flex-direction:column;gap:10px;">
+      <%= link_to edit_watch_session_path(@watch_session), class: "btn btn-secondary w-100" do %>
+        <i class="fa-solid fa-pen" style="font-size:0.8rem"></i> Edit session
+      <% end %>
+      <%= link_to films_path, class: "btn btn-outline-light w-100" do %>
+        <i class="fa-solid fa-bookmark" style="font-size:0.8rem"></i> My film library
+      <% end %>
+    </div>
   </div>
 </div>

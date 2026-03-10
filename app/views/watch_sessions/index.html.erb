@@ -1,20 +1,26 @@
-<div class="container py-5">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="mb-0">Your Watch Sessions</h1>
-    <%= link_to "New watch session", new_watch_session_path, class: "btn btn-secondary rounded-pill px-4 py-2 shadow-sm "%>
+<div class="sessions-page-header">
+  <div>
+    <h1 class="section-heading">Your Sessions</h1>
+    <p class="section-sub">Each session captures a mood. Start one and let Filmy do the rest.</p>
   </div>
 
-  <% if @watch_sessions.any? %>
-    <div class="row g-3">
-      <% @watch_sessions.each do |watch_session| %>
-        <div class="col-12 col-md-6 col-lg-4">
-          <%= render "card", watch_session: watch_session %>
-        </div>
-      <% end %>
-    </div>
-  <% else %>
-    <div class="alert alert-info">
-      No watch sessions yet. Start your first one!
-    </div>
+  <%= link_to new_watch_session_path, class: "btn btn-primary" do %>
+    <i class="fa-solid fa-plus" style="font-size:0.8rem"></i>
+    New session
   <% end %>
 </div>
+
+<% if @watch_sessions.any? %>
+  <div class="sessions-grid">
+    <% @watch_sessions.each do |watch_session| %>
+      <%= render "card", watch_session: watch_session %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="empty-state">
+    <i class="fa-regular fa-film"></i>
+    <h3>No sessions yet</h3>
+    <p>Create your first session to start getting film recommendations.</p>
+    <%= link_to "Start your first session", new_watch_session_path, class: "btn btn-primary mt-3" %>
+  </div>
+<% end %>

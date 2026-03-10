@@ -1,10 +1,18 @@
 class FilmsController < ApplicationController
+  before_action :set_film, only: [:destroy]
+
+  def index
+    @films = current_user.films.recent
+  end
+
   def destroy
-    watch_session = current_user.watch_sessions.find(params[:watch_session_id])
-    film = watch_session.films.find(params[:id])
+    @film.destroy
+    redirect_to films_path, notice: "Removed from your library."
+  end
 
-    film.destroy
+  private
 
-    redirect_to edit_watch_session_path(watch_session), notice: "Film removed from watch session."
+  def set_film
+    @film = current_user.films.find(params[:id])
   end
 end

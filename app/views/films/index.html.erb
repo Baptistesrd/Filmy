@@ -1,0 +1,65 @@
+<div class="sessions-page-header">
+  <div>
+    <h1 class="section-heading">My Library</h1>
+    <p class="section-sub">Films you've saved from your chat sessions.</p>
+  </div>
+</div>
+
+<% if @films.any? %>
+  <div class="library-grid">
+    <% @films.each do |film| %>
+      <div class="library-film-card">
+        <div class="library-film-poster-wrap">
+          <% if film.poster_url.present? %>
+            <%= image_tag film.poster_url, alt: "#{film.title} poster" %>
+
+            <div class="library-film-overlay">
+              <div class="library-film-title"><%= film.title %></div>
+              <div class="library-film-year"><%= film.year %></div>
+              <% if film.rating.present? %>
+                <span class="library-film-rating">
+                  <i class="fa-solid fa-star" style="font-size:0.6rem"></i>
+                  <%= film.rating %>
+                </span>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="library-film-no-poster">
+              <div>
+                <div class="library-film-title" style="color:var(--text-muted);font-size:0.875rem"><%= film.title %></div>
+                <div class="library-film-year"><%= film.year %></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="library-film-footer">
+          <% if film.trailer_url.present? %>
+            <%= link_to film.trailer_url, target: "_blank", rel: "noopener", class: "btn-accent-ghost btn-sm" do %>
+              <i class="fa-brands fa-youtube" style="font-size:0.75rem"></i> Trailer
+            <% end %>
+          <% else %>
+            <%= link_to film.justwatch_lookup_url, target: "_blank", rel: "noopener", class: "btn-accent-ghost btn-sm" do %>
+              JustWatch
+            <% end %>
+          <% end %>
+
+          <%= button_to film_path(film),
+                method: :delete,
+                data: { turbo_confirm: "Remove from library?" },
+                class: "mac-close-btn",
+                form: { class: "m-0" } do %>
+            <span class="mac-close-icon">✕</span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="empty-state">
+    <i class="fa-regular fa-bookmark"></i>
+    <h3>Your library is empty</h3>
+    <p>Save films from your chat sessions and they'll appear here.</p>
+    <%= link_to "Start a session", new_watch_session_path, class: "btn btn-primary mt-3" %>
+  </div>
+<% end %>

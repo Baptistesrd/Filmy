@@ -1,18 +1,19 @@
-<div class="card border-0 shadow-sm rounded-4">
-  <div class="card-body">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <h2 class="h6 mb-0 text-dark">Recommended</h2>
-      <span class="badge bg-light text-dark"><%= recommended_films.size %></span>
-    </div>
+<div class="film-panel">
+  <div class="film-panel-header">
+    <h2><i class="fa-solid fa-film" style="color:var(--accent);font-size:0.9rem;margin-right:6px"></i>Picks for you</h2>
+    <span class="film-panel-count"><%= recommended_films.size %></span>
+  </div>
 
+  <div class="film-panel-body">
     <% if recommended_films.any? %>
-      <div class="d-flex flex-column gap-3">
-        <% recommended_films.each do |film| %>
-          <%= render "recommended_films/card", film: film %>
-        <% end %>
-      </div>
+      <% recommended_films.each do |film| %>
+        <%= render "recommended_films/card", film: film %>
+      <% end %>
     <% else %>
-      <p class="text-dark-50 mb-0">Ask for recommendations and they'll appear here.</p>
+      <div class="film-panel-empty">
+        <i class="fa-regular fa-compass"></i>
+        Ask me what you're in the mood for and your picks will appear here.
+      </div>
     <% end %>
   </div>
 </div>

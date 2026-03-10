@@ -1,0 +1,65 @@
+// ─── Form Elements ────────────────────────────────────────────────────────────
+
+.form-control,
+.form-select {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  font-family: $body-font;
+  font-size: 0.9375rem;
+  transition: border-color var(--ease), box-shadow var(--ease);
+
+  &::placeholder { color: var(--text-dim); }
+
+  &:focus {
+    background: var(--bg-surface);
+    border-color: var(--accent);
+    color: var(--text);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+    outline: none;
+  }
+}
+
+.form-select option {
+  background: var(--bg-surface);
+  color: var(--text);
+}
+
+.form-label {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 6px;
+}
+
+// Input group icon
+.input-group-text {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  color: var(--text-dim);
+}
+
+// Errors
+.invalid-feedback { color: #{$error}; font-size: 0.8125rem; }
+.is-invalid { border-color: #{$error} !important; }
+
+// Devise forms
+.devise-form {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  max-width: 440px;
+  margin: 0 auto;
+
+  h2 {
+    font-family: $headers-font;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title><%= content_for(:title) || "Filmy" %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -8,49 +8,53 @@
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= yield :head %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
   </head>
 
   <body>
     <%= link_to "Skip to main content", "#main-content", class: "visually-hidden-focusable" %>
 
-    <header>
-      <%# <%= render "shared/navbar" %>
-    </header>
+    <% if notice.present? %>
+      <div class="alert alert-notice" role="alert"><%= notice %></div>
+    <% end %>
+    <% if alert.present? %>
+      <div class="alert alert-alert" role="alert"><%= alert %></div>
+    <% end %>
 
-    <div class="container-fluid" id="main-content">
-      <div class="d-flex" data-controller="toggle">
-        <nav class="sidebar pt-3 flex-shrink-0 d-none" style="width:250px" data-toggle-target="hideable">
+    <% if user_signed_in? %>
+      <div class="app-shell" data-controller="toggle" id="main-content">
+        <nav class="sidebar d-none" data-toggle-target="hideable" aria-label="Sidebar navigation">
           <%= render "shared/sidebar", watch_sessions: @watch_sessions %>
         </nav>
 
-        <main class="flex-grow-1 my-4">
-          <%# <%= link_to "#",
-              class: "d-none nav-link text-light mb-3",
-              data: { action: "click->toggle#call", toggle_target: "show" } do %>
-            <%# <i class="fa-regular fa-square-caret-right"></i>
-          <% end %>
+        <div class="app-content">
+          <div class="sidebar-toggle-wrap">
+            <button class="sidebar-toggle d-lg-none"
+                    data-action="click->toggle#call"
+                    data-toggle-target="show"
+                    aria-label="Open sidebar">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+          </div>
 
-          <button
-            class="sidebar-toggle btn btn-light"
-            data-action="click->toggle#call"
-            data-toggle-target="show">
-            <i class="fa-solid fa-bars"></i>
-          </button>
-
-          <%= yield %>
-        </main>
+          <main class="app-main">
+            <%= yield %>
+          </main>
+        </div>
       </div>
-    </div>
+    <% else %>
+      <main id="main-content">
+        <%= yield %>
+      </main>
+    <% end %>
   </body>
 </html>

@@ -1,10 +1,25 @@
-// Define variables for your color scheme
+// ─── Filmy Design System — Color Tokens ──────────────────────────────────────
 
-// For example:
-$red: #FD1015;
-$blue: #0D6EFD;
-$yellow: #FFC65A;
-$orange: #E67E22;
-$green: #1EDD88;
-$gray: #0E0000;
-$light-gray: #F4F4F4;
+// SCSS variables (used in Bootstrap overrides below)
+$bg-dark:      #0a0a0f;
+$bg-elevated:  #111118;
+$bg-surface:   #1a1a24;
+$text-primary: #f5f0e8;
+$text-muted:   #9e9a93;
+$text-dim:     #5a5650;
+$accent:       #e8a020;
+$accent-dim:   rgba(232, 160, 32, 0.15);
+$accent-hover: #f0b030;
+$border:       rgba(255, 255, 255, 0.07);
+$border-strong:rgba(255, 255, 255, 0.14);
+$success:      #22c55e;
+$error:        #ef4444;
+
+// Legacy variables kept for Bootstrap compatibility
+$red:        $error;
+$blue:       $accent;
+$yellow:     $accent;
+$orange:     $accent;
+$green:      $success;
+$gray:       $text-dim;
+$light-gray: $bg-elevated;

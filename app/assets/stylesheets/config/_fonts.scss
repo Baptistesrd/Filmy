@@ -1,14 +1,5 @@
-// app/assets/stylesheets/config/_bootstrap_variables.scss
+// ─── Filmy Design System — Font Tokens ───────────────────────────────────────
+// Loaded via Google Fonts in layouts/application.html.erb
 
-// Fallback fonts (so this file never crashes even if config/_fonts.scss changes)
-$body-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-  Arial, "Noto Sans", "Liberation Sans", sans-serif !default;
-
-$headers-font: $body-font !default;
-
-// Bootstrap variables (edit as you like)
-$font-family-sans-serif: $body-font;
-
-// Optional: example tweaks (safe to keep or delete)
-// $body-bg: #0b0e14;
-// $body-color: rgba(255, 255, 255, 0.92);
+$body-font:    "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+$headers-font: "Cormorant Garamond", Georgia, "Times New Roman", serif;

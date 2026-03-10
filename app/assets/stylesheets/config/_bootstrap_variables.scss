@@ -1,28 +1,70 @@
-// This is where you override default Bootstrap variables
-// 1. Find all Bootstrap variables that you can override at the end of each component's documentation under the `Sass variables` anchor
-// e.g. here are the ones you can override for the navbar https://getbootstrap.com/docs/5.3/components/navbar/#sass-variables
-// 2. These variables are defined with default value (see https://robots.thoughtbot.com/sass-default)
-// 3. You can override them below!
+// ─── Bootstrap Variable Overrides ────────────────────────────────────────────
 
-// General style
+// Fonts
 $font-family-sans-serif: $body-font;
 $headings-font-family:   $headers-font;
-$body-bg:                $light-gray;
 $font-size-base:         1rem;
+$headings-font-weight:   600;
 
 // Colors
-$body-color: $gray;
-$primary:    $blue;
-$success:    $green;
-$info:       $yellow;
-$danger:     $red;
-$warning:    $orange;
+$body-bg:    $bg-dark;
+$body-color: $text-primary;
+$primary:    $accent;
+$secondary:  $bg-surface;
+$success:    $success;
+$danger:     $error;
+$light:      $bg-elevated;
+$dark:       $bg-surface;
 
-// Buttons & inputs' radius
-$border-radius-sm:            .0625rem;
-$border-radius:               .125rem;
-$border-radius-lg:            .25rem;
-$border-radius-xl:            .5rem;
-$border-radius-xxl:           1rem;
+// Cards
+$card-bg:              $bg-elevated;
+$card-border-color:    $border;
+$card-border-radius:   16px;
+$card-cap-bg:          $bg-elevated;
+$card-color:           $text-primary;
 
-// Override other variables below!
+// Inputs
+$input-bg:                $bg-surface;
+$input-border-color:      $border;
+$input-color:             $text-primary;
+$input-placeholder-color: $text-dim;
+$input-focus-border-color:$accent;
+$input-focus-box-shadow:  0 0 0 3px rgba(232, 160, 32, 0.15);
+$input-border-radius:     8px;
+
+// Buttons
+$btn-border-radius:    10px;
+$btn-font-weight:      500;
+$btn-padding-y:        0.625rem;
+$btn-padding-x:        1.5rem;
+
+// Border radius
+$border-radius-sm:  6px;
+$border-radius:     10px;
+$border-radius-lg:  16px;
+$border-radius-xl:  24px;
+$border-radius-xxl: 32px;
+
+// Badges
+$badge-border-radius: 6px;
+$badge-font-weight:   500;
+$badge-padding-y:     0.3em;
+$badge-padding-x:     0.6em;
+
+// Nav / dropdowns
+$nav-link-color:       $text-muted;
+$nav-link-hover-color: $text-primary;
+
+// Alerts
+$alert-border-radius: 10px;
+
+// Tables
+$table-color:         $text-primary;
+$table-bg:            transparent;
+$table-border-color:  $border;
+
+// Links
+$link-color:           $accent;
+$link-hover-color:     $accent-hover;
+$link-decoration:      none;
+$link-hover-decoration:none;

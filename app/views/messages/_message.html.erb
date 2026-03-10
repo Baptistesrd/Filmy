@@ -1,13 +1,13 @@
-<% role = message.role.to_s.strip.downcase %>
-<% is_user = (role == "user") %>
+<% is_user = message.role.to_s == "user" %>
 
 <% if is_user %>
   <div class="chat-row chat-row--user">
     <div class="chat-bubble chat-bubble--user">
       <% if message.image.attached? %>
-        <%= image_tag url_for(message.image), class: "img-fluid rounded mb-2 d-block", style: "max-width: 220px;" %>
+        <%= image_tag url_for(message.image),
+              alt: "Uploaded image",
+              style: "max-width: 220px; border-radius: 8px; display: block; margin-bottom: 8px;" %>
       <% end %>
-
       <% if message.content.present? %>
         <%= simple_format(h(message.content), {}, wrapper_tag: "div") %>
       <% end %>
@@ -23,7 +23,9 @@
               wrapper_tag: "div"
             ) %>
       <% else %>
-        <span class="text-muted">...</span>
+        <div class="typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
       <% end %>
     </div>
   </div>

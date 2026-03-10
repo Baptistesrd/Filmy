@@ -22,11 +22,9 @@ class WatchSessionsController < ApplicationController
 
   def show
     @chats = @watch_session.chats.order(created_at: :desc)
-    @films = @watch_session.films.order(created_at: :desc)
   end
 
   def edit
-    @films = @watch_session.films.order(:title)
   end
 
   def update

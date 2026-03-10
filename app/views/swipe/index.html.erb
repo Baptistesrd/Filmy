@@ -1,0 +1,71 @@
+<div class="discover-page"
+     data-controller="swipe"
+     data-swipe-save-url-value="<%= swipe_preferences_path %>"
+     data-swipe-more-url-value="<%= discover_path(format: :json) %>"
+     data-swipe-csrf-value="<%= form_authenticity_token %>">
+
+  <div class="discover-header">
+    <h1 class="discover-title">Discover</h1>
+    <p class="discover-subtitle">Swipe to shape your taste profile.</p>
+  </div>
+
+  <div class="swipe-arena">
+    <div class="swipe-stack" data-swipe-target="stack">
+      <% @films.each_with_index do |film, i| %>
+        <div class="swipe-card <%= 'swipe-card--top' if i == 0 %>"
+             data-swipe-target="card"
+             data-tmdb-id="<%= film[:tmdb_id] %>"
+             data-title="<%= film[:title] %>"
+             data-year="<%= film[:year] %>"
+             data-poster="<%= film[:poster_url] %>"
+             data-synopsis="<%= film[:synopsis] %>"
+             data-rating="<%= film[:tmdb_rating] %>"
+             style="z-index:<%= 100 - i %>">
+
+          <% if film[:poster_url].present? %>
+            <img src="<%= film[:poster_url] %>" alt="<%= film[:title] %>" class="swipe-poster" loading="lazy">
+          <% else %>
+            <div class="swipe-poster swipe-poster--placeholder">
+              <i class="fa-solid fa-film"></i>
+            </div>
+          <% end %>
+
+          <div class="swipe-overlay swipe-overlay--like">LIKE</div>
+          <div class="swipe-overlay swipe-overlay--skip">SKIP</div>
+
+          <div class="swipe-info">
+            <h3 class="swipe-film-title"><%= film[:title] %></h3>
+            <div class="swipe-meta">
+              <% if film[:year].present? %>
+                <span class="swipe-year"><%= film[:year] %></span>
+              <% end %>
+              <% if film[:tmdb_rating].present? %>
+                <span class="swipe-rating">
+                  <i class="fa-solid fa-star"></i>
+                  <%= film[:tmdb_rating] %>
+                </span>
+              <% end %>
+            </div>
+            <% if film[:synopsis].present? %>
+              <p class="swipe-synopsis"><%= truncate(film[:synopsis], length: 120) %></p>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="swipe-empty" data-swipe-target="empty" style="display:none">
+        <i class="fa-solid fa-film"></i>
+        <p>Loading more films…</p>
+      </div>
+    </div>
+
+    <div class="swipe-actions">
+      <button class="swipe-btn swipe-btn--skip" data-action="click->swipe#skipCurrent" aria-label="Skip">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <button class="swipe-btn swipe-btn--like" data-action="click->swipe#likeCurrent" aria-label="Like">
+        <i class="fa-solid fa-heart"></i>
+      </button>
+    </div>
+  </div>
+</div>

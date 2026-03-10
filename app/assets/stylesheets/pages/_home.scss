@@ -1,66 +1,119 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-h1 {
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
-}
-
-body {
-  background: #0d0d0d;
-  color: #f0f0f0;
-  font-family: 'Inter', sans-serif;
-}
+// ─── Landing / Hero ───────────────────────────────────────────────────────────
 
 .hero {
   min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), image-url('films.avif') center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    160deg,
+    rgba(10, 10, 15, 0.75) 0%,
+    rgba(10, 10, 15, 0.60) 100%
+  ),
+  image-url("films.avif") center / cover no-repeat;
+}
+
+// Grain texture overlay
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.6;
 }
 
 .hero-content {
+  position: relative;
+  z-index: 1;
   text-align: center;
   padding: 2rem;
+  max-width: 640px;
+  animation: fade-up 0.6s ease both;
 }
 
-.logo {
-  font-size: 3.5rem;
-  font-weight: 800;
-  letter-spacing: -1px;
-  margin-bottom: 0.5rem;
-}
-
-.tagline {
-  font-size: 1.3rem;
-  color: whitesmoke;
+.hero-eyebrow {
+  font-size: 0.8125rem;
   font-weight: 600;
-  margin-bottom: 1rem;
-  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin-bottom: 16px;
 }
 
-.description {
-  font-size: 1rem;
-  color: #aaa;
-  margin-bottom: 2.5rem;
-}
-
-.btn-primary {
-  display: inline-block;
-  background: #403F4C;
-  color: white;
-  padding: 0.9rem 2.5rem;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 1rem;
+.hero-title {
+  font-family: $headers-font;
+  font-size: clamp(4rem, 10vw, 7.5rem);
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+  color: var(--text);
+  margin-bottom: 20px;
+
+  // Amber period at end
+  &::after {
+    content: ".";
+    color: var(--accent);
+  }
 }
 
-.btn-primary:hover {
-  background: #f40612;
-  transform: scale(1.03);
+.hero-tagline {
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  color: rgba(245, 240, 232, 0.7);
+  line-height: 1.55;
+  margin-bottom: 36px;
+  font-weight: 300;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.hero-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #0a0a0f;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  padding: 13px 28px;
+  border-radius: var(--radius-md);
+  border: none;
+  text-decoration: none;
+  transition: background var(--ease), transform var(--ease), box-shadow var(--ease);
+
+  &:hover {
+    background: var(--accent-hover);
+    color: #0a0a0f;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-accent);
+  }
+}
+
+.hero-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  padding: 13px 28px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  text-decoration: none;
+  transition: background var(--ease), border-color var(--ease);
+  backdrop-filter: blur(6px);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
 }

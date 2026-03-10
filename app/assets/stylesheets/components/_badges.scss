@@ -1,0 +1,42 @@
+// ─── Badges & Tags ────────────────────────────────────────────────────────────
+
+.badge-accent {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid rgba(232, 160, 32, 0.25);
+  border-radius: var(--radius-sm);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+}
+
+.badge-muted {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 3px 8px;
+}
+
+// Override Bootstrap badge defaults
+.badge {
+  font-family: $body-font;
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+
+.text-bg-secondary {
+  background: var(--bg-surface) !important;
+  color: var(--text-muted) !important;
+  border: 1px solid var(--border);
+}
+
+.text-bg-dark {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: var(--text-muted) !important;
+}

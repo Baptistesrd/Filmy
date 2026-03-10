@@ -1,31 +1,32 @@
-<%= simple_form_for [chat, message], html: { class: "chat-form", multipart: true } do |f| %>
+<%= simple_form_for [chat, message],
+      html: { class: "chat-form", multipart: true, data: { controller: "message-form" } } do |f| %>
 
-  <div id="image-preview-container" class="mb-2"></div>
+  <div id="image-preview-container"></div>
 
-  <div class="d-flex gap-2 align-items-center">
-
+  <div class="chat-form-row">
     <%= f.input :content,
-      label: false,
-      placeholder: "I'm in the mood for...",
-      required: false,
-      wrapper_html: { class: "flex-grow-1 mb-0" },
-      input_html: { class: "form-control chat-input", rows: 2 } %>
+          label: false,
+          placeholder: "What are you in the mood for?",
+          required: false,
+          wrapper_html: { class: "flex-grow-1 mb-0" },
+          input_html: {
+            class: "chat-input",
+            rows: 1,
+            data: { "message-form-target": "input", action: "keydown->message-form#submitOnEnter" }
+          } %>
 
-      <label class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center mb-0" style="width:38px;height:38px;">
-        <i class="fa-solid fa-plus text-white"></i>
-
-        <%= f.file_field :image,
+    <label class="chat-upload-btn" title="Attach image">
+      <i class="fa-solid fa-paperclip" style="font-size:0.85rem"></i>
+      <%= f.file_field :image,
             accept: "image/png,image/jpeg,image/gif,image/webp",
             class: "d-none",
-            id: "image-upload" %>
-      </label>
+            id: "image-upload",
+            data: { action: "change->message-form#previewImage" } %>
+    </label>
 
-    <button type="submit"
-      class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center p-0"
-      style="width:36px;height:36px;">
-      <i class="fa-solid fa-arrow-up text-white"></i>
+    <button type="submit" class="chat-send-btn" aria-label="Send message">
+      <i class="fa-solid fa-arrow-up" style="font-size:0.85rem"></i>
     </button>
-
   </div>
 
 <% end %>

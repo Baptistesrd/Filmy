@@ -1,65 +1,14 @@
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-12 col-md-10 col-lg-8">
-      <div class="card shadow-sm">
-        <div class="card-body p-4 p-md-5">
-          <div class="d-flex justify-content-between align-items-start mb-4">
-            <h1 class="h2 mb-0">Edit Watch Session</h1>
-            <%= link_to "Back",
-                (@watch_session&.persisted? ? watch_session_path(@watch_session) : root_path),
-                class: "btn btn-outline-secondary" %>
-          </div>
-
-          <%= render "form", watch_session: @watch_session %>
-
-          <hr class="my-4">
-
-          <div class="mt-4">
-            <h2 class="h5 mb-3">Remove a film from this session</h2>
-
-            <% if @films.present? && @films.any? %>
-              <div class="card border-0 shadow-sm rounded-4 p-3">
-                <label for="film_select" class="form-label">Current films</label>
-
-                <select id="film_select" class="form-select mb-3" onchange="updateDeleteFilmForm(this)">
-                  <option value="">Choose a film to remove</option>
-                  <% @films.each do |film| %>
-                    <option value="<%= watch_session_film_path(@watch_session, film) %>">
-                      <%= film.title %><% if film.year.present? %> (<%= film.year %>)<% end %>
-                    </option>
-                  <% end %>
-                </select>
-
-                <form id="delete-film-form" method="post" action="">
-                  <input type="hidden" name="_method" value="delete">
-                  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
-
-                  <button type="submit" class="btn btn-outline-danger" disabled id="delete-film-button">
-                    Delete film
-                  </button>
-                </form>
-              </div>
-            <% else %>
-              <p class="text-muted mb-0">There are no films in this watch session yet.</p>
-            <% end %>
-          </div>
-        </div>
+<div class="row justify-content-center">
+  <div class="col-12 col-md-10 col-lg-8">
+    <div class="form-page-card">
+      <div class="d-flex justify-content-between align-items-start mb-4">
+        <h1 class="section-heading" style="font-size:2rem">Edit Session</h1>
+        <%= link_to watch_session_path(@watch_session), class: "btn btn-outline-light btn-sm" do %>
+          <i class="fa-solid fa-xmark"></i>
+        <% end %>
       </div>
+
+      <%= render "form", watch_session: @watch_session %>
     </div>
   </div>
 </div>
-
-<script>
-  function updateDeleteFilmForm(select) {
-    const form = document.getElementById("delete-film-form");
-    const button = document.getElementById("delete-film-button");
-
-    if (select.value === "") {
-      form.action = "";
-      button.disabled = true;
-    } else {
-      form.action = select.value;
-      button.disabled = false;
-    }
-  }
-</script>
