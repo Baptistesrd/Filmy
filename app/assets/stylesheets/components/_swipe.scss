@@ -1,46 +1,28 @@
-// ─── Discover — full-screen immersive swipe experience ────────────────────────
+// ─── Discover page ─────────────────────────────────────────────────────────────
 
-// ── Blurred poster background ──────────────────────────────────────────────────
-.discover-bg {
-  position: fixed;
-  inset: -80px;
-  z-index: 0;
-  background-size: cover;
-  background-position: center;
-  filter: blur(80px) brightness(0.12) saturate(0.4);
-  transition: opacity 1.6s ease;
-  pointer-events: none;
-
-  &--a { opacity: 0; }
-  &--b { opacity: 0; }
-}
-
-// ── Page wrapper — fills full viewport below navbar ───────────────────────────
 .discover-wrap {
-  position: relative;
-  z-index: 1;
   height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 72px 20px 20px; // 60px nav + 12px gap
+  padding: 72px 20px 16px;
   overflow: hidden;
 }
 
-// ── Top bar ───────────────────────────────────────────────────────────────────
+// ── Top bar ────────────────────────────────────────────────────────────────────
 .discover-topbar {
   flex: none;
   width: 100%;
-  max-width: 460px;
+  max-width: 400px;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-bottom: 12px;
+  padding-bottom: 14px;
 }
 
 .discover-brand {
   font-family: $headers-font;
-  font-size: clamp(1.3rem, 3vw, 1.6rem);
+  font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1;
@@ -52,18 +34,16 @@
 .discover-stats {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .discover-stat {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   font-size: 0.78rem;
-  font-weight: 500;
   color: var(--text-muted);
-
-  i { font-size: 0.62rem; opacity: 0.5; }
+  i { font-size: 0.6rem; opacity: 0.55; }
 }
 
 .discover-stat-sep {
@@ -76,39 +56,37 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(232, 160, 32, 0.12);
+  background: rgba(232, 160, 32, 0.1);
   border: 1px solid rgba(232, 160, 32, 0.28);
   color: var(--accent);
   font-family: $body-font;
-  font-size: 0.76rem;
+  font-size: 0.75rem;
   font-weight: 600;
   padding: 7px 13px;
   border-radius: 100px;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+  transition: background 0.18s ease, border-color 0.18s ease;
 
-  i { font-size: 0.68rem; }
+  i { font-size: 0.66rem; }
 
   &:hover {
-    background: rgba(232, 160, 32, 0.2);
-    border-color: rgba(232, 160, 32, 0.55);
-    box-shadow: 0 0 16px rgba(232, 160, 32, 0.18);
+    background: rgba(232, 160, 32, 0.18);
+    border-color: rgba(232, 160, 32, 0.5);
   }
 
-  &:disabled { opacity: 0.5; pointer-events: none; }
+  &:disabled { opacity: 0.4; pointer-events: none; }
 }
 
-// ── Category chips ────────────────────────────────────────────────────────────
+// ── Category chips ─────────────────────────────────────────────────────────────
 .discover-cats {
   flex: none;
   display: flex;
   gap: 6px;
-  flex-wrap: nowrap;
   justify-content: center;
   width: 100%;
-  max-width: 460px;
-  padding-bottom: 14px;
+  max-width: 400px;
+  padding-bottom: 16px;
   overflow-x: auto;
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
@@ -118,9 +96,9 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
-  color: var(--text-dim);
+  color: var(--text-muted);
   font-family: $body-font;
   font-size: 0.72rem;
   font-weight: 500;
@@ -128,37 +106,36 @@
   border-radius: 100px;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.18s ease;
+  transition: all 0.15s ease;
 
-  i { font-size: 0.62rem; }
+  i { font-size: 0.6rem; }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.07);
     border-color: var(--border-strong);
-    color: var(--text-muted);
+    color: var(--text);
   }
 
   &--active {
-    background: rgba(232, 160, 32, 0.14);
-    border-color: rgba(232, 160, 32, 0.4);
+    background: rgba(232, 160, 32, 0.12);
+    border-color: rgba(232, 160, 32, 0.38);
     color: var(--accent);
   }
 }
 
-// ── Arena — takes remaining height ────────────────────────────────────────────
+// ── Card arena ─────────────────────────────────────────────────────────────────
 .swipe-arena {
   flex: 1;
-  min-height: 0; // critical: lets flex child shrink below natural size
+  min-height: 0;
   width: 100%;
-  max-width: 400px;
+  max-width: 360px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  transition: opacity 0.35s ease;
+  gap: 18px;
 }
 
-// ── Card stack — fills available space ────────────────────────────────────────
+// ── Card stack ─────────────────────────────────────────────────────────────────
 .swipe-stack {
   flex: 1;
   min-height: 0;
@@ -166,25 +143,23 @@
   width: 100%;
 }
 
-// ── Individual card ───────────────────────────────────────────────────────────
+// ── Individual card ────────────────────────────────────────────────────────────
 .swipe-card {
   position: absolute;
   inset: 0;
-  border-radius: 20px;
+  border-radius: 18px;
   overflow: hidden;
   cursor: grab;
   user-select: none;
   touch-action: none;
   will-change: transform;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6), 0 20px 60px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
 
-  // Stacking transforms are managed by JS (_updateCardStack)
-  // Default: all hidden until JS initialises
-  &--top { cursor: grab; &:active { cursor: grabbing; } }
+  &--top { &:active { cursor: grabbing; } }
   &--gone { display: none !important; }
 }
 
-// ── Poster ────────────────────────────────────────────────────────────────────
+// ── Poster ─────────────────────────────────────────────────────────────────────
 .swipe-poster {
   position: absolute;
   inset: 0;
@@ -192,69 +167,65 @@
   height: 100%;
   object-fit: cover;
   pointer-events: none;
-  display: block;
 
   &--placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--bg-surface);
-    font-size: 3.5rem;
+    background: var(--bg-elevated);
+    font-size: 3rem;
     color: var(--text-dim);
     opacity: 0.2;
   }
 }
 
-// ── Like / Nope stamps ────────────────────────────────────────────────────────
+// ── Like / Nope stamps ─────────────────────────────────────────────────────────
 .swipe-overlay {
   position: absolute;
-  top: 20px;
-  padding: 6px 14px;
-  border-radius: 8px;
+  top: 18px;
+  padding: 5px 11px;
+  border-radius: 6px;
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 0.9rem;
   letter-spacing: 0.1em;
   opacity: 0;
   pointer-events: none;
   z-index: 20;
-  transition: opacity 0.06s linear;
 
   &--like {
-    left: 16px;
-    border: 3px solid #4ade80;
+    left: 14px;
+    border: 2px solid #4ade80;
     color: #4ade80;
     transform: rotate(-12deg);
-    text-shadow: 0 0 16px rgba(74, 222, 128, 0.6);
   }
 
   &--nope {
-    right: 16px;
-    border: 3px solid #f87171;
+    right: 14px;
+    border: 2px solid #f87171;
     color: #f87171;
     transform: rotate(12deg);
-    text-shadow: 0 0 16px rgba(248, 113, 113, 0.6);
   }
 }
 
-// ── Card info gradient ────────────────────────────────────────────────────────
+// ── Card info ──────────────────────────────────────────────────────────────────
 .swipe-card-info {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 80px 18px 18px;
-  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 45%, transparent 100%);
+  padding: 60px 16px 16px;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
   z-index: 10;
   pointer-events: none;
 }
 
 .swipe-card-title {
   font-family: $headers-font;
-  font-size: clamp(1.4rem, 4vw, 1.9rem);
+  font-size: clamp(1.3rem, 4vw, 1.7rem);
   font-weight: 700;
   color: #fff;
-  margin: 0 0 6px;
-  letter-spacing: -0.03em;
+  margin: 0 0 5px;
+  letter-spacing: -0.02em;
   line-height: 1.1;
 }
 
@@ -262,102 +233,112 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .swipe-card-year {
-  font-size: 0.82rem;
-  color: rgba(255,255,255,0.55);
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
 }
 
 .swipe-card-rating {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: rgba(232, 160, 32, 0.2);
-  border: 1px solid rgba(232, 160, 32, 0.35);
+  gap: 3px;
+  background: rgba(232, 160, 32, 0.18);
+  border: 1px solid rgba(232, 160, 32, 0.32);
   color: var(--accent);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   padding: 2px 7px;
   border-radius: 100px;
-
-  i { font-size: 0.58rem; }
+  i { font-size: 0.54rem; }
 }
 
 .swipe-card-synopsis {
-  font-size: 0.76rem;
-  color: rgba(255,255,255,0.5);
+  font-size: 0.73rem;
+  color: rgba(255,255,255,0.42);
   line-height: 1.5;
   margin: 0;
 }
 
-// ── Action buttons ────────────────────────────────────────────────────────────
+// ── Action buttons ─────────────────────────────────────────────────────────────
 .swipe-actions {
+  position: relative;
+  z-index: 30;
   flex: none;
   display: flex;
-  gap: 28px;
+  gap: 24px;
   justify-content: center;
+  align-items: center;
 }
 
 .swipe-btn {
   width: 58px;
   height: 58px;
   border-radius: 50%;
-  border: none;
-  font-size: 1.25rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
-  backdrop-filter: blur(8px);
+  font-size: 1.2rem;
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s ease, background 0.15s ease;
 
-  &:hover  { transform: scale(1.16); }
-  &:active { transform: scale(0.9); }
+  &:active { transform: scale(0.9) !important; transition-duration: 0.08s; }
 
   &--skip {
-    background: rgba(248, 113, 113, 0.12);
+    background: rgba(248, 113, 113, 0.08);
+    border: 1.5px solid rgba(248, 113, 113, 0.45);
     color: #f87171;
-    box-shadow: 0 0 0 1.5px rgba(248,113,113,0.22), 0 4px 18px rgba(248,113,113,0.1);
-    &:hover { background: rgba(248,113,113,0.22); box-shadow: 0 0 0 2px rgba(248,113,113,0.45), 0 8px 24px rgba(248,113,113,0.18); }
+    &:hover {
+      transform: scale(1.12);
+      background: rgba(248, 113, 113, 0.16);
+      border-color: rgba(248, 113, 113, 0.75);
+      box-shadow: 0 4px 20px rgba(248, 113, 113, 0.22);
+    }
   }
 
   &--like {
-    background: rgba(74, 222, 128, 0.12);
+    background: rgba(74, 222, 128, 0.08);
+    border: 1.5px solid rgba(74, 222, 128, 0.45);
     color: #4ade80;
-    box-shadow: 0 0 0 1.5px rgba(74,222,128,0.22), 0 4px 18px rgba(74,222,128,0.1);
-    &:hover { background: rgba(74,222,128,0.22); box-shadow: 0 0 0 2px rgba(74,222,128,0.45), 0 8px 24px rgba(74,222,128,0.18); }
+    &:hover {
+      transform: scale(1.12);
+      background: rgba(74, 222, 128, 0.16);
+      border-color: rgba(74, 222, 128, 0.75);
+      box-shadow: 0 4px 20px rgba(74, 222, 128, 0.22);
+    }
   }
 }
 
-// ── Keyboard hint ─────────────────────────────────────────────────────────────
+// ── Keyboard hint ──────────────────────────────────────────────────────────────
 .discover-keys {
+  position: relative;
+  z-index: 30;
   flex: none;
   display: flex;
-  gap: 20px;
-  font-size: 0.7rem;
+  gap: 16px;
+  font-size: 0.68rem;
   color: var(--text-dim);
-  padding-bottom: 4px;
 
   kbd {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 19px;
-    height: 19px;
+    width: 18px;
+    height: 18px;
     border: 1px solid var(--border-strong);
-    border-radius: 4px;
-    background: rgba(255,255,255,0.04);
-    font-size: 0.68rem;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.03);
+    font-size: 0.64rem;
     font-family: $body-font;
-    color: var(--text-muted);
+    color: var(--text-dim);
   }
 
   @media (max-width: 480px) { display: none; }
 }
 
-// ── Empty / loading ───────────────────────────────────────────────────────────
+// ── Empty / loading ────────────────────────────────────────────────────────────
 .swipe-empty {
   position: absolute;
   inset: 0;
@@ -365,24 +346,22 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   background: var(--bg-elevated);
-  border-radius: 20px;
+  border-radius: 18px;
   border: 1px solid var(--border);
   color: var(--text-muted);
-  font-size: 0.86rem;
-
+  font-size: 0.84rem;
   p { margin: 0; }
 }
 
 .swipe-empty-icon {
-  font-size: 2rem;
+  font-size: 1.8rem;
   color: var(--accent);
   opacity: 0.4;
 }
 
 // ─── Recommendation overlay ────────────────────────────────────────────────────
-
 .rec-overlay {
   position: fixed;
   inset: 0;
@@ -394,7 +373,9 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 
   &--visible {
     opacity: 1;
@@ -403,84 +384,53 @@
   }
 }
 
-.rec-backdrop {
-  position: absolute;
-  inset: 0;
-  cursor: pointer;
-  overflow: hidden;
-}
-
-.rec-backdrop-blur {
-  position: absolute;
-  inset: -80px;
-  background-size: cover;
-  background-position: center;
-  filter: blur(60px) brightness(0.18) saturate(0.45);
-}
-
-.rec-backdrop-dim {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.72);
-}
-
 .rec-modal {
   position: relative;
-  z-index: 1;
   width: 100%;
-  max-width: 660px;
+  max-width: 560px;
   max-height: calc(100dvh - 40px);
   display: flex;
   overflow: hidden;
-  background: rgba(12, 12, 18, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 22px;
-  box-shadow: 0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(232,160,32,0.06), inset 0 1px 0 rgba(255,255,255,0.06);
-  backdrop-filter: blur(20px);
-  transform: translateY(20px) scale(0.97);
-  transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  transform: translateY(14px) scale(0.98);
+  transition: transform 0.38s cubic-bezier(0.34, 1.4, 0.64, 1);
 
   .rec-overlay--visible & { transform: translateY(0) scale(1); }
 
-  @media (max-width: 560px) {
+  @media (max-width: 520px) {
     flex-direction: column;
     overflow-y: auto;
   }
 }
 
-// Close button (top-right)
 .rec-close {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 12px;
+  right: 12px;
   z-index: 10;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease;
-
-  &:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+  transition: background 0.15s ease, color 0.15s ease;
+  &:hover { background: rgba(255, 255, 255, 0.1); color: var(--text); }
 }
 
 .rec-poster-wrap {
-  flex: 0 0 200px;
-  position: relative;
+  flex: 0 0 180px;
   overflow: hidden;
-  min-height: 280px;
-
-  @media (max-width: 560px) {
-    flex: none;
-    height: 200px;
-    width: 100%;
-  }
+  min-height: 260px;
+  @media (max-width: 520px) { flex: none; height: 180px; width: 100%; }
 }
 
 .rec-poster {
@@ -506,32 +456,31 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 24px 22px 20px;
+  gap: 10px;
+  padding: 22px 20px 18px;
   overflow-y: auto;
 }
 
 .rec-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(232, 160, 32, 0.12);
-  border: 1px solid rgba(232, 160, 32, 0.28);
+  gap: 5px;
+  background: rgba(232, 160, 32, 0.1);
+  border: 1px solid rgba(232, 160, 32, 0.25);
   color: var(--accent);
-  font-size: 0.66rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 4px 10px;
+  padding: 3px 9px;
   border-radius: 100px;
   width: fit-content;
-
-  i { font-size: 0.6rem; }
+  i { font-size: 0.56rem; }
 }
 
 .rec-message {
-  font-size: 0.9rem;
-  line-height: 1.72;
+  font-size: 0.86rem;
+  line-height: 1.7;
   color: var(--text-muted);
   margin: 0;
   font-style: italic;
@@ -539,7 +488,7 @@
 
 .rec-title {
   font-family: $headers-font;
-  font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
   font-weight: 700;
   color: var(--text);
   margin: 0;
@@ -558,19 +507,19 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border);
   color: var(--text-muted);
-  font-size: 0.76rem;
-  padding: 3px 9px;
+  font-size: 0.74rem;
+  padding: 2px 8px;
   border-radius: 100px;
 
   &--amber {
-    background: rgba(232,160,32,0.1);
-    border-color: rgba(232,160,32,0.25);
+    background: rgba(232, 160, 32, 0.1);
+    border-color: rgba(232, 160, 32, 0.25);
     color: var(--accent);
     font-weight: 700;
-    i { font-size: 0.58rem; }
+    i { font-size: 0.54rem; }
   }
 }
 
@@ -579,38 +528,38 @@
   gap: 8px;
   flex-wrap: wrap;
   margin-top: auto;
-  padding-top: 6px;
+  padding-top: 4px;
 }
 
 .rec-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   font-family: $body-font;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 500;
-  padding: 9px 17px;
+  padding: 8px 16px;
   border-radius: 100px;
   border: none;
   cursor: pointer;
   text-decoration: none;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 
   &:hover  { transform: scale(1.04); }
   &:active { transform: scale(0.97); }
 
   &--ghost {
-    background: rgba(255,255,255,0.06);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--text-muted);
     border: 1px solid var(--border-strong);
-    &:hover { background: rgba(255,255,255,0.1); }
+    &:hover { background: rgba(255, 255, 255, 0.09); }
   }
 
   &--amber {
     background: var(--accent);
     color: #0a0a0f;
     font-weight: 600;
-    box-shadow: 0 4px 14px rgba(232,160,32,0.28);
-    &:hover { box-shadow: 0 6px 20px rgba(232,160,32,0.45); }
+    box-shadow: 0 3px 12px rgba(232, 160, 32, 0.25);
+    &:hover { box-shadow: 0 5px 18px rgba(232, 160, 32, 0.4); }
   }
 }

@@ -1,12 +1,56 @@
 // ─── Watch Sessions (index + show) ───────────────────────────────────────────
 
-.sessions-page-header {
+// ── Hero banner ───────────────────────────────────────────────────────────────
+.sessions-hero {
+  position: relative;
+  width: 100%;
+  height: clamp(240px, 35vh, 360px);
+  background: image-url('oklm.webp') center top / cover no-repeat;
+  overflow: hidden;
+
+  // Dark gradient overlay so text is readable
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 10, 15, 0.25) 0%,
+      rgba(10, 10, 15, 0.72) 100%
+    );
+  }
+}
+
+.sessions-hero-inner {
+  position: relative;
+  z-index: 1;
+  height: 100%;
   display: flex;
-  justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 36px;
+  justify-content: space-between;
   gap: 16px;
+  padding: 0 40px 32px;
   flex-wrap: wrap;
+
+  @media (max-width: 576px) { padding: 0 20px 24px; }
+}
+
+.sessions-hero-title {
+  font-family: $headers-font;
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin: 0;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+}
+
+// ── Body ──────────────────────────────────────────────────────────────────────
+.sessions-body {
+  padding: 32px 40px;
+
+  @media (max-width: 576px) { padding: 24px 16px; }
 }
 
 .sessions-grid {

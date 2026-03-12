@@ -16,7 +16,6 @@ export default class extends Controller {
     this._topCard    = null;
     this._likedCount = 0;
     this._seenCount  = 0;
-    this._bgLayer    = "a";
     this._dragging   = false;
     this._startX     = 0;
     this._startY     = 0;
@@ -136,12 +135,12 @@ export default class extends Controller {
         card.style.opacity      = "1";
         card.style.pointerEvents = "auto";
       } else if (i === 1) {
-        card.style.transform    = "scale(0.96) translateY(10px)";
+        card.style.transform    = "scale(0.96) translateY(6px)";
         card.style.zIndex       = "9";
         card.style.opacity      = "1";
         card.style.pointerEvents = "none";
       } else if (i === 2) {
-        card.style.transform    = "scale(0.92) translateY(20px)";
+        card.style.transform    = "scale(0.92) translateY(12px)";
         card.style.zIndex       = "8";
         card.style.opacity      = "0.6";
         card.style.pointerEvents = "none";
@@ -243,18 +242,8 @@ export default class extends Controller {
     }, { once: true });
   }
 
-  // ── Background ─────────────────────────────────────────────────────────────────
-  _updateBackground(url) {
-    if (!url) return;
-    const next   = this._bgLayer === "a" ? "b" : "a";
-    const nextEl = document.getElementById(`discover-bg-${next}`);
-    const prevEl = document.getElementById(`discover-bg-${this._bgLayer}`);
-    if (!nextEl || !prevEl) return;
-    nextEl.style.backgroundImage = `url('${url}')`;
-    nextEl.style.opacity = "1";
-    prevEl.style.opacity = "0";
-    this._bgLayer = next;
-  }
+  // ── Background (no-op — background layers removed) ────────────────────────────
+  _updateBackground(_url) {}
 
   // ── Persistence ────────────────────────────────────────────────────────────────
   _savePreference(card, liked) {

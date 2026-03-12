@@ -9,7 +9,8 @@ $nav-height: 60px;
 
   // Hero and discover page fill the full viewport
   &:has(.hero),
-  &:has(.discover-wrap) {
+  &:has(.discover-wrap),
+  &:has(.sessions-hero) {
     padding-top: 0;
   }
 }
