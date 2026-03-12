@@ -1,55 +1,103 @@
-<nav class="navbar navbar-expand-sm navbar-light navbar-lewagon">
-  <div class="container-fluid">
+<nav class="app-nav" data-controller="toggle">
+  <div class="app-nav-inner">
 
-    <%= link_to "#",
-      class: "btn btn-light me-2",
-      data: { action: "click->toggle#call", toggle_target: "show" } do %>
-      <i class="fa-solid fa-bars"></i>
+    <%# Logo %>
+    <%= link_to root_path, class: "app-nav-logo" do %>
+      Filmy<span class="app-nav-logo-dot">.</span>
     <% end %>
 
-    <%= link_to root_path, class: "navbar-brand" do %>
-      <%= image_tag "https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/logo.png" %>
-    <% end %>
-
-    <button class="navbar-toggler" type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarSupportedContent">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto">
-
-        <% if user_signed_in? %>
-
-          <li class="nav-item dropdown">
-            <a href="#"
-               class="avatar"
-               id="navbarDropdown"
-               data-bs-toggle="dropdown"
-               aria-expanded="false">
-              <%= image_tag "https://kitt.lewagon.com/placeholder/users/ssaunier",
-                            class: "avatar" %>
-            </a>
-
-            <div class="dropdown-menu dropdown-menu-end">
-              <%= link_to "Log out",
-                          destroy_user_session_path,
-                          data: { turbo_method: :delete },
-                          class: "dropdown-item" %>
-            </div>
-          </li>
-
-        <% else %>
-
-          <li class="nav-item">
-            <%= link_to "Login",
-                        new_user_session_path,
-                        class: "nav-link" %>
-          </li>
-
+    <%# Desktop links (authenticated) %>
+    <% if user_signed_in? %>
+      <div class="app-nav-links">
+        <%= link_to "Sessions", watch_sessions_path,
+              class: "app-nav-link #{'app-nav-link--active' if current_page?(watch_sessions_path)}" %>
+        <%= link_to "Library", films_path,
+              class: "app-nav-link #{'app-nav-link--active' if current_page?(films_path)}" %>
+        <%= link_to discover_path, class: "app-nav-link app-nav-link--discover #{'app-nav-link--active' if current_page?(discover_path)}" do %>
+          <i class="fa-solid fa-fire-flame-curved"></i> Discover
         <% end %>
-      </ul>
+      </div>
+    <% end %>
+
+    <%# Right side %>
+    <div class="app-nav-right">
+      <% if user_signed_in? %>
+
+        <%# New session CTA %>
+        <%= link_to new_watch_session_path, class: "app-nav-cta" do %>
+          <i class="fa-solid fa-plus"></i>
+          <span>New session</span>
+        <% end %>
+
+        <%# User dropdown %>
+        <div class="app-nav-user">
+          <button class="app-nav-avatar" type="button">
+            <%= current_user.email.first.upcase %>
+          </button>
+          <div class="app-nav-dropdown">
+            <%= link_to "Account settings", edit_user_registration_path, class: "app-nav-dropdown-item" %>
+            <div class="app-nav-dropdown-sep"></div>
+            <%= button_to "Sign out", destroy_user_session_path,
+                  method: :delete,
+                  class: "app-nav-dropdown-item app-nav-dropdown-item--danger",
+                  form: { data: { turbo: false } } %>
+          </div>
+        </div>
+
+      <% else %>
+        <%= link_to "Sign in", new_user_session_path, class: "app-nav-link" %>
+        <%= link_to "Get started", new_user_registration_path, class: "app-nav-cta" %>
+      <% end %>
+
+      <%# Mobile hamburger %>
+      <button class="app-nav-hamburger"
+              type="button"
+              data-toggle-target="show"
+              data-action="click->toggle#call"
+              aria-label="Open menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+
+  <%# Mobile menu %>
+  <div class="app-nav-mobile d-none" data-toggle-target="hideable">
+    <div class="app-nav-mobile-header">
+      <span class="app-nav-logo">Filmy<span class="app-nav-logo-dot">.</span></span>
+      <button class="app-nav-mobile-close"
+              type="button"
+              data-action="click->toggle#call"
+              aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="app-nav-mobile-links">
+      <% if user_signed_in? %>
+        <%= link_to watch_sessions_path, class: "app-nav-mobile-link", data: { action: "click->toggle#call" } do %>
+          <i class="fa-solid fa-film"></i> Sessions
+        <% end %>
+        <%= link_to films_path, class: "app-nav-mobile-link", data: { action: "click->toggle#call" } do %>
+          <i class="fa-solid fa-bookmark"></i> Library
+        <% end %>
+        <%= link_to discover_path, class: "app-nav-mobile-link app-nav-mobile-link--discover", data: { action: "click->toggle#call" } do %>
+          <i class="fa-solid fa-fire-flame-curved"></i> Discover
+        <% end %>
+        <%= link_to new_watch_session_path, class: "app-nav-mobile-link app-nav-mobile-link--cta" do %>
+          <i class="fa-solid fa-plus"></i> New session
+        <% end %>
+        <div class="app-nav-mobile-sep"></div>
+        <%= link_to edit_user_registration_path, class: "app-nav-mobile-link" do %>
+          <i class="fa-solid fa-gear"></i> Account settings
+        <% end %>
+        <%= button_to "Sign out", destroy_user_session_path,
+              method: :delete,
+              class: "app-nav-mobile-link app-nav-mobile-link--danger",
+              form: { data: { turbo: false } } %>
+      <% else %>
+        <%= link_to "Sign in", new_user_session_path, class: "app-nav-mobile-link" %>
+        <%= link_to "Get started", new_user_registration_path, class: "app-nav-mobile-link app-nav-mobile-link--cta" %>
+      <% end %>
     </div>
   </div>
 </nav>

@@ -13,6 +13,9 @@ export default class extends Controller {
     this._deltaX     = 0;
     this._dragging   = false;
     this._topCard    = null;
+    this._likedCount = 0;
+    this._seenCount  = 0;
+    this._bgLayer    = "a"; // active background layer
 
     this._onPointerDown  = this._onPointerDown.bind(this);
     this._onPointerMove  = this._onPointerMove.bind(this);
@@ -57,6 +60,36 @@ export default class extends Controller {
     this._topCard = cards[0];
     this._topCard.classList.add("swipe-card--top");
     this._topCard.addEventListener("pointerdown", this._onPointerDown);
+    this._updateBackground(this._topCard.dataset.poster);
+  }
+
+  // ── Background cross-fade ──────────────────────────────────────────────────
+
+  _updateBackground(posterUrl) {
+    if (!posterUrl) return;
+    const nextLayer = this._bgLayer === "a" ? "b" : "a";
+    const nextEl    = document.getElementById(`discover-bg-${nextLayer}`);
+    const prevEl    = document.getElementById(`discover-bg-${this._bgLayer}`);
+    if (!nextEl || !prevEl) return;
+
+    nextEl.style.backgroundImage = `url('${posterUrl}')`;
+    nextEl.style.opacity = "1";
+    prevEl.style.opacity = "0";
+    this._bgLayer = nextLayer;
+  }
+
+  // ── Stats counters ─────────────────────────────────────────────────────────
+
+  _incrementSeen() {
+    this._seenCount++;
+    const el = document.getElementById("seen-count");
+    if (el) el.textContent = this._seenCount;
+  }
+
+  _incrementLiked() {
+    this._likedCount++;
+    const el = document.getElementById("liked-count");
+    if (el) el.textContent = this._likedCount;
   }
 
   _unbindDrag() {
@@ -149,6 +182,8 @@ export default class extends Controller {
     }
 
     this._savePreference(card, liked);
+    this._incrementSeen();
+    if (liked) this._incrementLiked();
 
     card.addEventListener("transitionend", () => {
       card.classList.add("swipe-card--gone");

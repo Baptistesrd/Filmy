@@ -1,35 +1,138 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<div class="auth-page">
 
-<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= f.error_notification %>
+  <%# ── Left visual panel ──────────────────────────────────────────────────── %>
+  <div class="auth-visual" aria-hidden="true">
 
-  <div class="form-inputs">
-    <%= f.input :email, required: true, autofocus: true %>
+    <%# Floating film frames %>
+    <div class="film-frame" style="--w:110px;--h:80px; --x:12%; --y:-10%; --dur:22s;--delay:0s;  --r:-5deg; --o:0.15;--border-o:0.15"></div>
+    <div class="film-frame" style="--w:75px; --h:55px; --x:60%; --y:-10%; --dur:16s;--delay:5s;  --r:8deg;  --o:0.12;--border-o:0.12"></div>
+    <div class="film-frame" style="--w:95px; --h:70px; --x:35%; --y:-10%; --dur:19s;--delay:9s;  --r:-11deg;--o:0.13;--border-o:0.13"></div>
+    <div class="film-frame" style="--w:120px;--h:88px; --x:70%; --y:-10%; --dur:14s;--delay:2s;  --r:5deg;  --o:0.11;--border-o:0.11"></div>
+    <div class="film-frame" style="--w:65px; --h:48px; --x:22%; --y:-10%; --dur:24s;--delay:7s;  --r:13deg; --o:0.14;--border-o:0.14"></div>
 
-    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-      <p>Currently waiting confirmation for: <%= resource.unconfirmed_email %></p>
-    <% end %>
+    <div class="auth-visual-content">
 
-    <%= f.input :password,
-                hint: "leave it blank if you don't want to change it",
-                required: false,
-                input_html: { autocomplete: "new-password" } %>
-    <%= f.input :password_confirmation,
-                required: false,
-                input_html: { autocomplete: "new-password" } %>
-    <%= f.input :current_password,
-                hint: "we need your current password to confirm your changes",
-                required: true,
-                input_html: { autocomplete: "current-password" } %>
+      <%# Logo %>
+      <div class="auth-visual-logo">
+        <div class="auth-visual-logo-mark">F</div>
+        <span class="auth-visual-logo-name">Filmy</span>
+      </div>
+
+      <%# Headline %>
+      <div class="auth-visual-center">
+        <p class="auth-visual-eyebrow">Your account</p>
+        <h1 class="auth-visual-title">
+          Keep your<br>
+          profile <em>sharp</em>.
+        </h1>
+        <p class="auth-visual-desc">
+          Update your email or password.<br>
+          Your library and sessions stay untouched.
+        </p>
+      </div>
+
+      <%# Feature pills %>
+      <div class="auth-visual-features">
+        <span class="auth-feature-pill">
+          <i class="fa-solid fa-lock"></i> Secure
+        </span>
+        <span class="auth-feature-pill">
+          <i class="fa-solid fa-bookmark"></i> Library preserved
+        </span>
+        <span class="auth-feature-pill">
+          <i class="fa-solid fa-film"></i> Sessions intact
+        </span>
+      </div>
+
+    </div>
   </div>
 
-  <div class="form-actions">
-    <%= f.button :submit, "Update" %>
+  <%# ── Right form panel ───────────────────────────────────────────────────── %>
+  <div class="auth-form-panel auth-form-panel--edit">
+    <div class="auth-form-inner">
+
+      <%# Mobile logo %>
+      <div class="auth-mobile-logo">
+        <div class="auth-visual-logo-mark">F</div>
+        <span class="auth-visual-logo-name">Filmy</span>
+      </div>
+
+      <%= link_to :back, class: "auth-back-link" do %>
+        <i class="fa-solid fa-arrow-left"></i> Go back
+      <% end %>
+
+      <div class="auth-form-header">
+        <h2>Edit profile.</h2>
+        <p>Signed in as <strong><%= current_user.email %></strong></p>
+      </div>
+
+      <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+        <% if resource.errors.any? %>
+          <div class="auth-error-notification">
+            <%= resource.errors.full_messages.first %>
+          </div>
+        <% end %>
+
+        <div class="auth-fields">
+          <%= f.input :email,
+                      required: true,
+                      autofocus: true,
+                      label: "Email address",
+                      input_html: { autocomplete: "email" } %>
+
+          <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+            <p class="auth-pending-confirm">
+              <i class="fa-solid fa-clock"></i>
+              Awaiting confirmation for: <strong><%= resource.unconfirmed_email %></strong>
+            </p>
+          <% end %>
+
+          <div class="auth-fields-separator">
+            <span>Change password <em>(leave blank to keep current)</em></span>
+          </div>
+
+          <%= f.input :password,
+                      required: false,
+                      label: "New password",
+                      placeholder: "Leave blank to keep current",
+                      input_html: { autocomplete: "new-password" } %>
+
+          <%= f.input :password_confirmation,
+                      required: false,
+                      label: "Confirm new password",
+                      placeholder: "Repeat new password",
+                      input_html: { autocomplete: "new-password" } %>
+
+          <div class="auth-fields-separator">
+            <span>Security confirmation</span>
+          </div>
+
+          <%= f.input :current_password,
+                      required: true,
+                      label: "Current password",
+                      placeholder: "Required to save changes",
+                      input_html: { autocomplete: "current-password" } %>
+        </div>
+
+        <%= f.button :submit, "Save changes", class: "auth-submit-btn" %>
+      <% end %>
+
+      <%# Danger zone %>
+      <div class="auth-danger-zone">
+        <p class="auth-danger-label">
+          <i class="fa-solid fa-triangle-exclamation"></i> Danger zone
+        </p>
+        <p class="auth-danger-desc">
+          Permanently delete your account and all your data. This cannot be undone.
+        </p>
+        <%= button_to "Delete my account",
+              registration_path(resource_name),
+              data: { turbo_confirm: "Are you sure? This will permanently delete your account and all your data." },
+              method: :delete,
+              class: "auth-danger-btn" %>
+      </div>
+
+    </div>
   </div>
-<% end %>
 
-<h3>Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
-
-<%= link_to "Back", :back %>
+</div>

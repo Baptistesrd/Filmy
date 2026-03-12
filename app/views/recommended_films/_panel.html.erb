@@ -4,16 +4,77 @@
     <span class="film-panel-count"><%= recommended_films.size %></span>
   </div>
 
-  <div class="film-panel-body">
-    <% if recommended_films.any? %>
-      <% recommended_films.each do |film| %>
-        <%= render "recommended_films/card", film: film %>
+  <% unsaved = recommended_films.reject(&:added?) %>
+  <% saved   = recommended_films.select(&:added?) %>
+
+  <% if recommended_films.any? %>
+
+    <div class="rswipe-area" data-controller="rec-swipe">
+
+      <% unsaved.each_with_index do |film, i| %>
+        <div class="rswipe-card"
+             data-rec-swipe-target="card"
+             data-save-url="<%= save_recommended_film_path(film) %>"
+             style="z-index: <%= unsaved.size - i %>">
+
+          <% if film.poster_url.present? %>
+            <img src="<%= film.poster_url %>" alt="<%= film.title %>" class="rswipe-poster">
+          <% else %>
+            <div class="rswipe-poster rswipe-poster--empty">
+              <i class="fa-solid fa-film"></i>
+            </div>
+          <% end %>
+
+          <div class="rswipe-overlay rswipe-overlay--like">SAVE <i class="fa-solid fa-heart"></i></div>
+          <div class="rswipe-overlay rswipe-overlay--skip">SKIP <i class="fa-solid fa-xmark"></i></div>
+
+          <div class="rswipe-info">
+            <p class="rswipe-title"><%= film.title %></p>
+            <p class="rswipe-meta"><%= film.year %><% if film.runtime.present? %> · <%= film.runtime %> min<% end %></p>
+            <% if film.blurb.present? %>
+              <p class="rswipe-blurb"><%= truncate(film.blurb, length: 110) %></p>
+            <% end %>
+          </div>
+
+        </div>
       <% end %>
-    <% else %>
+
+      <div class="rswipe-empty <%= unsaved.any? ? 'd-none' : '' %>" data-rec-swipe-target="empty">
+        <i class="fa-regular fa-compass"></i>
+        <p>Keep chatting<br>for more picks!</p>
+      </div>
+
+    </div>
+
+    <div class="rswipe-hint <%= unsaved.empty? ? 'd-none' : '' %>" data-rec-swipe-target="hint">
+      <button type="button" data-action="rec-swipe#skip" class="rswipe-btn rswipe-btn--skip">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <span class="rswipe-hint-label">swipe to decide</span>
+      <button type="button" data-action="rec-swipe#like" class="rswipe-btn rswipe-btn--like">
+        <i class="fa-solid fa-heart"></i>
+      </button>
+    </div>
+
+    <% if saved.any? %>
+      <div class="rswipe-saved-list">
+        <div class="rswipe-saved-header">Saved · <%= saved.size %></div>
+        <% saved.each do |film| %>
+          <div class="rswipe-saved-item">
+            <span class="rswipe-saved-title"><%= film.title %></span>
+            <span class="rswipe-saved-badge"><i class="fa-solid fa-check"></i></span>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+  <% else %>
+    <div class="film-panel-body">
       <div class="film-panel-empty">
         <i class="fa-regular fa-compass"></i>
         Ask me what you're in the mood for and your picks will appear here.
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
+
 </div>

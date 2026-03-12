@@ -1,224 +1,337 @@
-// ── Discover / Swipe page ─────────────────────────────────────────────────
+// ─── Discover page ────────────────────────────────────────────────────────────
 
+// ── Dual-layer blurred background ─────────────────────────────────────────────
+.discover-bg {
+  position: fixed;
+  inset: -60px; // extra padding to hide blur edges
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(70px) brightness(0.15) saturate(0.5);
+  transition: opacity 1.4s ease;
+  pointer-events: none;
+
+  &--a { opacity: 1; }
+  &--b { opacity: 0; }
+}
+
+// ── Page shell ────────────────────────────────────────────────────────────────
 .discover-page {
-  display:         flex;
-  flex-direction:  column;
-  align-items:     center;
-  min-height:      100vh;
-  padding:         2rem 1rem 3rem;
-  background:      var(--bg-dark);
-}
-
-.discover-header {
-  text-align:    center;
-  margin-bottom: 2rem;
-
-  .discover-title {
-    font-family: $headers-font;
-    font-size:   clamp(2rem, 5vw, 3rem);
-    color:       var(--text-primary);
-    margin:      0 0 0.25rem;
-  }
-
-  .discover-subtitle {
-    font-size: 0.875rem;
-    color:     var(--text-muted);
-    margin:    0;
-  }
-}
-
-// ── Arena ─────────────────────────────────────────────────────────────────
-
-.swipe-arena {
-  display:        flex;
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
   flex-direction: column;
-  align-items:    center;
-  gap:            1.75rem;
-  width:          100%;
-  max-width:      400px;
+  align-items: center;
+  padding: 88px 20px 48px; // 88 = navbar height + breathing room
 }
 
-// ── Card stack ────────────────────────────────────────────────────────────
+// ── Header ────────────────────────────────────────────────────────────────────
+.discover-header {
+  text-align: center;
+  margin-bottom: 12px;
+  animation: fade-up 0.5s ease both;
+}
 
+.discover-title {
+  font-family: $headers-font;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.045em;
+  line-height: 1;
+  margin: 0 0 6px;
+}
+
+.discover-dot { color: var(--accent); }
+
+.discover-sub {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+// ── Stats row ─────────────────────────────────────────────────────────────────
+.discover-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  animation: fade-up 0.5s 0.08s ease both;
+}
+
+.discover-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+
+  i { font-size: 0.7rem; opacity: 0.6; }
+}
+
+.discover-stat-sep {
+  width: 1px;
+  height: 12px;
+  background: var(--border-strong);
+}
+
+// ── Arena ─────────────────────────────────────────────────────────────────────
+.swipe-arena {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 400px;
+  animation: fade-up 0.5s 0.14s ease both;
+}
+
+// ── Card stack ────────────────────────────────────────────────────────────────
 .swipe-stack {
   position: relative;
-  width:    100%;
-  height:   580px;
+  width: 100%;
+  height: 560px;
+
+  @media (max-width: 480px) { height: 500px; }
 }
 
 .swipe-card {
-  position:      absolute;
-  inset:         0;
-  border-radius: 18px;
-  overflow:      hidden;
-  background:    var(--bg-surface);
-  border:        1px solid rgba(255, 255, 255, 0.07);
-  cursor:        grab;
-  user-select:   none;
-  will-change:   transform;
-  touch-action:  none;
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  will-change: transform;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.5),
+    0 32px 80px rgba(0, 0, 0, 0.4);
 
   // Stacked cards peeking behind
-  &:nth-child(2) { transform: scale(0.95) translateY(12px); }
-  &:nth-child(3) { transform: scale(0.90) translateY(24px); }
-  &:nth-child(n+4) { opacity: 0; pointer-events: none; }
+  &:nth-child(2) {
+    transform: scale(0.95) translateY(14px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+  &:nth-child(3) {
+    transform: scale(0.90) translateY(28px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  &:nth-child(n+4) {
+    opacity: 0;
+    pointer-events: none;
+  }
 
   &--top {
     cursor: grab;
     &:active { cursor: grabbing; }
   }
 
-  &--gone {
-    display: none;
-  }
+  &--gone { display: none !important; }
 }
 
-// ── Poster ────────────────────────────────────────────────────────────────
-
+// ── Poster ────────────────────────────────────────────────────────────────────
 .swipe-poster {
-  width:       100%;
-  height:      380px;
-  object-fit:  cover;
-  display:     block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
 
   &--placeholder {
-    display:         flex;
-    align-items:     center;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    background:      #1a1a24;
-    color:           var(--text-muted);
-    font-size:       3rem;
+    background: var(--bg-surface);
+    color: var(--text-dim);
+    font-size: 3.5rem;
+    opacity: 0.3;
   }
 }
 
-// ── Overlays ──────────────────────────────────────────────────────────────
-
+// ── Swipe overlays (LIKE / NOPE stamps) ───────────────────────────────────────
 .swipe-overlay {
-  position:      absolute;
-  top:           1.25rem;
-  padding:       0.35rem 0.8rem;
-  border-radius: 6px;
-  font-weight:   700;
-  font-size:     1.25rem;
-  letter-spacing: 0.05em;
-  opacity:       0;
+  position: absolute;
+  top: 22px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  opacity: 0;
   pointer-events: none;
-  transition:    opacity 0.08s ease;
+  transition: opacity 0.07s ease;
+  z-index: 10;
 
   &--like {
-    left:    1.25rem;
-    border:  3px solid #4ade80;
-    color:   #4ade80;
-    transform: rotate(-8deg);
+    left: 18px;
+    border: 3px solid #4ade80;
+    color: #4ade80;
+    transform: rotate(-12deg);
+    text-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
   }
 
   &--skip {
-    right:   1.25rem;
-    border:  3px solid #f87171;
-    color:   #f87171;
-    transform: rotate(8deg);
+    right: 18px;
+    border: 3px solid #f87171;
+    color: #f87171;
+    transform: rotate(12deg);
+    text-shadow: 0 0 20px rgba(248, 113, 113, 0.5);
   }
 }
 
-// ── Info panel ────────────────────────────────────────────────────────────
-
-.swipe-info {
-  padding: 1rem 1.25rem;
+// ── Card info overlay (bottom gradient) ───────────────────────────────────────
+.swipe-card-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 80px 20px 22px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.93) 0%,
+    rgba(0, 0, 0, 0.70) 40%,
+    transparent 100%
+  );
+  z-index: 5;
+  pointer-events: none;
 }
 
-.swipe-film-title {
-  font-family:   $headers-font;
-  font-size:     1.35rem;
-  color:         var(--text-primary);
-  margin:        0 0 0.4rem;
-  line-height:   1.2;
-  white-space:   nowrap;
-  overflow:      hidden;
-  text-overflow: ellipsis;
+.swipe-card-title {
+  font-family: $headers-font;
+  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
 }
 
-.swipe-meta {
-  display:     flex;
-  gap:         0.75rem;
-  margin-bottom: 0.5rem;
-  font-size:   0.8rem;
+.swipe-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.swipe-year   { color: var(--text-muted); }
-.swipe-rating {
-  color: $accent;
-  i { font-size: 0.7rem; margin-right: 0.2rem; }
+.swipe-card-year {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 400;
 }
 
-.swipe-synopsis {
-  font-size:   0.78rem;
-  color:       var(--text-muted);
-  line-height: 1.5;
-  margin:      0;
+.swipe-card-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(232, 160, 32, 0.20);
+  border: 1px solid rgba(232, 160, 32, 0.35);
+  color: var(--accent);
+  font-size: 0.825rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 100px;
+
+  i { font-size: 0.65rem; }
 }
 
-// ── Action buttons ────────────────────────────────────────────────────────
-
+// ── Action buttons ────────────────────────────────────────────────────────────
 .swipe-actions {
-  display:         flex;
-  gap:             2.5rem;
+  display: flex;
+  gap: 36px;
   justify-content: center;
 }
 
 .swipe-btn {
-  width:           60px;
-  height:          60px;
-  border-radius:   50%;
-  border:          none;
-  font-size:       1.4rem;
-  cursor:          pointer;
-  transition:      transform 0.15s ease, box-shadow 0.15s ease;
-  display:         flex;
-  align-items:     center;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 
-  &:hover  { transform: scale(1.12); }
-  &:active { transform: scale(0.95); }
+  &:hover  { transform: scale(1.14); }
+  &:active { transform: scale(0.92); }
 
   &--skip {
-    background:  rgba(248, 113, 113, 0.12);
-    color:       #f87171;
-    box-shadow:  0 0 0 2px rgba(248, 113, 113, 0.3);
+    background: rgba(248, 113, 113, 0.15);
+    color: #f87171;
+    box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.3), 0 8px 24px rgba(248, 113, 113, 0.15);
 
-    &:hover { box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.7); }
+    &:hover {
+      background: rgba(248, 113, 113, 0.25);
+      box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.6), 0 12px 32px rgba(248, 113, 113, 0.25);
+    }
   }
 
   &--like {
-    background:  rgba(74, 222, 128, 0.12);
-    color:       #4ade80;
-    box-shadow:  0 0 0 2px rgba(74, 222, 128, 0.3);
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ade80;
+    box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.3), 0 8px 24px rgba(74, 222, 128, 0.15);
 
-    &:hover { box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.7); }
+    &:hover {
+      background: rgba(74, 222, 128, 0.25);
+      box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.6), 0 12px 32px rgba(74, 222, 128, 0.25);
+    }
   }
 }
 
-// ── Empty / loading state ─────────────────────────────────────────────────
+// ── Keyboard hint ─────────────────────────────────────────────────────────────
+.discover-keys {
+  display: flex;
+  gap: 28px;
+  font-size: 0.75rem;
+  color: var(--text-dim);
 
-.swipe-empty {
-  position:        absolute;
-  inset:           0;
-  display:         flex;
-  flex-direction:  column;
-  align-items:     center;
-  justify-content: center;
-  gap:             1rem;
-  background:      var(--bg-surface);
-  border-radius:   18px;
-  border:          1px solid rgba(255, 255, 255, 0.07);
-  color:           var(--text-muted);
-  font-size:       0.9rem;
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    font-size: 0.75rem;
+    font-family: $body-font;
+    color: var(--text-muted);
+    vertical-align: middle;
+  }
 
-  i { font-size: 2.5rem; color: $accent; }
+  @media (max-width: 480px) { display: none; }
 }
 
-// ── Mobile tweaks ─────────────────────────────────────────────────────────
+// ── Empty / loading state ─────────────────────────────────────────────────────
+.swipe-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--bg-elevated);
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.9rem;
 
-@media (max-width: 480px) {
-  .swipe-stack  { height: 500px; }
-  .swipe-poster { height: 320px; }
+  i {
+    font-size: 2.5rem;
+    color: var(--accent);
+    opacity: 0.5;
+  }
+
+  p { margin: 0; }
 }

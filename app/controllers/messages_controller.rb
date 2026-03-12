@@ -86,8 +86,7 @@ class MessagesController < ApplicationController
     end
   rescue StandardError => e
     Rails.logger.error("Claude API error: #{e.message}")
-    @assistant_message.update_column(:content, "I'm having trouble connecting right now. Mind trying again?")
-    broadcast_replace(@assistant_message)
+    @assistant_message.content = "I'm having trouble connecting right now. Mind trying again?"
   end
 
   def send_image_question
@@ -106,8 +105,7 @@ class MessagesController < ApplicationController
     end
   rescue StandardError => e
     Rails.logger.error("Claude vision error: #{e.message}")
-    @assistant_message.update_column(:content, "I couldn't read that image. Try uploading it again?")
-    broadcast_replace(@assistant_message)
+    @assistant_message.content = "I couldn't read that image. Try uploading it again?"
   end
 
   def broadcast_append(message)
@@ -138,7 +136,8 @@ class MessagesController < ApplicationController
   end
 
   def build_history(llm)
-    @chat.messages.order(:created_at).each do |msg|
+    exclude_ids = [@message.id, @assistant_message.id].compact
+    @chat.messages.order(:created_at).where.not(id: exclude_ids).each do |msg|
       next if msg.content.blank?
 
       llm.add_message(role: msg.role, content: msg.content)
@@ -168,6 +167,8 @@ class MessagesController < ApplicationController
 
   def normalize_ai_text(text)
     s = text.to_s.gsub(/\r\n?/, "\n").strip
+    return s unless s.match?(/^\s*[-*•]\s+/m) # pas de bullets → retourne tel quel
+
     s = s.gsub(/^\s{0,3}#{Regexp.escape('#')}{1,6}\s+/, "")
     s = s.gsub(/^\s*[-*]\s+/, "• ")
     s = s.gsub(/\s*•\s*/, "\n• ")

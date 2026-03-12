@@ -43,6 +43,9 @@ body {
   font-family: $body-font;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  scrollbar-width: none;       // Firefox
+  -ms-overflow-style: none;    // IE/Edge
+  &::-webkit-scrollbar { display: none; } // Chrome/Safari
 }
 
 h1, h2, h3, h4, h5 { font-family: $headers-font; }

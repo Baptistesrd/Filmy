@@ -1,12 +1,303 @@
-.navbar-lewagon {
+// ─── App Navbar ───────────────────────────────────────────────────────────────
+
+$nav-height: 60px;
+
+.app-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: rgba(10, 10, 15, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.app-nav-inner {
+  height: $nav-height;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+// ── Logo ──────────────────────────────────────────────────────────────────────
+.app-nav-logo {
+  font-family: $headers-font;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: color var(--ease);
+
+  &:hover { color: var(--text); }
+}
+
+.app-nav-logo-dot { color: var(--accent); }
+
+// Discover link — accent flame icon
+.app-nav-link--discover {
+  color: var(--accent) !important;
+  i { margin-right: 4px; font-size: 0.75rem; }
+  &:hover { background: var(--accent-dim) !important; }
+  &.app-nav-link--active { background: var(--accent-dim) !important; }
+}
+
+.app-nav-mobile-link--discover {
+  color: var(--accent);
+  &:hover { background: var(--accent-dim); color: var(--accent); }
+}
+
+// ── Desktop nav links ─────────────────────────────────────────────────────────
+.app-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  @media (max-width: 680px) { display: none; }
+}
+
+.app-nav-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: color var(--ease), background var(--ease);
+
+  &:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.05);
+  }
+
+  &--active {
+    color: var(--text);
+    background: rgba(255,255,255,0.06);
+  }
+}
+
+// ── Right side ────────────────────────────────────────────────────────────────
+.app-nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+// New session CTA button
+.app-nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--accent);
+  color: #0a0a0f;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: background var(--ease), transform var(--ease);
+  white-space: nowrap;
+
+  i { font-size: 0.7rem; }
+
+  &:hover {
+    background: var(--accent-hover);
+    color: #0a0a0f;
+    transform: translateY(-1px);
+  }
+
+  // Hide label on small screens, keep icon
+  span { @media (max-width: 480px) { display: none; } }
+}
+
+// User avatar + dropdown
+.app-nav-user {
+  position: relative;
+
+  @media (max-width: 680px) { display: none; }
+
+  &:hover .app-nav-dropdown,
+  &:focus-within .app-nav-dropdown {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+}
+
+.app-nav-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-strong);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: $body-font;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color var(--ease), background var(--ease);
+
+  &:hover {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+}
+
+.app-nav-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 180px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.app-nav-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: $body-font;
+  transition: background var(--ease), color var(--ease);
+
+  &:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+  }
+
+  &--danger {
+    &:hover {
+      background: rgba(239,68,68,0.1);
+      color: #fca5a5;
+    }
+  }
+}
+
+.app-nav-dropdown-sep {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+// ── Hamburger (mobile only) ───────────────────────────────────────────────────
+.app-nav-hamburger {
+  display: none;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background var(--ease), color var(--ease);
+
+  @media (max-width: 680px) { display: flex; }
+
+  &:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+  }
+}
+
+// ── Mobile menu ───────────────────────────────────────────────────────────────
+.app-nav-mobile {
+  border-top: 1px solid var(--border);
+  background: rgba(10, 10, 15, 0.97);
+  backdrop-filter: blur(20px);
+  padding: 16px 20px 24px;
+
+  &.d-none { display: none !important; }
+}
+
+.app-nav-mobile-header {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  background: white;
+  margin-bottom: 16px;
 }
 
-.navbar-lewagon .navbar-collapse {
-  flex-grow: 0;
+.app-nav-mobile-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
 }
 
-.navbar-lewagon .navbar-brand img {
-  width: 40px;
+.app-nav-mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.app-nav-mobile-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: $body-font;
+  cursor: pointer;
+  transition: background var(--ease), color var(--ease);
+
+  i { width: 16px; text-align: center; font-size: 0.875rem; }
+
+  &:hover {
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+  }
+
+  &--cta {
+    color: var(--accent);
+    &:hover { background: var(--accent-dim); color: var(--accent); }
+  }
+
+  &--danger {
+    &:hover { background: rgba(239,68,68,0.1); color: #fca5a5; }
+  }
+}
+
+.app-nav-mobile-sep {
+  height: 1px;
+  background: var(--border);
+  margin: 6px 0;
 }

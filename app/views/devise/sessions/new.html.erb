@@ -1,25 +1,102 @@
-<div class="auth-wrapper">
-  <div class="auth-card">
-    <h2 class="auth-title">Log in</h2>
+<div class="auth-page">
 
-    <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-      <div class="form-inputs">
-        <%= f.input :email,
-                    required: false,
-                    autofocus: true,
-                    input_html: { autocomplete: "email" } %>
-        <%= f.input :password,
-                    required: false,
-                    placeholder: "6 characters minimum",
-                    input_html: { autocomplete: "current-password" } %>
-        <%= f.input :remember_me, as: :boolean if devise_mapping.rememberable? %>
+  <%# ── Left visual panel ──────────────────────────────────────────────────── %>
+  <div class="auth-visual" aria-hidden="true">
+
+    <%# Floating film frames %>
+    <div class="film-frame" style="--w:130px;--h:95px; --x:7%;  --y:-10%; --dur:20s;--delay:0s;  --r:-6deg; --o:0.16;--border-o:0.16"></div>
+    <div class="film-frame" style="--w:80px; --h:60px; --x:62%; --y:-10%; --dur:15s;--delay:3s;  --r:9deg;  --o:0.12;--border-o:0.12"></div>
+    <div class="film-frame" style="--w:105px;--h:75px; --x:28%; --y:-10%; --dur:18s;--delay:7s;  --r:-3deg; --o:0.14;--border-o:0.14"></div>
+    <div class="film-frame" style="--w:90px; --h:65px; --x:50%; --y:-10%; --dur:22s;--delay:2s;  --r:12deg; --o:0.10;--border-o:0.10"></div>
+    <div class="film-frame" style="--w:70px; --h:50px; --x:18%; --y:-10%; --dur:17s;--delay:11s; --r:-10deg;--o:0.13;--border-o:0.13"></div>
+    <div class="film-frame" style="--w:115px;--h:82px; --x:75%; --y:-10%; --dur:25s;--delay:5s;  --r:4deg;  --o:0.11;--border-o:0.11"></div>
+
+    <div class="auth-visual-content">
+
+      <%# Logo %>
+      <div class="auth-visual-logo">
+        <div class="auth-visual-logo-mark">F</div>
+        <span class="auth-visual-logo-name">Filmy</span>
       </div>
 
-      <div class="form-actions">
-        <%= f.button :submit, "Log in", class:"btn btn-primary" %>
+      <%# Headline %>
+      <div class="auth-visual-center">
+        <p class="auth-visual-eyebrow">AI-Powered Cinema</p>
+        <h1 class="auth-visual-title">
+          Your next favourite<br>
+          film is <em>waiting</em>.
+        </h1>
+        <p class="auth-visual-desc">
+          AI picks films for your mood. You discover something extraordinary.<br>
+          Every session, every time.
+        </p>
       </div>
-    <% end %>
 
-    <%= render "devise/shared/links" %>
+      <%# Feature pills %>
+      <div class="auth-visual-features">
+        <span class="auth-feature-pill">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> AI recommendations
+        </span>
+        <span class="auth-feature-pill">
+          <i class="fa-solid fa-bookmark"></i> Personal library
+        </span>
+        <span class="auth-feature-pill">
+          <i class="fa-solid fa-users"></i> Watch sessions
+        </span>
+      </div>
+
+    </div>
   </div>
+
+  <%# ── Right form panel ───────────────────────────────────────────────────── %>
+  <div class="auth-form-panel">
+    <div class="auth-form-inner">
+
+      <%# Mobile logo %>
+      <div class="auth-mobile-logo">
+        <div class="auth-visual-logo-mark">F</div>
+        <span class="auth-visual-logo-name">Filmy</span>
+      </div>
+
+      <%= link_to root_path, class: "auth-back-link" do %>
+        <i class="fa-solid fa-arrow-left"></i> Back to home
+      <% end %>
+
+      <div class="auth-form-header">
+        <h2>Welcome back.</h2>
+        <p>Log in to continue your cinematic journey.</p>
+      </div>
+
+      <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+        <div class="auth-fields">
+          <%= f.input :email,
+                      required: false,
+                      autofocus: true,
+                      label: "Email address",
+                      input_html: { autocomplete: "email", placeholder: "you@example.com" } %>
+
+          <%= f.input :password,
+                      required: false,
+                      label: "Password",
+                      placeholder: "Your password",
+                      input_html: { autocomplete: "current-password" } %>
+
+          <%= f.input :remember_me, as: :boolean, label: "Keep me signed in" if devise_mapping.rememberable? %>
+        </div>
+
+        <%= f.button :submit, "Log in to Filmy", class: "auth-submit-btn" %>
+      <% end %>
+
+      <div class="auth-divider">or</div>
+
+      <div class="auth-links">
+        <p>Don't have an account? <%= link_to "Sign up free", new_registration_path(resource_name) %></p>
+        <% if devise_mapping.recoverable? %>
+          <p><%= link_to "Forgot your password?", new_password_path(resource_name) %></p>
+        <% end %>
+      </div>
+
+    </div>
+  </div>
+
 </div>

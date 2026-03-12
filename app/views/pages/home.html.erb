@@ -1,34 +1,201 @@
-<div class="hero">
+<%# ── Hero ──────────────────────────────────────────────────────────────────── %>
+<section class="hero">
+  <video class="hero-bg"
+         autoplay muted loop playsinline preload="auto"
+         poster="<%= asset_path('films.avif') %>">
+    <source src="<%= asset_path('vision.mp4') %>" type="video/mp4">
+  </video>
+
+  <div class="hero-overlay"></div>
+
   <div class="hero-content">
-    <p class="hero-eyebrow">Your cinematic companion</p>
-
-    <h1 class="hero-title">Filmy</h1>
-
     <p class="hero-tagline">
-      Tell us how you feel.<br>
-      We'll find the perfect film.
+      Say hello to my little friend.
     </p>
+
+    <h1 class="hero-title">
+      Filmy<span class="hero-title-dot">.</span>
+    </h1>
 
     <div class="hero-cta">
       <% if user_signed_in? %>
         <%= link_to new_watch_session_path, class: "hero-btn-primary" do %>
-          <i class="fa-solid fa-play" style="font-size:0.8rem"></i>
-          Start a session
+          <i class="fa-solid fa-play"></i> Start a session
         <% end %>
-
         <%= link_to watch_sessions_path, class: "hero-btn-ghost" do %>
           My sessions
         <% end %>
       <% else %>
         <%= link_to new_user_registration_path, class: "hero-btn-primary" do %>
-          Get started — it's free
-          <i class="fa-solid fa-arrow-right" style="font-size:0.8rem"></i>
+          Get started — it's free <i class="fa-solid fa-arrow-right"></i>
         <% end %>
-
         <%= link_to new_user_session_path, class: "hero-btn-ghost" do %>
           Sign in
         <% end %>
       <% end %>
     </div>
   </div>
-</div>
+
+  <div class="hero-scroll-hint">
+    <i class="fa-solid fa-chevron-down"></i>
+  </div>
+</section>
+
+<%# ── Social Proof ─────────────────────────────────────────────────────────── %>
+<style>
+  @keyframes sp-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .sp-track-inner {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: max-content !important;
+    animation: sp-marquee 30s linear infinite !important;
+  }
+  .sp-track-inner:hover {
+    animation-play-state: paused !important;
+  }
+  .sp-pill {
+    display: inline-flex !important;
+    flex-shrink: 0 !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+    white-space: nowrap !important;
+    background: #111118 !important;
+    border: 1px solid rgba(245,240,232,0.10) !important;
+    border-radius: 999px !important;
+    padding: 5px 14px 5px 5px !important;
+    cursor: default !important;
+    transition: border-color 0.2s !important;
+  }
+  .sp-pill:hover {
+    border-color: rgba(232,160,32,0.4) !important;
+  }
+  .sp-pill img {
+    display: block !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+  }
+  .sp-pill span {
+    font-size: 0.8125rem !important;
+    font-weight: 500 !important;
+    color: #f5f0e8 !important;
+    white-space: nowrap !important;
+  }
+  .sp-heading {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .sp-heading p {
+    margin: 0;
+    line-height: 1.4;
+  }
+  .sp-heading-muted {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    font-weight: 400;
+    font-style: italic;
+    color: rgba(245, 240, 232, 0.45);
+    letter-spacing: -0.01em;
+  }
+  .sp-heading-bold {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.7rem, 3.2vw, 2.6rem);
+    font-weight: 700;
+    color: #f5f0e8;
+    letter-spacing: -0.03em;
+  }
+  .sp-rule {
+    height: 1px;
+    border: none;
+    background: linear-gradient(to right, transparent, rgba(245,240,232,0.12) 20%, rgba(245,240,232,0.12) 80%, transparent);
+    margin: 20px auto;
+    max-width: 560px;
+  }
+</style>
+
+<%
+  sp_users = [
+    { name: "Sarah M.",  img: 1  },
+    { name: "Tom K.",    img: 12 },
+    { name: "Emma L.",   img: 5  },
+    { name: "James D.",  img: 33 },
+    { name: "Olivia R.", img: 9  },
+    { name: "Noah P.",   img: 15 },
+    { name: "Chloé B.",  img: 44 },
+    { name: "Liam W.",   img: 52 },
+    { name: "Ava S.",    img: 26 },
+    { name: "Marcus T.", img: 57 },
+    { name: "Priya K.",  img: 47 },
+    { name: "Finn O.",   img: 60 },
+  ]
+%>
+
+<section class="social-proof-section">
+
+  <div class="sp-heading">
+    <p class="sp-heading-muted">Trusted by film lovers.</p>
+    <p class="sp-heading-bold">Used by people with great taste.</p>
+  </div>
+
+  <div class="sp-rule"></div>
+
+  <div style="overflow:hidden; padding:20px 0; -webkit-mask-image:linear-gradient(to right,transparent 0%,black 10%,black 90%,transparent 100%); mask-image:linear-gradient(to right,transparent 0%,black 10%,black 90%,transparent 100%);">
+    <div class="sp-track-inner">
+      <% (sp_users + sp_users).each do |u| %>
+        <div class="sp-pill">
+          <img src="https://i.pravatar.cc/56?img=<%= u[:img] %>" alt="<%= u[:name] %>">
+          <span><%= u[:name] %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="sp-rule"></div>
+
+</section>
+
+<%# ── Features ─────────────────────────────────────────────────────────────── %>
+<section class="features-section">
+  <div class="features-grid">
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+      </div>
+      <h3 class="feature-title">AI-powered picks</h3>
+      <p class="feature-desc">
+        Describe your mood, your evening, your vibe — our AI curates the perfect film in seconds.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <i class="fa-solid fa-bookmark"></i>
+      </div>
+      <h3 class="feature-title">Personal library</h3>
+      <p class="feature-desc">
+        Save the films you love and build your own curated collection to revisit anytime.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <i class="fa-solid fa-users"></i>
+      </div>
+      <h3 class="feature-title">Watch sessions</h3>
+      <p class="feature-desc">
+        Create sessions for different moods — date night, solo chill, family time — each with its own recommendations.
+      </p>
+    </div>
+
+  </div>
+</section>

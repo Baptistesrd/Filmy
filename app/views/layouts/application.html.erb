@@ -30,31 +30,10 @@
       <div class="alert alert-alert" role="alert"><%= alert %></div>
     <% end %>
 
-    <% if user_signed_in? %>
-      <div class="app-shell" data-controller="toggle" id="main-content">
-        <nav class="sidebar d-none" data-toggle-target="hideable" aria-label="Sidebar navigation">
-          <%= render "shared/sidebar", watch_sessions: @watch_sessions %>
-        </nav>
+    <%= render "shared/navbar" %>
 
-        <div class="app-content">
-          <div class="sidebar-toggle-wrap">
-            <button class="sidebar-toggle d-lg-none"
-                    data-action="click->toggle#call"
-                    data-toggle-target="show"
-                    aria-label="Open sidebar">
-              <i class="fa-solid fa-bars"></i>
-            </button>
-          </div>
-
-          <main class="app-main">
-            <%= yield %>
-          </main>
-        </div>
-      </div>
-    <% else %>
-      <main id="main-content">
-        <%= yield %>
-      </main>
-    <% end %>
+    <main class="app-main" id="main-content">
+      <%= yield %>
+    </main>
   </body>
 </html>

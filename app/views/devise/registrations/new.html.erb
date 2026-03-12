@@ -1,30 +1,109 @@
-<div style="background-image: url('<%= asset_path('moov1.avif') %>');
-            background-size: cover;
-            background-position: center;
-            min-height: 100vh;">
+<div class="auth-page">
 
-<div style="max-width: 400px; margin: 0 auto;">
-  <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-    <%= f.error_notification %>
+  <%# ── Left visual panel ──────────────────────────────────────────────────── %>
+  <div class="auth-visual" aria-hidden="true">
 
-    <div class="form-inputs">
-      <%= f.input :email,
-                  required: true,
-                  autofocus: true,
-                  input_html: { autocomplete: "email" }%>
-      <%= f.input :password,
-                  required: true,
-                  placeholder: ("#{@minimum_password_length} characters minimum" if @minimum_password_length),
-                  input_html: { autocomplete: "new-password" } %>
-      <%= f.input :password_confirmation,
-                  required: true,
-                  input_html: { autocomplete: "new-password" } %>
+    <%# Floating film frames %>
+    <div class="film-frame" style="--w:95px; --h:70px; --x:10%; --y:-10%; --dur:19s;--delay:0s;  --r:7deg;  --o:0.15;--border-o:0.15"></div>
+    <div class="film-frame" style="--w:120px;--h:88px; --x:55%; --y:-10%; --dur:16s;--delay:4s;  --r:-8deg; --o:0.13;--border-o:0.13"></div>
+    <div class="film-frame" style="--w:75px; --h:55px; --x:33%; --y:-10%; --dur:21s;--delay:8s;  --r:3deg;  --o:0.11;--border-o:0.11"></div>
+    <div class="film-frame" style="--w:110px;--h:80px; --x:72%; --y:-10%; --dur:14s;--delay:1s;  --r:-12deg;--o:0.14;--border-o:0.14"></div>
+    <div class="film-frame" style="--w:85px; --h:62px; --x:20%; --y:-10%; --dur:24s;--delay:6s;  --r:9deg;  --o:0.12;--border-o:0.12"></div>
+    <div class="film-frame" style="--w:65px; --h:48px; --x:45%; --y:-10%; --dur:17s;--delay:13s; --r:-5deg; --o:0.10;--border-o:0.10"></div>
+
+    <div class="auth-visual-content">
+
+      <%# Logo %>
+      <div class="auth-visual-logo">
+        <div class="auth-visual-logo-mark">F</div>
+        <span class="auth-visual-logo-name">Filmy</span>
+      </div>
+
+      <%# Headline %>
+      <div class="auth-visual-center">
+        <p class="auth-visual-eyebrow">Start your story</p>
+        <h1 class="auth-visual-title">
+          Cinema curated<br>
+          for <em>your</em> taste.
+        </h1>
+        <p class="auth-visual-desc">
+          Tell us your mood, your moment, your crew.<br>
+          Let the AI find the perfect film.
+        </p>
+      </div>
+
+      <%# Feature pills %>
+      <div class="auth-visual-features">
+        <span class="auth-feature-pill">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> AI recommendations
+        </span>
+        <span class="auth-feature-pill">
+          <i class="fa-solid fa-bookmark"></i> Personal library
+        </span>
+        <span class="auth-feature-pill">
+          <i class="fa-solid fa-film"></i> Free forever
+        </span>
+      </div>
+
     </div>
+  </div>
 
-    <div class="form-actions">
-      <%= f.button :submit, "Sign up" %>
+  <%# ── Right form panel ───────────────────────────────────────────────────── %>
+  <div class="auth-form-panel">
+    <div class="auth-form-inner">
+
+      <%# Mobile logo %>
+      <div class="auth-mobile-logo">
+        <div class="auth-visual-logo-mark">F</div>
+        <span class="auth-visual-logo-name">Filmy</span>
+      </div>
+
+      <%= link_to root_path, class: "auth-back-link" do %>
+        <i class="fa-solid fa-arrow-left"></i> Back to home
+      <% end %>
+
+      <div class="auth-form-header">
+        <h2>Create account.</h2>
+        <p>Join Filmy — it's free, and takes 30 seconds.</p>
+      </div>
+
+      <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <% if resource.errors.any? %>
+          <div class="auth-error-notification">
+            <%= resource.errors.full_messages.first %>
+          </div>
+        <% end %>
+
+        <div class="auth-fields">
+          <%= f.input :email,
+                      required: true,
+                      autofocus: true,
+                      label: "Email address",
+                      input_html: { autocomplete: "email", placeholder: "you@example.com" } %>
+
+          <%= f.input :password,
+                      required: true,
+                      label: "Password",
+                      placeholder: "#{"#{@minimum_password_length} characters minimum" if @minimum_password_length}",
+                      input_html: { autocomplete: "new-password" } %>
+
+          <%= f.input :password_confirmation,
+                      required: true,
+                      label: "Confirm password",
+                      placeholder: "Repeat your password",
+                      input_html: { autocomplete: "new-password" } %>
+        </div>
+
+        <%= f.button :submit, "Create my account", class: "auth-submit-btn" %>
+      <% end %>
+
+      <div class="auth-divider">or</div>
+
+      <div class="auth-links">
+        <p>Already have an account? <%= link_to "Log in", new_session_path(resource_name) %></p>
+      </div>
+
     </div>
-  <% end %>
+  </div>
+
 </div>
-
-<%= render "devise/shared/links" %>
