@@ -74,7 +74,7 @@ class MessagesController < ApplicationController
   private
 
   def send_question
-    llm = RubyLLM.chat(model: "claude-sonnet-4-5")
+    llm = RubyLLM.chat(model: "gpt-4o")
     llm.with_instructions(instructions)
     build_history(llm)
 
@@ -85,12 +85,12 @@ class MessagesController < ApplicationController
       broadcast_replace(@assistant_message)
     end
   rescue StandardError => e
-    Rails.logger.error("Claude API error: #{e.message}")
+    Rails.logger.error("OpenAI API error: #{e.message}")
     @assistant_message.content = "I'm having trouble connecting right now. Mind trying again?"
   end
 
   def send_image_question
-    llm = RubyLLM.chat(model: "claude-sonnet-4-5")
+    llm = RubyLLM.chat(model: "gpt-4o")
     llm.with_instructions([image_instructions, @watch_session&.context_prompt].compact.join("\n\n"))
     build_history(llm)
 
@@ -104,7 +104,7 @@ class MessagesController < ApplicationController
       broadcast_replace(@assistant_message)
     end
   rescue StandardError => e
-    Rails.logger.error("Claude vision error: #{e.message}")
+    Rails.logger.error("OpenAI vision error: #{e.message}")
     @assistant_message.content = "I couldn't read that image. Try uploading it again?"
   end
 

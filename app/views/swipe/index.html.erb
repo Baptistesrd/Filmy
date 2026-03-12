@@ -1,49 +1,76 @@
-<%# Dual-layer blurred background – cross-faded via JS %>
-<div class="discover-bg discover-bg--a" id="discover-bg-a"
-     style="background-image: url('<%= @films.first&.dig(:poster_url) %>')"></div>
+<%# ─── Discover page ─────────────────────────────────────────────────────────── %>
+
+<%# Dual-layer blurred background %>
+<div class="discover-bg discover-bg--a" id="discover-bg-a"></div>
 <div class="discover-bg discover-bg--b" id="discover-bg-b"></div>
 
-<div class="discover-page"
+<div class="discover-wrap"
      data-controller="swipe"
      data-swipe-save-url-value="<%= swipe_preferences_path %>"
      data-swipe-more-url-value="<%= discover_path(format: :json) %>"
-     data-swipe-csrf-value="<%= form_authenticity_token %>">
+     data-swipe-recommend-url-value="<%= discover_recommend_path %>"
+     data-swipe-csrf-value="<%= form_authenticity_token %>"
+     data-swipe-category-value="<%= @category %>">
 
-  <%# Header %>
-  <header class="discover-header">
-    <h1 class="discover-title">Discover<span class="discover-dot">.</span></h1>
-    <p class="discover-sub">Swipe to shape your taste profile</p>
+  <%# ── Top bar ──────────────────────────────────────────────────────────────── %>
+  <header class="discover-topbar">
+    <div class="discover-brand">
+      Discover<span class="discover-dot">.</span>
+    </div>
+
+    <div class="discover-stats">
+      <span class="discover-stat">
+        <i class="fa-solid fa-heart"></i>
+        <span id="liked-count">0</span>
+      </span>
+      <div class="discover-stat-sep"></div>
+      <span class="discover-stat">
+        <i class="fa-solid fa-eye"></i>
+        <span id="seen-count">0</span>
+      </span>
+    </div>
+
+    <button id="rec-trigger-btn"
+            class="discover-pick-btn"
+            data-action="click->swipe#recommend">
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+      <span>My pick</span>
+    </button>
   </header>
 
-  <%# Stats row %>
-  <div class="discover-stats">
-    <span class="discover-stat">
-      <i class="fa-solid fa-heart"></i>
-      <span id="liked-count">0</span> liked
-    </span>
-    <span class="discover-stat-sep"></span>
-    <span class="discover-stat">
-      <i class="fa-solid fa-eye"></i>
-      <span id="seen-count">0</span> seen
-    </span>
+  <%# ── Category chips ─────────────────────────────────────────────────────── %>
+  <div class="discover-cats">
+    <% [
+      { key: "popular",     label: "Popular",      icon: "fa-fire" },
+      { key: "trending",    label: "Trending",     icon: "fa-arrow-trend-up" },
+      { key: "top_rated",   label: "Top Rated",    icon: "fa-star" },
+      { key: "hidden_gems", label: "Hidden Gems",  icon: "fa-gem" }
+    ].each do |cat| %>
+      <button class="discover-cat <%= 'discover-cat--active' if @category == cat[:key] %>"
+              data-cat="<%= cat[:key] %>"
+              data-action="click->swipe#switchCategory">
+        <i class="fa-solid <%= cat[:icon] %>"></i>
+        <%= cat[:label] %>
+      </button>
+    <% end %>
   </div>
 
-  <%# Card arena %>
-  <div class="swipe-arena">
+  <%# ── Card arena ──────────────────────────────────────────────────────────── %>
+  <div class="swipe-arena" id="swipe-arena">
+
     <div class="swipe-stack" data-swipe-target="stack">
 
       <% @films.each_with_index do |film, i| %>
-        <div class="swipe-card <%= 'swipe-card--top' if i == 0 %>"
+        <div class="swipe-card"
              data-swipe-target="card"
              data-tmdb-id="<%= film[:tmdb_id] %>"
              data-title="<%= film[:title] %>"
              data-year="<%= film[:year] %>"
              data-poster="<%= film[:poster_url] %>"
-             data-synopsis="<%= film[:synopsis] %>"
+             data-synopsis="<%= film[:synopsis]&.truncate(160) %>"
              data-rating="<%= film[:tmdb_rating] %>"
              style="z-index:<%= 100 - i %>">
 
-          <%# Poster (fills entire card) %>
           <% if film[:poster_url].present? %>
             <img src="<%= film[:poster_url] %>"
                  alt="<%= film[:title] %>"
@@ -55,36 +82,37 @@
             </div>
           <% end %>
 
-          <%# Swipe overlays %>
           <div class="swipe-overlay swipe-overlay--like">
             <i class="fa-solid fa-heart"></i> LIKE
           </div>
-          <div class="swipe-overlay swipe-overlay--skip">
+          <div class="swipe-overlay swipe-overlay--nope">
             NOPE <i class="fa-solid fa-xmark"></i>
           </div>
 
-          <%# Info overlay at bottom of card %>
           <div class="swipe-card-info">
             <h2 class="swipe-card-title"><%= film[:title] %></h2>
             <div class="swipe-card-meta">
               <% if film[:year].present? %>
                 <span class="swipe-card-year"><%= film[:year] %></span>
               <% end %>
-              <% if film[:tmdb_rating].present? %>
+              <% if film[:tmdb_rating].present? && film[:tmdb_rating] > 0 %>
                 <span class="swipe-card-rating">
                   <i class="fa-solid fa-star"></i> <%= film[:tmdb_rating] %>
                 </span>
               <% end %>
             </div>
+            <% if film[:synopsis].present? %>
+              <p class="swipe-card-synopsis"><%= film[:synopsis].truncate(110) %></p>
+            <% end %>
           </div>
 
         </div>
       <% end %>
 
-      <%# Empty / loading state %>
+      <%# Loading / empty state %>
       <div class="swipe-empty" data-swipe-target="empty" style="display:none">
-        <i class="fa-solid fa-clapperboard"></i>
-        <p>Loading more films…</p>
+        <div class="swipe-empty-icon"><i class="fa-solid fa-clapperboard"></i></div>
+        <p>Loading films…</p>
       </div>
 
     </div>
@@ -96,6 +124,7 @@
               aria-label="Skip">
         <i class="fa-solid fa-xmark"></i>
       </button>
+
       <button class="swipe-btn swipe-btn--like"
               data-action="click->swipe#likeCurrent"
               aria-label="Like">
@@ -103,11 +132,62 @@
       </button>
     </div>
 
-    <%# Keyboard hint %>
     <div class="discover-keys">
       <span><kbd>←</kbd> Skip</span>
       <span>Like <kbd>→</kbd></span>
     </div>
-  </div>
 
-</div>
+  </div><%# /swipe-arena %>
+
+  <%# ── Recommendation overlay (fixed, inside controller scope) ─────────────── %>
+  <div class="rec-overlay" id="rec-overlay">
+
+    <%# Backdrop — click to close %>
+    <div class="rec-backdrop" data-action="click->swipe#keepSwiping">
+      <div class="rec-backdrop-blur" id="rec-backdrop-blur"></div>
+      <div class="rec-backdrop-dim"></div>
+    </div>
+
+    <%# Modal card %>
+    <div class="rec-modal">
+      <button class="rec-close" data-action="click->swipe#keepSwiping" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="rec-poster-wrap" id="rec-poster-wrap">
+        <%# Poster injected by JS %>
+      </div>
+
+      <div class="rec-content">
+        <div class="rec-badge">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Your pick
+        </div>
+
+        <p class="rec-message" id="rec-message"></p>
+
+        <div class="rec-film-info">
+          <h2 class="rec-title" id="rec-title"></h2>
+          <div class="rec-meta" id="rec-meta"></div>
+        </div>
+
+        <div class="rec-actions">
+          <button class="rec-btn rec-btn--ghost"
+                  data-action="click->swipe#keepSwiping">
+            <i class="fa-solid fa-rotate-left"></i> Keep swiping
+          </button>
+          <a class="rec-btn rec-btn--amber"
+             id="rec-trailer"
+             href="#"
+             target="_blank"
+             rel="noopener"
+             style="display:none">
+            <i class="fa-brands fa-youtube"></i> Trailer
+          </a>
+        </div>
+      </div>
+
+    </div><%# /rec-modal %>
+
+  </div><%# /rec-overlay %>
+
+</div><%# /discover-wrap %>

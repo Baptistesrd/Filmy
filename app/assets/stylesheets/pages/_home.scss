@@ -275,6 +275,28 @@
   white-space: nowrap;
 }
 
+// ─── Announce video section ───────────────────────────────────────────────────
+
+.announce-section {
+  background: var(--bg);
+  padding: 0 24px 80px;
+  display: flex;
+  justify-content: center;
+}
+
+.announce-frame {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.announce-video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 // ─── Features section ─────────────────────────────────────────────────────────
 
 .features-section {

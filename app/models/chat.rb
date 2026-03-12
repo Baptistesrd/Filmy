@@ -22,7 +22,7 @@ class Chat < ApplicationRecord
 
     raw_title =
       begin
-        response = RubyLLM.chat.with_instructions(TITLE_PROMPT).ask(first_user_message.content)
+        response = RubyLLM.chat(model: "gpt-4o-mini").with_instructions(TITLE_PROMPT).ask(first_user_message.content)
         response.content.to_s
       rescue StandardError
         ""

@@ -1,135 +1,186 @@
-// ─── Discover page ────────────────────────────────────────────────────────────
+// ─── Discover — full-screen immersive swipe experience ────────────────────────
 
-// ── Dual-layer blurred background ─────────────────────────────────────────────
+// ── Blurred poster background ──────────────────────────────────────────────────
 .discover-bg {
   position: fixed;
-  inset: -60px; // extra padding to hide blur edges
+  inset: -80px;
   z-index: 0;
   background-size: cover;
   background-position: center;
-  filter: blur(70px) brightness(0.15) saturate(0.5);
-  transition: opacity 1.4s ease;
+  filter: blur(80px) brightness(0.12) saturate(0.4);
+  transition: opacity 1.6s ease;
   pointer-events: none;
 
-  &--a { opacity: 1; }
+  &--a { opacity: 0; }
   &--b { opacity: 0; }
 }
 
-// ── Page shell ────────────────────────────────────────────────────────────────
-.discover-page {
+// ── Page wrapper — fills full viewport below navbar ───────────────────────────
+.discover-wrap {
   position: relative;
   z-index: 1;
-  min-height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 88px 20px 48px; // 88 = navbar height + breathing room
+  padding: 72px 20px 20px; // 60px nav + 12px gap
+  overflow: hidden;
 }
 
-// ── Header ────────────────────────────────────────────────────────────────────
-.discover-header {
-  text-align: center;
-  margin-bottom: 12px;
-  animation: fade-up 0.5s ease both;
+// ── Top bar ───────────────────────────────────────────────────────────────────
+.discover-topbar {
+  flex: none;
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
 }
 
-.discover-title {
+.discover-brand {
   font-family: $headers-font;
-  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-size: clamp(1.3rem, 3vw, 1.6rem);
   font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.045em;
+  letter-spacing: -0.03em;
   line-height: 1;
-  margin: 0 0 6px;
+  flex: 1;
 }
 
 .discover-dot { color: var(--accent); }
 
-.discover-sub {
-  font-size: 0.78rem;
-  color: var(--text-dim);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin: 0;
-}
-
-// ── Stats row ─────────────────────────────────────────────────────────────────
 .discover-stats {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 32px;
-  animation: fade-up 0.5s 0.08s ease both;
+  gap: 10px;
 }
 
 .discover-stat {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 500;
   color: var(--text-muted);
 
-  i { font-size: 0.7rem; opacity: 0.6; }
+  i { font-size: 0.62rem; opacity: 0.5; }
 }
 
 .discover-stat-sep {
   width: 1px;
-  height: 12px;
+  height: 10px;
   background: var(--border-strong);
 }
 
-// ── Arena ─────────────────────────────────────────────────────────────────────
+.discover-pick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(232, 160, 32, 0.12);
+  border: 1px solid rgba(232, 160, 32, 0.28);
+  color: var(--accent);
+  font-family: $body-font;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 7px 13px;
+  border-radius: 100px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+
+  i { font-size: 0.68rem; }
+
+  &:hover {
+    background: rgba(232, 160, 32, 0.2);
+    border-color: rgba(232, 160, 32, 0.55);
+    box-shadow: 0 0 16px rgba(232, 160, 32, 0.18);
+  }
+
+  &:disabled { opacity: 0.5; pointer-events: none; }
+}
+
+// ── Category chips ────────────────────────────────────────────────────────────
+.discover-cats {
+  flex: none;
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 460px;
+  padding-bottom: 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.discover-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: $body-font;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 6px 13px;
+  border-radius: 100px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s ease;
+
+  i { font-size: 0.62rem; }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--border-strong);
+    color: var(--text-muted);
+  }
+
+  &--active {
+    background: rgba(232, 160, 32, 0.14);
+    border-color: rgba(232, 160, 32, 0.4);
+    color: var(--accent);
+  }
+}
+
+// ── Arena — takes remaining height ────────────────────────────────────────────
 .swipe-arena {
+  flex: 1;
+  min-height: 0; // critical: lets flex child shrink below natural size
+  width: 100%;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
-  width: 100%;
-  max-width: 400px;
-  animation: fade-up 0.5s 0.14s ease both;
+  gap: 16px;
+  transition: opacity 0.35s ease;
 }
 
-// ── Card stack ────────────────────────────────────────────────────────────────
+// ── Card stack — fills available space ────────────────────────────────────────
 .swipe-stack {
+  flex: 1;
+  min-height: 0;
   position: relative;
   width: 100%;
-  height: 560px;
-
-  @media (max-width: 480px) { height: 500px; }
 }
 
+// ── Individual card ───────────────────────────────────────────────────────────
 .swipe-card {
   position: absolute;
   inset: 0;
-  border-radius: 22px;
+  border-radius: 20px;
   overflow: hidden;
   cursor: grab;
   user-select: none;
   touch-action: none;
   will-change: transform;
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.5),
-    0 32px 80px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6), 0 20px 60px rgba(0, 0, 0, 0.4);
 
-  // Stacked cards peeking behind
-  &:nth-child(2) {
-    transform: scale(0.95) translateY(14px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  }
-  &:nth-child(3) {
-    transform: scale(0.90) translateY(28px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  }
-  &:nth-child(n+4) {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  &--top {
-    cursor: grab;
-    &:active { cursor: grabbing; }
-  }
-
+  // Stacking transforms are managed by JS (_updateCardStack)
+  // Default: all hidden until JS initialises
+  &--top { cursor: grab; &:active { cursor: grabbing; } }
   &--gone { display: none !important; }
 }
 
@@ -140,179 +191,173 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
   pointer-events: none;
+  display: block;
 
   &--placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
     background: var(--bg-surface);
-    color: var(--text-dim);
     font-size: 3.5rem;
-    opacity: 0.3;
+    color: var(--text-dim);
+    opacity: 0.2;
   }
 }
 
-// ── Swipe overlays (LIKE / NOPE stamps) ───────────────────────────────────────
+// ── Like / Nope stamps ────────────────────────────────────────────────────────
 .swipe-overlay {
   position: absolute;
-  top: 22px;
+  top: 20px;
   padding: 6px 14px;
   border-radius: 8px;
   font-weight: 800;
-  font-size: 1.1rem;
-  letter-spacing: 0.08em;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.07s ease;
-  z-index: 10;
+  z-index: 20;
+  transition: opacity 0.06s linear;
 
   &--like {
-    left: 18px;
+    left: 16px;
     border: 3px solid #4ade80;
     color: #4ade80;
     transform: rotate(-12deg);
-    text-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+    text-shadow: 0 0 16px rgba(74, 222, 128, 0.6);
   }
 
-  &--skip {
-    right: 18px;
+  &--nope {
+    right: 16px;
     border: 3px solid #f87171;
     color: #f87171;
     transform: rotate(12deg);
-    text-shadow: 0 0 20px rgba(248, 113, 113, 0.5);
+    text-shadow: 0 0 16px rgba(248, 113, 113, 0.6);
   }
 }
 
-// ── Card info overlay (bottom gradient) ───────────────────────────────────────
+// ── Card info gradient ────────────────────────────────────────────────────────
 .swipe-card-info {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 80px 20px 22px;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.93) 0%,
-    rgba(0, 0, 0, 0.70) 40%,
-    transparent 100%
-  );
-  z-index: 5;
+  padding: 80px 18px 18px;
+  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 45%, transparent 100%);
+  z-index: 10;
   pointer-events: none;
 }
 
 .swipe-card-title {
   font-family: $headers-font;
-  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
   font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 8px;
+  color: #fff;
+  margin: 0 0 6px;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
 }
 
 .swipe-card-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  margin-bottom: 6px;
 }
 
 .swipe-card-year {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.65);
-  font-weight: 400;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.55);
 }
 
 .swipe-card-rating {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  background: rgba(232, 160, 32, 0.20);
+  gap: 4px;
+  background: rgba(232, 160, 32, 0.2);
   border: 1px solid rgba(232, 160, 32, 0.35);
   color: var(--accent);
-  font-size: 0.825rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  padding: 3px 9px;
+  padding: 2px 7px;
   border-radius: 100px;
 
-  i { font-size: 0.65rem; }
+  i { font-size: 0.58rem; }
+}
+
+.swipe-card-synopsis {
+  font-size: 0.76rem;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.5;
+  margin: 0;
 }
 
 // ── Action buttons ────────────────────────────────────────────────────────────
 .swipe-actions {
+  flex: none;
   display: flex;
-  gap: 36px;
+  gap: 28px;
   justify-content: center;
 }
 
 .swipe-btn {
-  width: 66px;
-  height: 66px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   border: none;
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s ease;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 
-  &:hover  { transform: scale(1.14); }
-  &:active { transform: scale(0.92); }
+  &:hover  { transform: scale(1.16); }
+  &:active { transform: scale(0.9); }
 
   &--skip {
-    background: rgba(248, 113, 113, 0.15);
+    background: rgba(248, 113, 113, 0.12);
     color: #f87171;
-    box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.3), 0 8px 24px rgba(248, 113, 113, 0.15);
-
-    &:hover {
-      background: rgba(248, 113, 113, 0.25);
-      box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.6), 0 12px 32px rgba(248, 113, 113, 0.25);
-    }
+    box-shadow: 0 0 0 1.5px rgba(248,113,113,0.22), 0 4px 18px rgba(248,113,113,0.1);
+    &:hover { background: rgba(248,113,113,0.22); box-shadow: 0 0 0 2px rgba(248,113,113,0.45), 0 8px 24px rgba(248,113,113,0.18); }
   }
 
   &--like {
-    background: rgba(74, 222, 128, 0.15);
+    background: rgba(74, 222, 128, 0.12);
     color: #4ade80;
-    box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.3), 0 8px 24px rgba(74, 222, 128, 0.15);
-
-    &:hover {
-      background: rgba(74, 222, 128, 0.25);
-      box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.6), 0 12px 32px rgba(74, 222, 128, 0.25);
-    }
+    box-shadow: 0 0 0 1.5px rgba(74,222,128,0.22), 0 4px 18px rgba(74,222,128,0.1);
+    &:hover { background: rgba(74,222,128,0.22); box-shadow: 0 0 0 2px rgba(74,222,128,0.45), 0 8px 24px rgba(74,222,128,0.18); }
   }
 }
 
 // ── Keyboard hint ─────────────────────────────────────────────────────────────
 .discover-keys {
+  flex: none;
   display: flex;
-  gap: 28px;
-  font-size: 0.75rem;
+  gap: 20px;
+  font-size: 0.7rem;
   color: var(--text-dim);
+  padding-bottom: 4px;
 
   kbd {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 22px;
-    height: 22px;
+    width: 19px;
+    height: 19px;
     border: 1px solid var(--border-strong);
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.05);
-    font-size: 0.75rem;
+    background: rgba(255,255,255,0.04);
+    font-size: 0.68rem;
     font-family: $body-font;
     color: var(--text-muted);
-    vertical-align: middle;
   }
 
   @media (max-width: 480px) { display: none; }
 }
 
-// ── Empty / loading state ─────────────────────────────────────────────────────
+// ── Empty / loading ───────────────────────────────────────────────────────────
 .swipe-empty {
   position: absolute;
   inset: 0;
@@ -320,18 +365,252 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
   background: var(--bg-elevated);
-  border-radius: 22px;
+  border-radius: 20px;
   border: 1px solid var(--border);
   color: var(--text-muted);
-  font-size: 0.9rem;
-
-  i {
-    font-size: 2.5rem;
-    color: var(--accent);
-    opacity: 0.5;
-  }
+  font-size: 0.86rem;
 
   p { margin: 0; }
+}
+
+.swipe-empty-icon {
+  font-size: 2rem;
+  color: var(--accent);
+  opacity: 0.4;
+}
+
+// ─── Recommendation overlay ────────────────────────────────────────────────────
+
+.rec-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+
+  &--visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+.rec-backdrop {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.rec-backdrop-blur {
+  position: absolute;
+  inset: -80px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(60px) brightness(0.18) saturate(0.45);
+}
+
+.rec-backdrop-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.rec-modal {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 660px;
+  max-height: calc(100dvh - 40px);
+  display: flex;
+  overflow: hidden;
+  background: rgba(12, 12, 18, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(232,160,32,0.06), inset 0 1px 0 rgba(255,255,255,0.06);
+  backdrop-filter: blur(20px);
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  .rec-overlay--visible & { transform: translateY(0) scale(1); }
+
+  @media (max-width: 560px) {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+}
+
+// Close button (top-right)
+.rec-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+
+  &:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+}
+
+.rec-poster-wrap {
+  flex: 0 0 200px;
+  position: relative;
+  overflow: hidden;
+  min-height: 280px;
+
+  @media (max-width: 560px) {
+    flex: none;
+    height: 200px;
+    width: 100%;
+  }
+}
+
+.rec-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+
+  &--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-surface);
+    color: var(--text-dim);
+    font-size: 3rem;
+    opacity: 0.2;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.rec-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 22px 20px;
+  overflow-y: auto;
+}
+
+.rec-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(232, 160, 32, 0.12);
+  border: 1px solid rgba(232, 160, 32, 0.28);
+  color: var(--accent);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  width: fit-content;
+
+  i { font-size: 0.6rem; }
+}
+
+.rec-message {
+  font-size: 0.9rem;
+  line-height: 1.72;
+  color: var(--text-muted);
+  margin: 0;
+  font-style: italic;
+}
+
+.rec-title {
+  font-family: $headers-font;
+  font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.rec-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rec-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  padding: 3px 9px;
+  border-radius: 100px;
+
+  &--amber {
+    background: rgba(232,160,32,0.1);
+    border-color: rgba(232,160,32,0.25);
+    color: var(--accent);
+    font-weight: 700;
+    i { font-size: 0.58rem; }
+  }
+}
+
+.rec-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+.rec-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: $body-font;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 9px 17px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+
+  &:hover  { transform: scale(1.04); }
+  &:active { transform: scale(0.97); }
+
+  &--ghost {
+    background: rgba(255,255,255,0.06);
+    color: var(--text-muted);
+    border: 1px solid var(--border-strong);
+    &:hover { background: rgba(255,255,255,0.1); }
+  }
+
+  &--amber {
+    background: var(--accent);
+    color: #0a0a0f;
+    font-weight: 600;
+    box-shadow: 0 4px 14px rgba(232,160,32,0.28);
+    &:hover { box-shadow: 0 6px 20px rgba(232,160,32,0.45); }
+  }
 }

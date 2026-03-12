@@ -5,33 +5,62 @@ class TmdbService
   BASE_URL   = "https://api.themoviedb.org/3"
   IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
 
-  # Returns an array of film hashes from TMDB's popular endpoint.
-  def self.popular_films(page: 1)
+  CATEGORIES = %w[popular trending top_rated hidden_gems].freeze
+
+  # Unified discover method — routes to different TMDB endpoints by category.
+  def self.discover_films(page: 1, category: "popular")
     api_key = ENV.fetch("TMDB_API_KEY", nil)
     return [] if api_key.blank?
 
-    Rails.cache.fetch("tmdb_popular_v1/page_#{page}", expires_in: 1.hour) do
-      uri      = URI("#{BASE_URL}/movie/popular?api_key=#{api_key}&page=#{page}&language=en-US")
-      response = Net::HTTP.get_response(uri)
+    category = "popular" unless CATEGORIES.include?(category.to_s)
+
+    Rails.cache.fetch("tmdb_discover_v2/#{category}/#{page}", expires_in: 2.hours) do
+      url      = build_discover_url(api_key, category.to_s, page)
+      response = Net::HTTP.get_response(URI(url))
       next [] unless response.is_a?(Net::HTTPSuccess)
 
-      results = JSON.parse(response.body)["results"] || []
-      results.map do |m|
-        {
-          tmdb_id:     m["id"],
-          title:       m["title"],
-          year:        m["release_date"]&.then { |d| Date.parse(d).year rescue nil },
-          poster_url:  m["poster_path"].present? ? "#{IMAGE_BASE}#{m['poster_path']}" : nil,
-          synopsis:    m["overview"],
-          tmdb_rating: m["vote_average"]&.round(1),
-          genre:       nil  # genre_ids only on list endpoint; omit for performance
-        }
-      end
+      (JSON.parse(response.body)["results"] || []).map { |m| map_film(m) }
     end
   rescue StandardError => e
-    Rails.logger.warn("TmdbService.popular_films error: #{e.message}")
+    Rails.logger.warn("TmdbService.discover_films error: #{e.message}")
     []
   end
+
+  # Legacy alias kept for compatibility.
+  def self.popular_films(page: 1)
+    discover_films(page: page, category: "popular")
+  end
+
+  def self.build_discover_url(api_key, category, page)
+    base   = "#{BASE_URL}"
+    common = "api_key=#{api_key}&language=en-US&page=#{page}"
+
+    case category
+    when "trending"
+      "#{base}/trending/movie/week?#{common}"
+    when "top_rated"
+      "#{base}/movie/top_rated?#{common}"
+    when "hidden_gems"
+      # High-rated films most people haven't seen
+      "#{base}/discover/movie?#{common}&sort_by=vote_average.desc" \
+        "&vote_count.gte=150&vote_count.lte=2500&vote_average.gte=7.4"
+    else
+      "#{base}/movie/popular?#{common}"
+    end
+  end
+  private_class_method :build_discover_url
+
+  def self.map_film(m)
+    {
+      tmdb_id:     m["id"],
+      title:       m["title"],
+      year:        (Date.parse(m["release_date"]).year rescue nil if m["release_date"].present?),
+      poster_url:  m["poster_path"].present? ? "#{IMAGE_BASE}#{m['poster_path']}" : nil,
+      synopsis:    m["overview"],
+      tmdb_rating: m["vote_average"]&.round(1)
+    }
+  end
+  private_class_method :map_film
 
   def initialize(title:, year: nil)
     @title   = title

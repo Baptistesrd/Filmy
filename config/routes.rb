@@ -19,8 +19,10 @@ Rails.application.routes.draw do
   resources :ratings, only: [:create, :update, :destroy]
   resources :feedbacks, only: [:create, :destroy]
 
-  get  "/discover", to: "swipe#index",             as: :discover
+  get  "/discover",           to: "swipe#index",     as: :discover
+  post "/discover/recommend", to: "swipe#recommend", as: :discover_recommend
   resources :swipe_preferences, only: [:create]
 
   get "up" => "rails/health#show", as: :rails_health_check
 end
+

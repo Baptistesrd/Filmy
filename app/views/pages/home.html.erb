@@ -10,7 +10,7 @@
 
   <div class="hero-content">
     <p class="hero-tagline">
-      Say hello to my little friend.
+      Say hello to your little friend.
     </p>
 
     <h1 class="hero-title">
@@ -27,7 +27,7 @@
         <% end %>
       <% else %>
         <%= link_to new_user_registration_path, class: "hero-btn-primary" do %>
-          Get started — it's free <i class="fa-solid fa-arrow-right"></i>
+          Get started (it's free) <i class="fa-solid fa-arrow-right"></i>
         <% end %>
         <%= link_to new_user_session_path, class: "hero-btn-ghost" do %>
           Sign in
@@ -163,6 +163,16 @@
 
 </section>
 
+<%# ── Announce video ───────────────────────────────────────────────────────── %>
+<section class="announce-section">
+  <div class="announce-frame">
+    <video class="announce-video"
+           autoplay muted loop playsinline preload="auto">
+      <source src="<%= asset_path('lesgowe.mp4') %>" type="video/mp4">
+    </video>
+  </div>
+</section>
+
 <%# ── Features ─────────────────────────────────────────────────────────────── %>
 <section class="features-section">
   <div class="features-grid">
@@ -173,7 +183,7 @@
       </div>
       <h3 class="feature-title">AI-powered picks</h3>
       <p class="feature-desc">
-        Describe your mood, your evening, your vibe — our AI curates the perfect film in seconds.
+        Describe your mood, your evening, your vibe. Our AI curates the perfect film in seconds.
       </p>
     </div>
 
