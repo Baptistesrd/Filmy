@@ -4,20 +4,22 @@
 .sessions-hero {
   position: relative;
   width: 100%;
-  height: clamp(240px, 35vh, 360px);
-  background: image-url('oklm.webp') center top / cover no-repeat;
+  height: clamp(420px, 58vh, 580px);
+  background: image-url('oklm.png') center 30% / cover no-repeat;
   overflow: hidden;
 
-  // Dark gradient overlay so text is readable
+  // Multi-stop gradient: lets image breathe at top, fades to bg at bottom
   &::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(10, 10, 15, 0.25) 0%,
-      rgba(10, 10, 15, 0.72) 100%
-    );
+    background:
+      linear-gradient(to bottom,
+        rgba(10, 10, 15, 0.15)  0%,
+        rgba(10, 10, 15, 0.20) 40%,
+        rgba(10, 10, 15, 0.70) 72%,
+        rgba(10, 10, 15, 1.00) 100%
+      );
   }
 }
 
@@ -26,37 +28,40 @@
   z-index: 1;
   height: 100%;
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 0 40px 32px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+  padding: 0 40px 48px;
+  text-align: center;
 
-  @media (max-width: 576px) { padding: 0 20px 24px; }
+  @media (max-width: 576px) { padding: 0 20px 36px; }
 }
 
 .sessions-hero-title {
   font-family: $headers-font;
-  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-size: clamp(2.4rem, 5.5vw, 4rem);
   font-weight: 700;
   color: #fff;
   letter-spacing: -0.04em;
-  line-height: 1;
+  line-height: 1.05;
+  text-align: center;
   margin: 0;
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+  max-width: 640px;
 }
 
 // ── Body ──────────────────────────────────────────────────────────────────────
 .sessions-body {
-  padding: 32px 40px;
+  padding: 40px 40px 48px;
 
-  @media (max-width: 576px) { padding: 24px 16px; }
+  @media (max-width: 576px) { padding: 28px 16px 40px; }
 }
 
 .sessions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+  gap: 20px;
 }
 
 // Session show
